@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KVSL Music Player (Offline)</title>
+    <title>KMusic</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -126,6 +126,30 @@
         #lyrics-panel .bg-tertiary { background-color: #242424; }
         #lyrics-panel .hover\\:bg-highlight:hover { background-color: #2a2a2a; }
 
+        /* --- Now Playing Fullscreen (Always Dark) --- */
+        #now-playing-fullscreen {
+            background-color: #000; /* Force dark background */
+        }
+        #now-playing-fullscreen .text-primary, body.light #now-playing-fullscreen .text-primary {
+            color: #ffffff;
+        }
+        #now-playing-fullscreen .text-secondary, body.light #now-playing-fullscreen .text-secondary {
+            color: #b3b3b3;
+        }
+        #now-playing-fullscreen #close-now-playing-fullscreen, body.light #now-playing-fullscreen #close-now-playing-fullscreen {
+            color: #b3b3b3;
+        }
+        #now-playing-fullscreen #close-now-playing-fullscreen:hover, body.light #now-playing-fullscreen #close-now-playing-fullscreen:hover {
+            color: #ffffff;
+        }
+        #now-playing-fullscreen #go-to-lyrics-btn, body.light #now-playing-fullscreen #go-to-lyrics-btn {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
+        #now-playing-fullscreen #go-to-lyrics-btn:hover, body.light #now-playing-fullscreen #go-to-lyrics-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
         /* Show Timer Panel Light Theme Adjustments */
         body.light #show-timer-panel {
             background-color: rgba(229, 231, 235, 0.85); /* A light gray glass effect */
@@ -137,6 +161,28 @@
         body.light #show-timer-panel button:hover { background-color: rgba(0, 0, 0, 0.1); }
         body.light #show-timer-panel #show-timer-save-btn { background-color: var(--brand-color); color: #ffffff; }
 
+        /* Lyrics Panel Dropdowns Light Theme Adjustments */
+        body.light #lyrics-panel #font-size-dropdown,
+        body.light #lyrics-panel #more-options-dropdown {
+            background-color: var(--bg-secondary); /* Use light theme variable */
+            border: 1px solid var(--border-color);
+        }
+        body.light #lyrics-panel #font-size-dropdown .btn-icon,
+        body.light #lyrics-panel #more-options-dropdown > div {
+            color: var(--text-secondary);
+        }
+        body.light #lyrics-panel #font-size-dropdown .btn-icon:hover,
+        body.light #lyrics-panel #more-options-dropdown > div:hover {
+            color: var(--text-primary);
+            background-color: var(--bg-highlight);
+        }
+        body.light #lyrics-panel #more-options-dropdown #delete-lyrics-btn {
+            color: #f87171; /* red-400 */
+        }
+        body.light #lyrics-panel #more-options-dropdown #delete-lyrics-btn:hover {
+            color: #dc2626; /* red-600 */
+            background-color: rgba(239, 68, 68, 0.1);
+        }
 
         /* Sync Mode Styles */
         #sync-panel .sync-line { transition: all 0.3s; opacity: 0.5; }
@@ -162,7 +208,7 @@
             -webkit-backdrop-filter: blur(20px); border: 1px solid var(--border-color);
         }
         body.light.lyrics-active #queue-panel {
-             background-color: rgba(255, 255, 255, 0.75);
+            background-color: rgba(255, 255, 255, 0.75);
         }
 
         /* History Story Styles */
@@ -180,7 +226,8 @@
 
     <!-- Main Grid Layout -->
     <div class="h-screen w-full grid grid-rows-[1fr,auto]">
-        <div class="grid grid-cols-[auto,1fr] gap-2 p-2 overflow-hidden relative">
+        <!-- This is the main content area that was causing the overflow issue. Removed 'overflow-hidden'. -->
+        <div class="grid grid-cols-[auto,1fr] gap-2 p-2 relative">
             <!-- Left Sidebar -->
             <aside class="w-72 bg-primary rounded-lg flex flex-col gap-2">
                 <nav class="bg-secondary rounded-lg p-3">
@@ -312,10 +359,10 @@
     </aside>
 
     <!-- Now Playing Fullscreen View -->
-    <div id="now-playing-fullscreen" class="hidden fixed inset-0 bg-primary z-40 flex flex-col items-center justify-center overflow-hidden">
+    <div id="now-playing-fullscreen" class="hidden fixed inset-0 z-40 flex flex-col items-center justify-center overflow-hidden">
         <div id="now-playing-fullscreen-bg" class="absolute inset-0 bg-center bg-cover transition-all duration-1000" style="filter: blur(50px) brightness(0.4);"></div>
         <div class="relative z-10 flex flex-col items-center justify-center text-center p-8">
-            <button id="close-now-playing-fullscreen" class="absolute top-6 right-8 text-secondary hover:text-primary text-2xl"><i class="ph-bold ph-x"></i></button>
+            <button id="close-now-playing-fullscreen" class="absolute top-6 right-8 text-2xl"><i class="ph-bold ph-x"></i></button>
             <img id="now-playing-fullscreen-art" src="https://placehold.co/300x300/121212/b3b3b3?text=KVSL" class="w-80 h-80 rounded-lg shadow-2xl mb-6">
             <h2 id="now-playing-fullscreen-title" class="text-5xl font-extrabold text-primary">Título da Música</h2>
             <p id="now-playing-fullscreen-artist" class="text-2xl text-secondary mt-2">Nome do Artista</p>
