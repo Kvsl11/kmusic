@@ -28,38 +28,58 @@
 
 
     <style>
-        /* Custom Styles */
+        /* --- THEME VARIABLES --- */
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #121212;
+            --bg-tertiary: #242424;
+            --bg-glass: rgba(18, 18, 18, 0.75);
+            --bg-highlight: #2a2a2a;
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --brand-color: #29aae2;
+        }
+
+        body.light {
+            --bg-primary: #f5f5f5;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #e0e0e0;
+            --bg-glass: rgba(255, 255, 255, 0.85);
+            --bg-highlight: #eeeeee;
+            --text-primary: #000000;
+            --text-secondary: #5f5f5f;
+            --border-color: rgba(0, 0, 0, 0.1);
+            --brand-color: #29aae2;
+        }
+
+        /* --- APPLYING THEME --- */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #000;
-            color: #b3b3b3;
+            background-color: var(--bg-primary);
+            color: var(--text-secondary);
         }
-        .text-main { color: #fff; }
-        .text-secondary { color: #b3b3b3; }
-        .text-custom-blue { color: #29aae2; }
-        .bg-custom-blue { background-color: #29aae2; }
-        
-        .bg-glass {
-            background-color: rgba(18, 18, 18, 0.75);
+        .bg-primary { background-color: var(--bg-primary); }
+        .bg-secondary { background-color: var(--bg-secondary); }
+        .bg-tertiary { background-color: var(--bg-tertiary); }
+        .bg-highlight { background-color: var(--bg-highlight); }
+        .bg-glass { 
+            background-color: var(--bg-glass);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-color);
         }
+        .text-primary { color: var(--text-primary); }
+        .text-secondary { color: var(--text-secondary); }
+        .text-brand { color: var(--brand-color); }
+        .bg-brand { background-color: var(--brand-color); }
+        .border-theme { border-color: var(--border-color); }
         
         /* Custom Scrollbar for Lyrics Panel */
-        #lyrics-view::-webkit-scrollbar {
-            width: 8px;
-        }
-        #lyrics-view::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        #lyrics-view::-webkit-scrollbar-thumb {
-            background: transparent; /* Hidden by default */
-            border-radius: 10px;
-        }
-        #lyrics-view:hover::-webkit-scrollbar-thumb {
-            background: #29aae2; /* Visible on hover, in blue */
-        }
+        #lyrics-view::-webkit-scrollbar { width: 8px; }
+        #lyrics-view::-webkit-scrollbar-track { background: transparent; }
+        #lyrics-view::-webkit-scrollbar-thumb { background: transparent; border-radius: 10px; }
+        #lyrics-view:hover::-webkit-scrollbar-thumb { background: var(--brand-color); }
         
         /* General Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
@@ -70,7 +90,7 @@
         input[type="range"] {
             -webkit-appearance: none; appearance: none; width: 100%; height: 4px;
             border-radius: 5px; background: #535353; outline: none;
-            background-image: linear-gradient(#29aae2, #29aae2);
+            background-image: linear-gradient(var(--brand-color), var(--brand-color));
             background-size: 0% 100%;
             background-repeat: no-repeat;
             transition: background-size 0.1s;
@@ -81,49 +101,46 @@
             transition: opacity 0.2s ease-in-out;
         }
         .slider-container:hover input[type="range"]::-webkit-slider-thumb { opacity: 1; }
-        .active-blue, .btn-icon.active, .nav-item.active { color: #29aae2; }
+        .active-blue, .btn-icon.active, .nav-item.active { color: var(--brand-color); }
 
         /* Playing Song Indicator */
-        .playing-indicator {
-            display: flex;
-            gap: 2px;
-            height: 16px;
-            align-items: flex-end;
-        }
-        .playing-indicator .bar {
-            width: 3px;
-            background-color: #29aae2;
-            animation: bounce 1.2s ease-in-out infinite;
-        }
+        .playing-indicator { display: flex; gap: 2px; height: 16px; align-items: flex-end; }
+        .playing-indicator .bar { width: 3px; background-color: var(--brand-color); animation: bounce 1.2s ease-in-out infinite; }
         .playing-indicator .bar:nth-child(2) { animation-delay: -1.0s; }
         .playing-indicator .bar:nth-child(3) { animation-delay: -0.8s; }
         .playing-indicator .bar:nth-child(4) { animation-delay: -0.6s; }
-        @keyframes bounce {
-            0%, 100% { height: 4px; }
-            50% { height: 16px; }
-        }
+        @keyframes bounce { 0%, 100% { height: 4px; } 50% { height: 16px; } }
 
-        /* Lyrics Panel Styles */
-        #lyrics-panel .lyrics-line {
-            padding: 12px 20px; border-radius: 10px; cursor: pointer;
-            transition: all 0.4s ease;
-            font-weight: 800;
-            opacity: 0.4;
-        }
-        #lyrics-panel .lyrics-line:hover {
-            background-color: rgba(255, 255, 255, 0.05);
-            opacity: 1;
-        }
-        #lyrics-panel .lyrics-line.active {
-            color: #fff;
-            opacity: 1;
-            transform: scale(1.02);
-        }
+        /* Lyrics Panel Styles (Always Dark) */
+        #lyrics-panel { background-color: #000; }
+        #lyrics-panel .lyrics-line { padding: 12px 20px; border-radius: 10px; cursor: pointer; transition: all 0.4s ease; font-weight: 800; opacity: 0.4; color: #b3b3b3; }
+        #lyrics-panel .lyrics-line:hover { background-color: rgba(255, 255, 255, 0.05); opacity: 1; }
+        #lyrics-panel .lyrics-line.active { color: #ffffff; opacity: 1; transform: scale(1.02); }
         #lyrics-panel .lyrics-line.plain-text { cursor: default; }
+        #lyrics-panel .text-primary, body.light #lyrics-panel .text-primary { color: #ffffff; }
+        #lyrics-panel .text-secondary, body.light #lyrics-panel .text-secondary { color: #b3b3b3; }
+        #lyrics-panel .btn-icon, body.light #lyrics-panel .btn-icon { color: #b3b3b3; }
+        #lyrics-panel .btn-icon:hover, body.light #lyrics-panel .btn-icon:hover { color: #ffffff; }
+        #lyrics-panel .btn-icon.active-blue, body.light #lyrics-panel .btn-icon.active-blue { color: var(--brand-color); }
+        #lyrics-panel .border-theme { border-color: rgba(255, 255, 255, 0.1); }
+        #lyrics-panel .bg-tertiary { background-color: #242424; }
+        #lyrics-panel .hover\\:bg-highlight:hover { background-color: #2a2a2a; }
+
+        /* Show Timer Panel Light Theme Adjustments */
+        body.light #show-timer-panel {
+            background-color: rgba(229, 231, 235, 0.85); /* A light gray glass effect */
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        body.light #show-timer-panel .text-primary { color: #000000; }
+        body.light #show-timer-panel .text-brand { color: #29aae2; }
+        body.light #show-timer-panel button { background-color: rgba(0, 0, 0, 0.05); color: #000000; }
+        body.light #show-timer-panel button:hover { background-color: rgba(0, 0, 0, 0.1); }
+        body.light #show-timer-panel #show-timer-save-btn { background-color: var(--brand-color); color: #ffffff; }
+
 
         /* Sync Mode Styles */
         #sync-panel .sync-line { transition: all 0.3s; opacity: 0.5; }
-        #sync-panel .sync-line.current { opacity: 1; transform: scale(1.1); color: #fff; }
+        #sync-panel .sync-line.current { opacity: 1; transform: scale(1.1); color: var(--text-primary); }
         
         /* Drag and Drop styles */
         .queue-item.dragging { opacity: 0.5; }
@@ -133,86 +150,40 @@
 
         /* --- Queue Panel Styling --- */
         #queue-panel {
-            position: fixed;
-            top: 0.5rem;
-            right: 0.5rem;
-            bottom: calc(0.5rem + 92px);
-            width: 20rem;
-            border-radius: 0.5rem;
-            transform: translateX(calc(100% + 1rem));
+            position: fixed; top: 0.5rem; right: 0.5rem; bottom: calc(0.5rem + 92px);
+            width: 20rem; border-radius: 0.5rem; transform: translateX(calc(100% + 1rem));
             transition: transform 0.3s ease-in-out, background-color 0.3s, backdrop-filter 0.3s;
-            z-index: 45;
-            background-color: #121212; /* Default background */
+            z-index: 45; background-color: var(--bg-secondary);
         }
-
-        body.queue-open #queue-panel {
-            transform: translateX(0);
-        }
-
-        /* Make space for the sidebar ONLY when not in lyrics view */
-        body.queue-open:not(.lyrics-active) > .h-screen > div:first-child {
-            padding-right: calc(20rem + 0.5rem);
-            transition: padding-right 0.3s ease-in-out;
-        }
-
-        /* When on lyrics screen, apply glass effect and change text colors */
+        body.queue-open #queue-panel { transform: translateX(0); }
+        body.queue-open:not(.lyrics-active) > .h-screen > div:first-child { padding-right: calc(20rem + 0.5rem); transition: padding-right 0.3s ease-in-out; }
         body.lyrics-active #queue-panel {
-            background-color: rgba(28, 28, 28, 0.75);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: rgba(28, 28, 28, 0.75); backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px); border: 1px solid var(--border-color);
         }
-
-        body.lyrics-active #queue-panel h2,
-        body.lyrics-active #queue-panel #now-playing-title,
-        body.lyrics-active #queue-panel .queue-item .text-main {
-            color: #fff;
-        }
-
-        body.lyrics-active #queue-panel h3,
-        body.lyrics-active #queue-panel #now-playing-artist,
-        body.lyrics-active #queue-panel .queue-item .text-secondary {
-            color: #d1d5db; /* Brighter grey for better contrast */
-        }
-        
-        body.lyrics-active #queue-panel .queue-item:hover {
-            background-color: rgba(255, 255, 255, 0.1);
+        body.light.lyrics-active #queue-panel {
+             background-color: rgba(255, 255, 255, 0.75);
         }
 
         /* History Story Styles */
-        .story-card {
-            scroll-snap-align: start;
-            flex: 0 0 150px;
-        }
-        .story-card-inner {
-            transform-style: preserve-3d;
-            transition: transform 0.6s;
-        }
-        .story-card:hover .story-card-inner {
-            transform: rotateY(180deg);
-        }
-        .story-front, .story-back {
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-        }
-        .story-back {
-            transform: rotateY(180deg);
-        }
+        .story-card { scroll-snap-align: start; flex: 0 0 150px; }
+        .story-card-inner { transform-style: preserve-3d; transition: transform 0.6s; }
+        .story-card:hover .story-card-inner { transform: rotateY(180deg); }
+        .story-front, .story-back { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+        .story-back { transform: rotateY(180deg); }
         
-        .library-filter-btn.active {
-            background-color: #333;
-            color: #fff;
-        }
+        .library-filter-btn.active { background-color: var(--bg-tertiary); color: var(--text-primary); }
+        .home-header { transition: background-color 0.4s ease; }
     </style>
 </head>
-<body class="bg-black text-white overflow-hidden">
+<body class="bg-primary text-secondary">
 
     <!-- Main Grid Layout -->
     <div class="h-screen w-full grid grid-rows-[1fr,auto]">
         <div class="grid grid-cols-[auto,1fr] gap-2 p-2 overflow-hidden relative">
             <!-- Left Sidebar -->
-            <aside class="w-72 bg-black rounded-lg flex flex-col gap-2">
-                <nav class="bg-[#121212] rounded-lg p-3">
+            <aside class="w-72 bg-primary rounded-lg flex flex-col gap-2">
+                <nav class="bg-secondary rounded-lg p-3">
                     <div class="px-3 py-2">
                         <a href="#" class="nav-item flex items-center gap-5 font-bold text-md transition-colors duration-300" title="Início" id="nav-home">
                             <i class="ph-bold ph-house text-2xl"></i>
@@ -232,17 +203,17 @@
                         </a>
                     </div>
                 </nav>
-                <div class="bg-[#121212] rounded-lg flex-1 flex flex-col">
+                <div class="bg-secondary rounded-lg flex-1 flex flex-col">
                     <div class="p-3 flex justify-between items-center">
                         <a href="#" class="nav-item flex items-center gap-4 font-bold text-md transition-colors duration-300" title="Sua Biblioteca" id="nav-library">
                             <i class="ph-bold ph-stack text-2xl"></i>
                             <span>Sua Biblioteca</span>
                         </a>
                         <div>
-                            <button id="create-playlist-btn" class="text-secondary hover:text-main cursor-pointer hover:bg-white/10 rounded-full p-2 transition-colors duration-300" title="Criar playlist">
+                            <button id="create-playlist-btn" class="text-secondary hover:text-primary cursor-pointer hover:bg-highlight rounded-full p-2 transition-colors duration-300" title="Criar playlist">
                                 <i class="ph-bold ph-plus text-xl"></i>
                             </button>
-                            <label for="add-music-input" class="text-secondary hover:text-main cursor-pointer hover:bg-white/10 rounded-full p-2 transition-colors duration-300" title="Adicionar músicas">
+                            <label for="add-music-input" class="text-secondary hover:text-primary cursor-pointer hover:bg-highlight rounded-full p-2 transition-colors duration-300" title="Adicionar músicas">
                                 <i class="ph-bold ph-folder-plus text-xl"></i>
                             </label>
                             <input type="file" id="add-music-input" multiple accept=".mp3" class="hidden">
@@ -250,18 +221,26 @@
                     </div>
                     <div id="library-content" class="px-2 space-y-1 overflow-y-auto flex-1">
                        <div class="text-center text-secondary p-4" id="library-placeholder">
-                           <p class="font-semibold text-main">Crie sua primeira playlist</p>
+                           <p class="font-semibold text-primary">Crie sua primeira playlist</p>
                            <p class="text-sm">É fácil, vamos te ajudar.</p>
                        </div>
                     </div>
-                    <div id="status-indicator" class="text-xs text-center p-2 m-2 bg-gray-800 rounded-lg text-white transition-all duration-300 hidden">...</div>
+                    <div id="status-indicator" class="text-xs text-center p-2 m-2 bg-tertiary rounded-lg text-primary transition-all duration-300 hidden">...</div>
                 </div>
             </aside>
 
             <!-- Main Content -->
-            <main id="main-view" class="bg-[#121212] rounded-lg overflow-y-auto">
-                <!-- Content will be dynamically rendered here -->
-            </main>
+            <div class="relative">
+                 <main id="main-view" class="bg-secondary rounded-lg overflow-y-auto h-full">
+                    <!-- Content will be dynamically rendered here -->
+                </main>
+                <!-- Theme Toggle Button -->
+                 <div class="absolute top-4 right-4 z-20">
+                    <button id="theme-toggle-btn" class="text-secondary hover:text-primary cursor-pointer bg-primary hover:bg-highlight rounded-full p-2 transition-colors duration-300" title="Mudar Tema">
+                        <i id="theme-icon" class="ph-bold ph-sun text-xl"></i>
+                    </button>
+                </div>
+            </div>
         </div>
 
         <!-- Player Bar -->
@@ -270,21 +249,21 @@
                 <div class="flex items-center gap-3">
                     <img id="player-album-art" src="https://placehold.co/64x64/121212/b3b3b3?text=KVSL" alt="Capa" class="w-14 h-14 rounded-md shadow-md cursor-pointer">
                     <div>
-                        <p id="player-title" class="font-bold text-main truncate cursor-pointer">Nenhuma música tocando</p>
+                        <p id="player-title" class="font-bold text-primary truncate cursor-pointer">Nenhuma música tocando</p>
                         <p id="player-artist" class="text-sm text-secondary truncate">---</p>
                     </div>
                 </div>
                 <div class="flex flex-col items-center justify-center gap-2">
                     <div class="flex items-center gap-6">
-                        <button id="shuffle-btn" class="btn-icon text-secondary hover:text-main transition-colors" title="Aleatório"><i class="ph-bold ph-shuffle text-xl"></i></button>
-                        <button id="prev-btn" class="btn-icon text-secondary hover:text-main transition-colors" title="Anterior"><i class="ph-bold ph-skip-back text-2xl"></i></button>
+                        <button id="shuffle-btn" class="btn-icon text-secondary hover:text-primary transition-colors" title="Aleatório"><i class="ph-bold ph-shuffle text-xl"></i></button>
+                        <button id="prev-btn" class="btn-icon text-secondary hover:text-primary transition-colors" title="Anterior"><i class="ph-bold ph-skip-back text-2xl"></i></button>
                         <button id="play-pause-btn" class="bg-white text-black rounded-full w-10 h-10 flex items-center justify-center hover:scale-105 transition-transform" title="Tocar/Pausar">
                             <i id="play-pause-icon" class="ph-bold ph-play text-xl"></i>
                         </button>
-                        <button id="next-btn" class="btn-icon text-secondary hover:text-main transition-colors" title="Próxima"><i class="ph-bold ph-skip-forward text-2xl"></i></button>
-                        <button id="repeat-btn" class="btn-icon text-secondary hover:text-main transition-colors relative" title="Repetir">
+                        <button id="next-btn" class="btn-icon text-secondary hover:text-primary transition-colors" title="Próxima"><i class="ph-bold ph-skip-forward text-2xl"></i></button>
+                        <button id="repeat-btn" class="btn-icon text-secondary hover:text-primary transition-colors relative" title="Repetir">
                             <i class="ph-bold ph-repeat text-xl"></i>
-                            <span id="repeat-one-indicator" class="absolute -top-1 -right-1 text-xs bg-custom-blue text-black rounded-full h-3 w-3 flex items-center justify-center font-bold hidden">1</span>
+                            <span id="repeat-one-indicator" class="absolute -top-1 -right-1 text-xs bg-brand text-black rounded-full h-3 w-3 flex items-center justify-center font-bold hidden">1</span>
                         </button>
                     </div>
                     <div class="flex items-center gap-2 w-full max-w-xl slider-container">
@@ -294,8 +273,8 @@
                     </div>
                 </div>
                 <div class="flex items-center justify-end gap-4">
-                    <button id="lyrics-btn" class="btn-icon text-secondary hover:text-main transition-colors" title="Letra"><i class="ph-bold ph-microphone-stage text-xl"></i></button>
-                    <button id="queue-btn" class="btn-icon text-secondary hover:text-main transition-colors" title="Fila de reprodução"><i class="ph-bold ph-list-bullets text-xl"></i></button>
+                    <button id="lyrics-btn" class="btn-icon text-secondary hover:text-primary transition-colors" title="Letra"><i class="ph-bold ph-microphone-stage text-xl"></i></button>
+                    <button id="queue-btn" class="btn-icon text-secondary hover:text-primary transition-colors" title="Fila de reprodução"><i class="ph-bold ph-list-bullets text-xl"></i></button>
                     <div class="flex items-center gap-2 w-32 slider-container">
                         <i id="volume-icon" class="ph-bold ph-speaker-high text-xl"></i>
                         <input id="volume-bar" type="range" min="0" max="100" value="50" class="w-full">
@@ -311,15 +290,15 @@
     <!-- Queue Panel -->
     <aside id="queue-panel" class="p-4 flex flex-col gap-4">
         <div class="flex justify-between items-center">
-            <h2 class="text-lg font-bold text-main">Fila de Reprodução</h2>
-            <button id="close-queue-btn" class="text-secondary hover:text-main" title="Fechar fila"><i class="ph-bold ph-x text-xl"></i></button>
+            <h2 class="text-lg font-bold text-primary">Fila de Reprodução</h2>
+            <button id="close-queue-btn" class="text-secondary hover:text-primary" title="Fechar fila"><i class="ph-bold ph-x text-xl"></i></button>
         </div>
-        <div class="border-b border-gray-700 pb-4">
+        <div class="border-b border-theme pb-4">
             <h3 class="text-md font-semibold text-secondary mb-2">A tocar</h3>
             <div id="now-playing-item" class="flex items-center gap-3">
                 <img id="now-playing-art" src="https://placehold.co/48x48/121212/b3b3b3?text=KVSL" alt="Capa" class="w-12 h-12 rounded-md">
                 <div>
-                    <p id="now-playing-title" class="font-bold text-main">Selecione uma música</p>
+                    <p id="now-playing-title" class="font-bold text-primary">Selecione uma música</p>
                     <p id="now-playing-artist" class="text-sm text-secondary">...</p>
                 </div>
             </div>
@@ -333,19 +312,19 @@
     </aside>
 
     <!-- Now Playing Fullscreen View -->
-    <div id="now-playing-fullscreen" class="hidden fixed inset-0 bg-black z-40 flex flex-col items-center justify-center overflow-hidden">
+    <div id="now-playing-fullscreen" class="hidden fixed inset-0 bg-primary z-40 flex flex-col items-center justify-center overflow-hidden">
         <div id="now-playing-fullscreen-bg" class="absolute inset-0 bg-center bg-cover transition-all duration-1000" style="filter: blur(50px) brightness(0.4);"></div>
         <div class="relative z-10 flex flex-col items-center justify-center text-center p-8">
-            <button id="close-now-playing-fullscreen" class="absolute top-6 right-8 text-secondary hover:text-main text-2xl"><i class="ph-bold ph-x"></i></button>
+            <button id="close-now-playing-fullscreen" class="absolute top-6 right-8 text-secondary hover:text-primary text-2xl"><i class="ph-bold ph-x"></i></button>
             <img id="now-playing-fullscreen-art" src="https://placehold.co/300x300/121212/b3b3b3?text=KVSL" class="w-80 h-80 rounded-lg shadow-2xl mb-6">
-            <h2 id="now-playing-fullscreen-title" class="text-5xl font-extrabold text-main">Título da Música</h2>
+            <h2 id="now-playing-fullscreen-title" class="text-5xl font-extrabold text-primary">Título da Música</h2>
             <p id="now-playing-fullscreen-artist" class="text-2xl text-secondary mt-2">Nome do Artista</p>
             <button id="go-to-lyrics-btn" class="mt-8 bg-white/10 hover:bg-white/20 text-white font-bold py-3 px-6 rounded-full transition-colors">Ver Letra</button>
         </div>
     </div>
 
     <!-- Lyrics Panel (Fullscreen Modal) -->
-    <div id="lyrics-panel" class="hidden fixed inset-0 bg-black z-40 flex flex-col items-center overflow-hidden">
+    <div id="lyrics-panel" class="hidden fixed inset-0 z-40 flex flex-col items-center overflow-hidden">
         <div id="lyrics-bg" class="absolute inset-0 bg-center bg-cover transition-all duration-1000" style="filter: blur(50px) brightness(0.4);"></div>
         
         <!-- Show Timer Panel (Draggable & Resizable) -->
@@ -353,18 +332,18 @@
             <div id="show-timer-panel-drag-handle" class="w-full h-8 cursor-move -mt-3 -mx-3 mb-1"></div>
             <div class="flex items-center justify-between w-full -mt-7">
                 <div class="flex items-center gap-2">
-                    <i class="ph-bold ph-timer text-custom-blue text-xl"></i>
-                    <span class="font-bold text-md text-main">Tempo de Show</span>
+                    <i class="ph-bold ph-timer text-brand text-xl"></i>
+                    <span class="font-bold text-md text-primary">Tempo de Show</span>
                 </div>
-                <div id="show-timer-display" class="font-mono text-2xl font-bold text-main">00:00:00</div>
+                <div id="show-timer-display" class="font-mono text-2xl font-bold text-primary">00:00:00</div>
             </div>
             <div class="mt-2 flex justify-center gap-2">
-                <button id="show-timer-play-pause-btn" class="bg-white/20 hover:bg-white/30 text-main font-semibold py-1 px-3 rounded-full flex items-center gap-2 text-sm">
+                <button id="show-timer-play-pause-btn" class="bg-white/20 hover:bg-white/30 text-primary font-semibold py-1 px-3 rounded-full flex items-center gap-2 text-sm">
                     <i id="show-timer-play-pause-icon" class="ph-bold ph-play text-md"></i>
                     <span id="show-timer-play-pause-text">Iniciar</span>
                 </button>
-                <button id="show-timer-reset-btn" class="bg-white/20 hover:bg-white/30 text-main font-semibold py-1 px-3 rounded-full text-sm">Zerar</button>
-                <button id="show-timer-save-btn" class="bg-custom-blue hover:bg-blue-400 text-white font-bold py-1 px-3 rounded-full text-sm">Salvar</button>
+                <button id="show-timer-reset-btn" class="bg-white/20 hover:bg-white/30 text-primary font-semibold py-1 px-3 rounded-full text-sm">Zerar</button>
+                <button id="show-timer-save-btn" class="bg-brand hover:opacity-80 text-white font-bold py-1 px-3 rounded-full text-sm">Salvar</button>
             </div>
         </div>
 
@@ -373,31 +352,31 @@
                 <div class="flex items-center gap-6">
                     <img id="lyrics-album-art" src="https://placehold.co/96x96/121212/b3b3b3?text=KVSL" class="w-24 h-24 rounded-lg">
                     <div>
-                        <h2 id="lyrics-title" class="text-3xl font-extrabold text-main">Título da Música</h2>
+                        <h2 id="lyrics-title" class="text-3xl font-extrabold text-primary">Título da Música</h2>
                         <p id="lyrics-artist" class="text-lg text-secondary">Nome do Artista</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-4">
-                    <button id="toggle-show-timer-btn" class="btn-icon text-secondary hover:text-main" title="Temporizador de Show"><i class="ph-bold ph-timer text-xl"></i></button>
+                    <button id="toggle-show-timer-btn" class="btn-icon text-secondary hover:text-primary" title="Temporizador de Show"><i class="ph-bold ph-timer text-xl"></i></button>
                     
                     <div class="relative" id="font-size-menu-container">
-                        <button id="font-size-btn" class="btn-icon text-secondary hover:text-main" title="Tamanho da Fonte"><i class="ph-bold ph-text-aa text-xl"></i></button>
-                        <div id="font-size-dropdown" class="hidden absolute right-0 top-full mt-2 bg-[#282828] rounded-md shadow-lg p-2 z-50 flex items-center gap-2">
-                             <button id="decrease-lyrics-font" class="btn-icon text-secondary hover:text-main" title="Diminuir"><i class="ph-bold ph-minus text-lg"></i></button>
-                             <button id="increase-lyrics-font" class="btn-icon text-secondary hover:text-main" title="Aumentar"><i class="ph-bold ph-plus text-lg"></i></button>
+                        <button id="font-size-btn" class="btn-icon text-secondary hover:text-primary" title="Tamanho da Fonte"><i class="ph-bold ph-text-aa text-xl"></i></button>
+                        <div id="font-size-dropdown" class="hidden absolute right-0 top-full mt-2 bg-tertiary rounded-md shadow-lg p-2 z-50 flex items-center gap-2">
+                             <button id="decrease-lyrics-font" class="btn-icon text-secondary hover:text-primary" title="Diminuir"><i class="ph-bold ph-minus text-lg"></i></button>
+                             <button id="increase-lyrics-font" class="btn-icon text-secondary hover:text-primary" title="Aumentar"><i class="ph-bold ph-plus text-lg"></i></button>
                         </div>
                     </div>
 
                     <div class="relative" id="more-options-menu-container">
-                        <button id="more-options-btn" class="btn-icon text-secondary hover:text-main" title="Mais Opções"><i class="ph-bold ph-dots-three-vertical text-xl"></i></button>
-                        <div id="more-options-dropdown" class="hidden absolute right-0 top-full mt-2 bg-[#282828] rounded-md shadow-lg p-1 z-50 whitespace-nowrap">
-                            <div id="edit-lyrics-btn" class="flex items-center gap-3 px-3 py-2 hover:bg-[#3e3e3e] cursor-pointer"><i class="ph-bold ph-pencil-simple text-lg"></i><span>Editar Letra</span></div>
-                            <div id="start-sync-btn" class="flex items-center gap-3 px-3 py-2 hover:bg-[#3e3e3e] cursor-pointer"><i class="ph-bold ph-arrows-clockwise text-lg"></i><span>Sincronizar</span></div>
+                        <button id="more-options-btn" class="btn-icon text-secondary hover:text-primary" title="Mais Opções"><i class="ph-bold ph-dots-three-vertical text-xl"></i></button>
+                        <div id="more-options-dropdown" class="hidden absolute right-0 top-full mt-2 bg-tertiary rounded-md shadow-lg p-1 z-50 whitespace-nowrap">
+                            <div id="edit-lyrics-btn" class="flex items-center gap-3 px-3 py-2 hover:bg-highlight cursor-pointer"><i class="ph-bold ph-pencil-simple text-lg"></i><span>Editar Letra</span></div>
+                            <div id="start-sync-btn" class="flex items-center gap-3 px-3 py-2 hover:bg-highlight cursor-pointer"><i class="ph-bold ph-arrows-clockwise text-lg"></i><span>Sincronizar</span></div>
                             <div id="delete-lyrics-btn" class="flex items-center gap-3 px-3 py-2 text-red-400 hover:bg-red-600/20 cursor-pointer"><i class="ph-bold ph-trash text-lg"></i><span>Excluir Letra</span></div>
                         </div>
                     </div>
                     
-                    <button id="close-lyrics-btn" class="btn-icon text-secondary hover:text-main" title="Fechar"><i class="ph-bold ph-x text-2xl"></i></button>
+                    <button id="close-lyrics-btn" class="btn-icon text-secondary hover:text-primary" title="Fechar"><i class="ph-bold ph-x text-2xl"></i></button>
                 </div>
             </div>
             
@@ -406,25 +385,25 @@
             </div>
 
             <div id="lyrics-edit-view" class="hidden w-full max-w-4xl flex-1 flex-col items-center justify-center">
-                <textarea id="lyrics-textarea" class="w-full h-full bg-black/30 text-secondary p-4 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-custom-blue" placeholder="Cole a letra aqui..."></textarea>
-                <button id="save-lyrics-changes-btn" class="mt-4 bg-custom-blue text-white font-bold py-3 px-6 rounded-full hover:scale-105 transition-transform">Salvar Alterações</button>
+                <textarea id="lyrics-textarea" class="w-full h-full bg-black/30 text-secondary p-4 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-brand" placeholder="Cole a letra aqui..."></textarea>
+                <button id="save-lyrics-changes-btn" class="mt-4 bg-brand text-white font-bold py-3 px-6 rounded-full hover:scale-105 transition-transform">Salvar Alterações</button>
             </div>
             
             <!-- Player Controls for Lyrics View -->
-            <div class="w-full max-w-4xl mt-auto pt-2 border-t border-white/20 flex-shrink-0">
+            <div class="w-full max-w-4xl mt-auto pt-2 border-t border-theme flex-shrink-0">
                 <div class="flex flex-col items-center justify-center gap-0">
                     <div class="flex items-center gap-6">
-                        <button id="lyrics-shuffle-btn" class="btn-icon text-secondary hover:text-main transition-colors" title="Aleatório"><i class="ph-bold ph-shuffle text-xl"></i></button>
-                        <button id="lyrics-prev-btn" class="btn-icon text-secondary hover:text-main transition-colors" title="Anterior"><i class="ph-bold ph-skip-back text-2xl"></i></button>
+                        <button id="lyrics-shuffle-btn" class="btn-icon text-secondary hover:text-primary transition-colors" title="Aleatório"><i class="ph-bold ph-shuffle text-xl"></i></button>
+                        <button id="lyrics-prev-btn" class="btn-icon text-secondary hover:text-primary transition-colors" title="Anterior"><i class="ph-bold ph-skip-back text-2xl"></i></button>
                         <button id="lyrics-play-pause-btn" class="bg-white text-black rounded-full w-10 h-10 flex items-center justify-center hover:scale-105 transition-transform" title="Tocar/Pausar">
                             <i id="lyrics-play-pause-icon" class="ph-bold ph-play text-xl"></i>
                         </button>
-                        <button id="lyrics-next-btn" class="btn-icon text-secondary hover:text-main transition-colors" title="Próxima"><i class="ph-bold ph-skip-forward text-2xl"></i></button>
-                        <button id="lyrics-repeat-btn" class="btn-icon text-secondary hover:text-main transition-colors relative" title="Repetir">
+                        <button id="lyrics-next-btn" class="btn-icon text-secondary hover:text-primary transition-colors" title="Próxima"><i class="ph-bold ph-skip-forward text-2xl"></i></button>
+                        <button id="lyrics-repeat-btn" class="btn-icon text-secondary hover:text-primary transition-colors relative" title="Repetir">
                             <i class="ph-bold ph-repeat text-xl"></i>
-                            <span id="lyrics-repeat-one-indicator" class="absolute -top-1 -right-1 text-xs bg-custom-blue text-black rounded-full h-3 w-3 flex items-center justify-center font-bold hidden">1</span>
+                            <span id="lyrics-repeat-one-indicator" class="absolute -top-1 -right-1 text-xs bg-brand text-black rounded-full h-3 w-3 flex items-center justify-center font-bold hidden">1</span>
                         </button>
-                       <button id="lyrics-queue-btn" class="btn-icon text-secondary hover:text-main transition-colors" title="Fila de reprodução"><i class="ph-bold ph-list-bullets text-xl"></i></button>
+                       <button id="lyrics-queue-btn" class="btn-icon text-secondary hover:text-primary transition-colors" title="Fila de reprodução"><i class="ph-bold ph-list-bullets text-xl"></i></button>
                     </div>
                     <div class="flex items-center gap-2 w-full slider-container mt-1">
                         <span id="lyrics-current-time" class="text-xs text-secondary w-10 text-right">0:00</span>
@@ -437,41 +416,41 @@
     </div>
     
     <!-- Sync Panel (Fullscreen Modal) -->
-    <div id="sync-panel" class="hidden fixed inset-0 bg-black z-50 p-8 flex flex-col items-center justify-center gap-8">
+    <div id="sync-panel" class="hidden fixed inset-0 bg-primary z-50 p-8 flex flex-col items-center justify-center gap-8">
         <div class="text-center">
             <p class="text-2xl text-secondary sync-line" id="sync-line-prev"></p>
-            <p class="text-5xl font-extrabold text-main sync-line current" id="sync-line-current">Pressione "Próxima Linha" para começar</p>
+            <p class="text-5xl font-extrabold text-primary sync-line current" id="sync-line-current">Pressione "Próxima Linha" para começar</p>
             <p class="text-2xl text-secondary sync-line" id="sync-line-next"></p>
         </div>
         <button id="tap-sync-btn" class="bg-white text-black font-bold py-6 px-12 rounded-full text-2xl hover:scale-105 transition-transform">Próxima Linha</button>
-        <button id="finish-sync-btn" class="absolute bottom-8 right-8 bg-custom-blue text-white font-bold py-3 px-6 rounded-full hover:scale-105 transition-transform">Finalizar e Salvar</button>
+        <button id="finish-sync-btn" class="absolute bottom-8 right-8 bg-brand text-white font-bold py-3 px-6 rounded-full hover:scale-105 transition-transform">Finalizar e Salvar</button>
     </div>
 
     <!-- Error Modal -->
     <div id="error-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
-        <div class="bg-[#282828] border border-red-500 text-white rounded-lg p-6 max-w-2xl w-full shadow-lg">
+        <div class="bg-tertiary border border-red-500 text-primary rounded-lg p-6 max-w-2xl w-full shadow-lg">
             <div class="flex justify-between items-center mb-4">
                 <h2 id="error-title" class="text-xl font-bold text-red-400 flex items-center"><i class="ph-bold ph-warning text-xl mr-3"></i>Erro</h2>
-                <button id="close-error-modal" class="text-2xl text-gray-400 hover:text-main"><i class="ph-bold ph-x"></i></button>
+                <button id="close-error-modal" class="text-2xl text-secondary hover:text-primary"><i class="ph-bold ph-x"></i></button>
             </div>
             <div id="error-message" class="space-y-4"></div>
         </div>
     </div>
 
     <!-- Context Menu -->
-    <div id="context-menu" class="hidden absolute bg-[#282828] text-main rounded-md shadow-lg p-2 z-50">
+    <div id="context-menu" class="hidden absolute bg-tertiary text-primary rounded-md shadow-lg p-2 z-50">
         <!-- Playlist options will be added here -->
     </div>
     
     <!-- Playlist Edit Modal -->
     <div id="playlist-edit-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
-        <div class="bg-[#282828] rounded-lg p-6 w-full max-w-md shadow-lg space-y-4">
+        <div class="bg-tertiary rounded-lg p-6 w-full max-w-md shadow-lg space-y-4">
             <div class="flex justify-between items-center">
-                <h2 class="text-xl font-bold text-main">Editar detalhes</h2>
-                <button id="close-playlist-edit-modal" class="text-2xl text-gray-400 hover:text-white"><i class="ph-bold ph-x"></i></button>
+                <h2 class="text-xl font-bold text-primary">Editar detalhes</h2>
+                <button id="close-playlist-edit-modal" class="text-2xl text-secondary hover:text-primary"><i class="ph-bold ph-x"></i></button>
             </div>
             <div class="flex items-center gap-4">
-                <label for="playlist-cover-input" class="w-40 h-40 bg-[#3e3e3e] rounded-md flex-shrink-0 cursor-pointer flex items-center justify-center hover:bg-gray-600 relative group">
+                <label for="playlist-cover-input" class="w-40 h-40 bg-highlight rounded-md flex-shrink-0 cursor-pointer flex items-center justify-center hover:bg-gray-600 relative group">
                     <img id="playlist-modal-cover-preview" class="w-full h-full object-cover rounded-md">
                     <div class="absolute inset-0 bg-black/50 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                         <i class="ph-bold ph-pencil-simple text-2xl"></i>
@@ -479,20 +458,20 @@
                     </div>
                 </label>
                 <input type="file" id="playlist-cover-input" class="hidden" accept="image/*">
-                <input type="text" id="playlist-modal-name" class="w-full bg-[#3e3e3e] text-main p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-custom-blue" placeholder="Nome da playlist">
+                <input type="text" id="playlist-modal-name" class="w-full bg-highlight text-primary p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-brand" placeholder="Nome da playlist">
             </div>
-            <button id="save-playlist-details-btn" class="w-full bg-custom-blue text-white font-bold py-3 px-6 rounded-full hover:scale-105 transition-transform">Salvar</button>
+            <button id="save-playlist-details-btn" class="w-full bg-brand text-white font-bold py-3 px-6 rounded-full hover:scale-105 transition-transform">Salvar</button>
         </div>
     </div>
 
     <!-- Add Songs to Playlist Modal -->
     <div id="add-songs-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
-        <div class="bg-[#282828] rounded-lg p-6 w-full max-w-2xl shadow-lg flex flex-col h-[90vh]">
+        <div class="bg-tertiary rounded-lg p-6 w-full max-w-2xl shadow-lg flex flex-col h-[90vh]">
             <div class="flex justify-between items-center mb-4 flex-shrink-0">
-                <h2 class="text-xl font-bold text-main">Adicionar músicas a "<span id="add-songs-playlist-name"></span>"</h2>
-                <button id="close-add-songs-modal" class="text-2xl text-gray-400 hover:text-white"><i class="ph-bold ph-x"></i></button>
+                <h2 class="text-xl font-bold text-primary">Adicionar músicas a "<span id="add-songs-playlist-name"></span>"</h2>
+                <button id="close-add-songs-modal" class="text-2xl text-secondary hover:text-primary"><i class="ph-bold ph-x"></i></button>
             </div>
-            <input type="text" id="add-songs-search-input" class="w-full bg-[#3e3e3e] text-main p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-custom-blue mb-4 flex-shrink-0" placeholder="Buscar em todas as músicas...">
+            <input type="text" id="add-songs-search-input" class="w-full bg-highlight text-primary p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-brand mb-4 flex-shrink-0" placeholder="Buscar em todas as músicas...">
             <div id="add-songs-list" class="overflow-y-auto flex-1">
                 <!-- Song list will be rendered here -->
             </div>
@@ -501,25 +480,25 @@
 
     <!-- Confirmation Modal -->
     <div id="confirmation-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
-        <div class="bg-[#282828] text-white rounded-lg p-6 max-w-md w-full shadow-lg">
+        <div class="bg-tertiary text-primary rounded-lg p-6 max-w-md w-full shadow-lg">
             <h2 id="confirmation-title" class="text-xl font-bold mb-4">Você tem certeza?</h2>
             <p id="confirmation-message" class="text-secondary mb-6"></p>
             <div class="flex justify-end gap-4">
-                <button id="cancel-confirmation-btn" class="bg-transparent hover:bg-white/10 text-main font-bold py-2 px-4 rounded-full">Cancelar</button>
+                <button id="cancel-confirmation-btn" class="bg-transparent hover:bg-white/10 text-primary font-bold py-2 px-4 rounded-full">Cancelar</button>
                 <button id="confirm-action-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full">Confirmar</button>
             </div>
         </div>
     </div>
     
     <!-- "Up Next" Notification -->
-    <div id="up-next-notification" class="hidden fixed bottom-24 right-96 bg-[#282828] rounded-lg shadow-2xl p-3 w-72 z-50 flex items-center gap-3 transform transition-transform duration-500 ease-out translate-x-[calc(100%+2rem)] opacity-0">
+    <div id="up-next-notification" class="hidden fixed bottom-24 right-96 bg-tertiary rounded-lg shadow-2xl p-3 w-72 z-50 flex items-center gap-3 transform transition-transform duration-500 ease-out translate-x-[calc(100%+2rem)] opacity-0">
         <img id="up-next-art" src="https://placehold.co/48x48/121212/b3b3b3?text=🎵" class="w-12 h-12 rounded-md flex-shrink-0">
         <div class="overflow-hidden">
             <p class="text-xs text-secondary">A seguir</p>
-            <p id="up-next-title" class="text-sm font-bold text-main truncate">Título da próxima música</p>
+            <p id="up-next-title" class="text-sm font-bold text-primary truncate">Título da próxima música</p>
         </div>
         <div class="absolute bottom-0 left-0 w-full h-1 bg-white/20 rounded-b-lg overflow-hidden">
-            <div id="up-next-timer" class="h-full bg-custom-blue"></div>
+            <div id="up-next-timer" class="h-full bg-brand"></div>
         </div>
     </div>
 
@@ -634,6 +613,8 @@
         const navHistory = document.getElementById('nav-history');
         const navLibrary = document.getElementById('nav-library');
         const createPlaylistBtn = document.getElementById('create-playlist-btn');
+        const themeToggleBtn = document.getElementById('theme-toggle-btn');
+        const themeIcon = document.getElementById('theme-icon');
 
         // Context Menu
         const contextMenu = document.getElementById('context-menu');
@@ -715,8 +696,8 @@
         function setStatus(message, type = 'info') {
             statusIndicator.textContent = message;
             statusIndicator.classList.remove('hidden');
-            if (type === 'info') statusIndicator.className = 'text-xs text-center p-2 m-2 bg-gray-800 rounded-lg text-white transition-all duration-300';
-            else if (type === 'success') statusIndicator.className = 'text-xs text-center p-2 m-2 bg-custom-blue rounded-lg text-white transition-all duration-300';
+            if (type === 'info') statusIndicator.className = 'text-xs text-center p-2 m-2 bg-tertiary rounded-lg text-primary transition-all duration-300';
+            else if (type === 'success') statusIndicator.className = 'text-xs text-center p-2 m-2 bg-brand rounded-lg text-white transition-all duration-300';
             else if (type === 'error') statusIndicator.className = 'text-xs text-center p-2 m-2 bg-red-600 rounded-lg text-white transition-all duration-300';
             setTimeout(() => statusIndicator.classList.add('hidden'), 2500);
         }
@@ -757,6 +738,7 @@
             });
             await loadAllData();
             initializePlayerState();
+            initializeTheme();
             renderView('home');
         }
 
@@ -774,35 +756,58 @@
         addMusicInput.addEventListener('change', async (e) => {
             const files = e.target.files;
             if (!files.length) return;
-            for (const file of files) {
-                if (file.type !== 'audio/mpeg') continue;
-                setStatus(`Processando ${file.name}...`, 'info');
-                window.jsmediatags.read(file, {
-                    onSuccess: async (tag) => {
-                        const { title, artist, album, picture } = tag.tags;
-                        try {
-                            let imageBlob = picture ? new Blob([new Uint8Array(picture.data)], { type: picture.format }) : null;
-                            const tempAudio = new Audio(URL.createObjectURL(file));
-                            let duration = 0;
+
+            const processingPromises = Array.from(files).map(file => {
+                return new Promise((resolve, reject) => {
+                    if (file.type !== 'audio/mpeg') return resolve(); // Skip non-mp3 files
+                    setStatus(`Processando ${file.name}...`, 'info');
+                    window.jsmediatags.read(file, {
+                        onSuccess: async (tag) => {
+                            const { title, artist, album, picture } = tag.tags;
                             try {
-                                await new Promise((resolve, reject) => {
-                                    const timer = setTimeout(() => reject('Timeout'), 2000);
-                                    tempAudio.addEventListener('loadedmetadata', () => { clearTimeout(timer); duration = tempAudio.duration; resolve(); });
-                                });
-                            } catch (err) { console.warn("Could not get audio duration."); }
-                            setStatus('Salvando música...', 'info');
-                            const songData = {
-                                title: title || file.name.replace('.mp3', ''), artist: artist || 'Artista Desconhecido', album: album || 'Álbum Desconhecido',
-                                audioBlob: file, imageBlob: imageBlob, duration: duration, fileName: file.name, uploadedAt: new Date(), lyrics: '', playCount: 0
-                            };
-                            await db.add('songs', songData);
-                            await loadAllData();
-                            renderView('library');
-                        } catch (error) { console.error("Error saving song:", error); setStatus('Erro ao salvar!', 'error'); }
-                    },
-                    onError: (error) => { console.error('Error reading media tags:', error); setStatus('Erro ao ler ficheiro', 'error'); }
+                                let imageBlob = picture ? new Blob([new Uint8Array(picture.data)], { type: picture.format }) : null;
+                                const tempAudio = new Audio(URL.createObjectURL(file));
+                                let duration = 0;
+                                try {
+                                    await new Promise((resolveDuration, rejectDuration) => {
+                                        const timer = setTimeout(() => rejectDuration('Timeout'), 2000);
+                                        tempAudio.addEventListener('loadedmetadata', () => { 
+                                            clearTimeout(timer); 
+                                            duration = tempAudio.duration; 
+                                            resolveDuration(); 
+                                        });
+                                    });
+                                } catch (err) { console.warn("Could not get audio duration for", file.name); }
+                                
+                                const songData = {
+                                    title: title || file.name.replace('.mp3', ''), artist: artist || 'Artista Desconhecido', album: album || 'Álbum Desconhecido',
+                                    audioBlob: file, imageBlob: imageBlob, duration: duration, fileName: file.name, uploadedAt: new Date(), lyrics: '', playCount: 0
+                                };
+                                await db.add('songs', songData);
+                                resolve();
+                            } catch (error) { 
+                                console.error("Error saving song:", error); 
+                                reject(error);
+                            }
+                        },
+                        onError: (error) => { 
+                            console.error('Error reading media tags for', file.name, error); 
+                            reject(error);
+                        }
+                    });
                 });
+            });
+
+            try {
+                await Promise.all(processingPromises);
+                setStatus('Importação concluída!', 'success');
+            } catch (error) {
+                setStatus('Ocorreu um erro durante a importação.', 'error');
             }
+            
+            // Navigate after all files are processed
+            await loadAllData();
+            renderView('songs'); 
             e.target.value = '';
         });
 
@@ -879,56 +884,65 @@
         }
 
         function renderHomeView() {
-            const topSongs = [...songs].sort((a, b) => (b.playCount || 0) - (a.playCount || 0)).slice(0, 5);
-            
-            const artistCounts = songs.reduce((acc, song) => {
-                acc[song.artist] = (acc[song.artist] || 0) + (song.playCount || 0);
-                return acc;
-            }, {});
-            const topArtists = Object.entries(artistCounts).sort(([,a],[,b]) => b-a).slice(0, 5);
+            const container = mainView;
+            container.innerHTML = ''; // Clear previous content
 
-            let topSongsHTML = topSongs.map(song => {
-                const imageUrl = song.imageBlob ? URL.createObjectURL(song.imageBlob) : 'https://placehold.co/100x100/121212/b3b3b3?text=🎵';
-                return `<div class="bg-[#181818] p-4 rounded-lg hover:bg-[#282828] transition-colors cursor-pointer play-song-card" data-id="${song.id}">
-                            <img src="${imageUrl}" class="w-full h-auto rounded-md mb-4 shadow-lg">
-                            <p class="font-bold text-main truncate">${song.title}</p>
-                            <p class="text-sm text-secondary truncate">${song.artist}</p>
-                        </div>`;
+            // Greeting
+            const now = new Date();
+            const hours = now.getHours();
+            let greeting = 'Boa noite';
+            if (hours < 12) {
+                greeting = 'Bom dia';
+            } else if (hours < 18) {
+                greeting = 'Boa tarde';
+            }
+
+            // Recently Played Songs
+            const recentPlays = [...playHistory].reverse();
+            const uniqueRecentSongIds = [...new Set(recentPlays.map(p => p.songId))];
+            const recentSongs = uniqueRecentSongIds.slice(0, 6).map(id => songs.find(s => s.id === id)).filter(Boolean);
+
+            const recentSongsHTML = recentSongs.map(song => `
+                <div class="bg-highlight rounded-md flex items-center gap-4 overflow-hidden group cursor-pointer" onclick="playSong(${songs.findIndex(s => s.id === song.id)}, songs)">
+                    <img src="${song.imageBlob ? URL.createObjectURL(song.imageBlob) : 'https://placehold.co/80x80/121212/b3b3b3?text=🎵'}" class="w-20 h-20 object-cover">
+                    <p class="font-semibold text-primary flex-1 truncate pr-4">${song.title}</p>
+                </div>
+            `).join('');
+
+            // Top Playlists
+            const topPlaylists = [...playlists].sort((a, b) => (b.songIds?.length || 0) - (a.songIds?.length || 0)).slice(0, 8);
+            const topPlaylistsHTML = topPlaylists.map(playlist => {
+                 const coverHTML = generatePlaylistCover(playlist);
+                 return `
+                    <div class="bg-tertiary p-4 rounded-lg hover:bg-highlight transition-colors cursor-pointer" onclick="renderView('playlist', ${playlist.id})">
+                        <div class="w-full aspect-square mb-4 shadow-lg grid grid-cols-2 grid-rows-2 overflow-hidden rounded-md">${coverHTML}</div>
+                        <p class="font-bold text-primary truncate">${playlist.name}</p>
+                        <p class="text-sm text-secondary truncate">${playlist.songIds?.length || 0} músicas</p>
+                    </div>
+                 `;
             }).join('');
 
-            let topArtistsHTML = topArtists.map(([name, count]) => {
-                 return `<div class="bg-[#181818] p-4 rounded-lg hover:bg-[#282828] transition-colors cursor-pointer">
-                             <p class="font-bold text-main truncate">${name}</p>
-                             <p class="text-sm text-secondary">${count} reproduções</p>
-                         </div>`;
-            }).join('');
-
-            mainView.innerHTML = `
-                <header class="p-6"><h1 class="text-3xl font-extrabold text-main">Início</h1></header>
-                <div class="p-6 pt-0 space-y-8">
-                    <div>
-                        <h2 class="text-2xl font-bold text-main mb-4">Músicas mais ouvidas</h2>
-                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">${topSongsHTML || '<p class="text-secondary">Ainda não há dados.</p>'}</div>
+            container.innerHTML = `
+                <div class="p-6 space-y-8">
+                    <h1 class="text-3xl font-extrabold text-primary">${greeting}</h1>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        ${recentSongsHTML || ''}
                     </div>
                     <div>
-                        <h2 class="text-2xl font-bold text-main mb-4">Artistas mais ouvidos</h2>
-                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">${topArtistsHTML || '<p class="text-secondary">Ainda não há dados.</p>'}</div>
+                        <h2 class="text-2xl font-bold text-primary mb-4">Suas Playlists</h2>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6">
+                            ${topPlaylistsHTML || '<p class="text-secondary col-span-full">Crie algumas playlists para vê-las aqui.</p>'}
+                        </div>
                     </div>
                 </div>
             `;
-            mainView.querySelectorAll('.play-song-card').forEach(card => {
-                card.addEventListener('click', () => {
-                    const songId = parseInt(card.dataset.id);
-                    const songIndex = songs.findIndex(s => s.id === songId);
-                    playSong(songIndex, songs);
-                });
-            });
         }
+
 
         function renderLibraryView(filter = 'playlists') {
             document.body.dataset.libraryView = filter; // Store the current filter
             mainView.innerHTML = `
-                <header class="p-6 sticky top-0 bg-[#121212] z-10">
+                <header class="p-6 sticky top-0 bg-secondary z-10">
                     <div class="flex items-center gap-4">
                         <button id="library-filter-playlists" class="library-filter-btn px-4 py-2 rounded-full text-sm font-semibold transition-colors ${filter === 'playlists' ? 'active' : ''}" data-filter="playlists">Playlists</button>
                         <button id="library-filter-songs" class="library-filter-btn px-4 py-2 rounded-full text-sm font-semibold transition-colors ${filter === 'songs' ? 'active' : ''}" data-filter="songs">Músicas</button>
@@ -959,12 +973,12 @@
                 const coverHTML = generatePlaylistCover(playlist);
                 const songCount = playlist.songIds ? playlist.songIds.length : 0;
                 return `
-                    <div class="p-4 rounded-lg hover:bg-[#282828] transition-colors cursor-pointer flex items-center gap-4" onclick="renderView('playlist', ${playlist.id})">
-                        <div class="w-24 h-24 bg-[#282828] flex-shrink-0 flex items-center justify-center rounded-md shadow-lg grid grid-cols-2 grid-rows-2 overflow-hidden">
+                    <div class="p-4 rounded-lg hover:bg-highlight transition-colors cursor-pointer flex items-center gap-4" onclick="renderView('playlist', ${playlist.id})">
+                        <div class="w-24 h-24 bg-tertiary flex-shrink-0 flex items-center justify-center rounded-md shadow-lg grid grid-cols-2 grid-rows-2 overflow-hidden">
                             ${coverHTML}
                         </div>
                         <div>
-                            <p class="font-bold text-main text-lg">${playlist.name}</p>
+                            <p class="font-bold text-primary text-lg">${playlist.name}</p>
                             <p class="text-sm text-secondary">${songCount} música${songCount !== 1 ? 's' : ''}</p>
                         </div>
                     </div>
@@ -979,26 +993,26 @@
             container.innerHTML = `
                 <div class="flex items-center justify-between gap-6 mb-4">
                     <div>
-                        <h1 class="text-3xl font-extrabold text-main">Todas as Músicas</h1>
+                        <h1 class="text-3xl font-extrabold text-primary">Todas as Músicas</h1>
                         <p class="text-secondary mt-1">${songs.length} músicas, ${formatTime(totalDuration, true)}</p>
                     </div>
                     <div class="flex items-center gap-2">
-                         <button id="library-select-btn" class="btn-icon text-secondary hover:text-main p-2 rounded-full hover:bg-white/10" title="Selecionar músicas">
+                         <button id="library-select-btn" class="btn-icon text-secondary hover:text-primary p-2 rounded-full hover:bg-highlight" title="Selecionar músicas">
                              <i class="ph-bold ph-list-checks text-2xl"></i>
                          </button>
                          <div class="relative">
-                            <button id="library-options-btn" class="text-secondary hover:text-main p-2 rounded-full hover:bg-white/10" title="Mais opções">
+                            <button id="library-options-btn" class="text-secondary hover:text-primary p-2 rounded-full hover:bg-highlight" title="Mais opções">
                                 <i class="ph-bold ph-dots-three text-2xl"></i>
                             </button>
-                            <div id="library-context-menu" class="hidden absolute right-0 top-full mt-2 bg-[#282828] text-main rounded-md shadow-lg p-2 z-50 whitespace-nowrap">
+                            <div id="library-context-menu" class="hidden absolute right-0 top-full mt-2 bg-tertiary text-primary rounded-md shadow-lg p-2 z-50 whitespace-nowrap">
                                 <div id="delete-selected-menu-item" class="hidden px-4 py-2 hover:bg-red-600/20 hover:text-red-400 cursor-pointer">Excluir selecionadas</div>
                                 <div id="delete-all-songs-btn" class="px-4 py-2 hover:bg-red-600/20 hover:text-red-400 cursor-pointer">Excluir todas as músicas</div>
-                                <div id="cancel-selection-menu-item" class="hidden px-4 py-2 hover:bg-[#3e3e3e] cursor-pointer">Cancelar seleção</div>
+                                <div id="cancel-selection-menu-item" class="hidden px-4 py-2 hover:bg-highlight cursor-pointer">Cancelar seleção</div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="grid grid-cols-[auto,2fr,1fr,1fr,auto] gap-4 text-secondary border-b border-gray-700 p-2 mb-2">
+                <div class="grid grid-cols-[auto,2fr,1fr,1fr,auto] gap-4 text-secondary border-b border-theme p-2 mb-2">
                     <div id="song-list-header-col" class="w-8 text-center">#</div>
                     <div>Título</div>
                     <div>Artista</div>
@@ -1032,28 +1046,59 @@
         }
 
         function renderSearchView() {
+            const searchCategories = [
+                { name: 'Rock', color: 'bg-red-800' }, { name: 'Pop', color: 'bg-purple-800' },
+                { name: 'Sertanejo', color: 'bg-yellow-800' }, { name: 'Eletrônica', color: 'bg-blue-800' },
+                { name: 'Hip Hop', color: 'bg-orange-800' }, { name: 'MPB', color: 'bg-green-800' },
+                { name: 'Indie', color: 'bg-indigo-800' }, { name: 'Clássica', color: 'bg-gray-800' }
+            ];
+
+            const categoriesHTML = searchCategories.map(cat => `
+                <div class="aspect-square rounded-lg overflow-hidden relative ${cat.color} cursor-pointer">
+                    <h3 class="text-white text-2xl font-bold p-4">${cat.name}</h3>
+                    <img src="https://placehold.co/100x100/000000/ffffff?text=🎵" class="absolute -bottom-4 -right-4 w-24 h-24 rotate-[25deg]">
+                </div>
+            `).join('');
+
             mainView.innerHTML = `
-                <header class="p-6 sticky top-0 bg-[#121212] z-10">
-                    <h1 class="text-3xl font-extrabold text-main mb-4">Buscar</h1>
-                    <input type="text" id="search-input" class="w-full bg-[#282828] text-main p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-custom-blue" placeholder="O que você quer ouvir?">
+                <header class="p-6 sticky top-0 bg-secondary z-10">
+                    <div class="relative w-full max-w-md">
+                        <i class="ph-bold ph-magnifying-glass absolute top-1/2 left-3 -translate-y-1/2 text-secondary text-xl"></i>
+                        <input type="text" id="search-input" class="w-full bg-tertiary text-primary pl-10 pr-4 py-3 rounded-full focus:outline-none focus:ring-2 focus:ring-brand" placeholder="O que você quer ouvir?">
+                    </div>
                 </header>
-                <div class="px-4" id="search-results-container"></div>
+                <div id="search-default-view" class="p-6">
+                    <h2 class="text-2xl font-bold text-primary mb-4">Navegar por seções</h2>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+                        ${categoriesHTML}
+                    </div>
+                </div>
+                <div id="search-results-container" class="px-4 hidden"></div>
             `;
+            
             const searchInput = document.getElementById('search-input');
             const resultsContainer = document.getElementById('search-results-container');
+            const defaultView = document.getElementById('search-default-view');
+
             searchInput.addEventListener('input', () => {
                 const query = searchInput.value.toLowerCase();
                 if (!query) {
                     resultsContainer.innerHTML = '';
+                    resultsContainer.classList.add('hidden');
+                    defaultView.classList.remove('hidden');
                     return;
                 }
+
+                defaultView.classList.add('hidden');
+                resultsContainer.classList.remove('hidden');
+
                 const results = songs.filter(s => 
                     s.title.toLowerCase().includes(query) ||
                     s.artist.toLowerCase().includes(query) ||
                     s.album.toLowerCase().includes(query)
                 );
                 resultsContainer.innerHTML = `
-                    <div class="grid grid-cols-[auto,2fr,1fr,1fr,auto] gap-4 text-secondary border-b border-gray-700 p-2 mb-2">
+                    <div class="grid grid-cols-[auto,2fr,1fr,1fr,auto] gap-4 text-secondary border-b border-theme p-2 mb-2">
                         <div class="w-8 text-center">#</div>
                         <div>Título</div>
                         <div>Artista</div>
@@ -1075,34 +1120,34 @@
             
             mainView.innerHTML = `
                 <header class="p-6 flex items-end gap-6">
-                    <div class="w-48 h-48 bg-[#282828] flex-shrink-0 flex items-center justify-center rounded-md shadow-lg grid grid-cols-2 grid-rows-2 overflow-hidden">
+                    <div class="w-48 h-48 bg-tertiary flex-shrink-0 flex items-center justify-center rounded-md shadow-lg grid grid-cols-2 grid-rows-2 overflow-hidden">
                         ${generatePlaylistCover(playlist)}
                     </div>
                     <div class="flex-1">
                         <p class="text-sm">Playlist</p>
-                        <h1 class="text-6xl font-extrabold text-main">${playlist.name}</h1>
+                        <h1 class="text-6xl font-extrabold text-primary">${playlist.name}</h1>
                         <p class="text-secondary mt-2">${playlistSongs.length} músicas, ${formatTime(totalDuration, true)}</p>
                     </div>
                     <div class="flex items-center gap-4">
                         <button id="add-songs-to-playlist-btn" class="bg-white/10 text-white rounded-full w-14 h-14 flex items-center justify-center hover:bg-white/20 transition-colors" title="Adicionar músicas">
                             <i class="ph-bold ph-plus text-2xl"></i>
                         </button>
-                        <button id="play-playlist-btn" class="bg-custom-blue text-white rounded-full w-14 h-14 flex items-center justify-center hover:scale-105 transition-transform" title="Tocar playlist">
+                        <button id="play-playlist-btn" class="bg-brand text-white rounded-full w-14 h-14 flex items-center justify-center hover:scale-105 transition-transform" title="Tocar playlist">
                             <i class="ph-bold ph-play text-2xl"></i>
                         </button>
                         <div class="relative">
-                            <button id="playlist-options-btn" class="text-secondary hover:text-main p-2 rounded-full hover:bg-white/10" title="Mais opções">
+                            <button id="playlist-options-btn" class="text-secondary hover:text-primary p-2 rounded-full hover:bg-highlight" title="Mais opções">
                                 <i class="ph-bold ph-dots-three text-2xl"></i>
                             </button>
-                            <div id="playlist-context-menu" class="hidden absolute right-0 top-full mt-2 bg-[#282828] text-main rounded-md shadow-lg p-2 z-50 whitespace-nowrap">
-                                <div id="edit-playlist-details-btn" class="px-4 py-2 hover:bg-[#3e3e3e] cursor-pointer">Editar detalhes</div>
-                                <div id="delete-playlist-btn" class="px-4 py-2 hover:bg-red-600/20 hover:text-red-400 cursor-pointer">Excluir playlist</div>
+                            <div id="playlist-context-menu" class="hidden absolute right-0 top-full mt-2 bg-tertiary text-primary rounded-md shadow-lg p-2 z-50 whitespace-nowrap">
+                                <div id="edit-playlist-details-btn" class="px-4 py-2 hover:bg-highlight cursor-pointer">Editar detalhes</div>
+                                <div id="delete-playlist-btn" class="px-4 py-2 hover:bg-red-600/20 text-red-400 cursor-pointer">Excluir playlist</div>
                             </div>
                         </div>
                     </div>
                 </header>
                 <div class="px-4">
-                    <div class="grid grid-cols-[auto,2fr,1fr,1fr,auto] gap-4 text-secondary border-b border-gray-700 p-2 mb-2">
+                    <div class="grid grid-cols-[auto,2fr,1fr,1fr,auto] gap-4 text-secondary border-b border-theme p-2 mb-2">
                         <div class="w-8 text-center">#</div>
                         <div>Título</div>
                         <div>Artista</div>
@@ -1186,8 +1231,8 @@
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
                                 <p class="absolute bottom-2 left-2 font-bold text-white text-sm">${song.title}</p>
                             </div>
-                            <div class="story-back absolute w-full h-full bg-[#282828] flex flex-col items-center justify-center p-2 text-center">
-                                <p class="font-extrabold text-4xl text-custom-blue">${count}</p>
+                            <div class="story-back absolute w-full h-full bg-tertiary flex flex-col items-center justify-center p-2 text-center">
+                                <p class="font-extrabold text-4xl text-brand">${count}</p>
                                 <p class="text-sm">reproduções</p>
                                 <p class="text-xs text-secondary mt-1">nos últimos 7 dias</p>
                             </div>
@@ -1198,11 +1243,11 @@
 
             // 4. Prepare Detailed History Table
             let historyTableHTML = historyWithSongs.reverse().slice(0, 100).map(h => `
-                <div class="grid grid-cols-[2fr,1fr,1fr] gap-4 p-2 rounded-lg hover:bg-white/10">
+                <div class="grid grid-cols-[2fr,1fr,1fr] gap-4 p-2 rounded-lg hover:bg-highlight">
                     <div class="flex items-center gap-3">
                         <img src="${h.song.imageBlob ? URL.createObjectURL(h.song.imageBlob) : 'https://placehold.co/40x40/181818/b3b3b3?text=🎵'}" class="w-10 h-10 rounded">
                         <div>
-                            <p class="font-semibold text-main truncate">${h.song.title}</p>
+                            <p class="font-semibold text-primary truncate">${h.song.title}</p>
                             <p class="text-sm text-secondary truncate">${h.song.artist}</p>
                         </div>
                     </div>
@@ -1214,7 +1259,7 @@
             // 5. Render the view
             mainView.innerHTML = `
                 <header class="p-6 flex justify-between items-center">
-                    <h1 class="text-3xl font-extrabold text-main">Seu Histórico de Reprodução</h1>
+                    <h1 class="text-3xl font-extrabold text-primary">Seu Histórico de Reprodução</h1>
                     <button id="clear-history-btn" class="bg-red-600/20 text-red-400 hover:bg-red-600/40 font-semibold py-2 px-4 rounded-full flex items-center gap-2">
                         <i class="ph-bold ph-trash"></i>
                         <span>Limpar Histórico</span>
@@ -1223,7 +1268,7 @@
                 <div class="p-6 pt-0 space-y-8">
                     <!-- Stories -->
                     <div>
-                        <h2 class="text-2xl font-bold text-main mb-4">Destaques da Semana</h2>
+                        <h2 class="text-2xl font-bold text-primary mb-4">Destaques da Semana</h2>
                         <div class="flex gap-4 overflow-x-auto pb-4" style="scroll-snap-type: x mandatory;">
                             ${storiesHTML || '<p class="text-secondary">Ouça algumas músicas para ver seus destaques aqui.</p>'}
                         </div>
@@ -1231,22 +1276,22 @@
 
                     <!-- Dashboard -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <div class="bg-[#181818] p-4 rounded-lg"><p class="text-sm text-secondary">Tempo Ouvindo (Hoje)</p><p class="text-2xl font-bold text-main">${formatTime(totalTimeToday, true)}</p></div>
-                        <div class="bg-[#181818] p-4 rounded-lg"><p class="text-sm text-secondary">Tempo Ouvindo (Semana)</p><p class="text-2xl font-bold text-main">${formatTime(totalTimeWeek, true)}</p></div>
-                        <div class="bg-[#181818] p-4 rounded-lg"><p class="text-sm text-secondary">Tempo Ouvindo (Total)</p><p class="text-2xl font-bold text-main">${formatTime(totalTimeAll, true)}</p></div>
-                        <div class="bg-[#181818] p-4 rounded-lg"><p class="text-sm text-secondary">Música Mais Tocada</p><p class="text-2xl font-bold text-main truncate">${topSong ? topSong.title : 'N/A'}</p></div>
+                        <div class="bg-tertiary p-4 rounded-lg"><p class="text-sm text-secondary">Tempo Ouvindo (Hoje)</p><p class="text-2xl font-bold text-primary">${formatTime(totalTimeToday, true)}</p></div>
+                        <div class="bg-tertiary p-4 rounded-lg"><p class="text-sm text-secondary">Tempo Ouvindo (Semana)</p><p class="text-2xl font-bold text-primary">${formatTime(totalTimeWeek, true)}</p></div>
+                        <div class="bg-tertiary p-4 rounded-lg"><p class="text-sm text-secondary">Tempo Ouvindo (Total)</p><p class="text-2xl font-bold text-primary">${formatTime(totalTimeAll, true)}</p></div>
+                        <div class="bg-tertiary p-4 rounded-lg"><p class="text-sm text-secondary">Música Mais Tocada</p><p class="text-2xl font-bold text-primary truncate">${topSong ? topSong.title : 'N/A'}</p></div>
                     </div>
 
                     <!-- Charts -->
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div class="bg-[#181818] p-4 rounded-lg"><canvas id="listeningTimeChart"></canvas></div>
-                        <div class="bg-[#181818] p-4 rounded-lg"><canvas id="topSongsChart"></canvas></div>
+                        <div class="bg-tertiary p-4 rounded-lg"><canvas id="listeningTimeChart"></canvas></div>
+                        <div class="bg-tertiary p-4 rounded-lg"><canvas id="topSongsChart"></canvas></div>
                     </div>
 
                     <!-- Detailed List -->
                     <div>
-                        <h2 class="text-2xl font-bold text-main mb-4">Reproduções Recentes</h2>
-                        <div class="grid grid-cols-[2fr,1fr,1fr] gap-4 text-secondary border-b border-gray-700 p-2 mb-2 font-semibold">
+                        <h2 class="text-2xl font-bold text-primary mb-4">Reproduções Recentes</h2>
+                        <div class="grid grid-cols-[2fr,1fr,1fr] gap-4 text-secondary border-b border-theme p-2 mb-2 font-semibold">
                             <div>Música</div>
                             <div>Data</div>
                             <div>Duração da Reprodução</div>
@@ -1270,6 +1315,11 @@
 
         function renderListeningTimeChart(history) {
             const ctx = document.getElementById('listeningTimeChart').getContext('2d');
+            const computedStyle = getComputedStyle(document.body);
+            const textColor = computedStyle.getPropertyValue('--text-secondary').trim();
+            const borderColor = computedStyle.getPropertyValue('--border-color').trim();
+            const titleColor = computedStyle.getPropertyValue('--text-primary').trim();
+
             const data = Array(7).fill(0);
             const today = new Date();
             today.setHours(0,0,0,0);
@@ -1303,16 +1353,20 @@
                 },
                 options: {
                     scales: {
-                        y: { beginAtZero: true, ticks: { color: '#b3b3b3' }, grid: { color: 'rgba(255,255,255,0.1)' } },
-                        x: { type: 'time', time: { unit: 'day', displayFormats: { day: 'EEE' } }, ticks: { color: '#b3b3b3' }, grid: { color: 'rgba(255,255,255,0.1)' } }
+                        y: { beginAtZero: true, ticks: { color: textColor }, grid: { color: borderColor } },
+                        x: { type: 'time', time: { unit: 'day', displayFormats: { day: 'EEE' } }, ticks: { color: textColor }, grid: { color: borderColor } }
                     },
-                    plugins: { legend: { display: false }, title: { display: true, text: 'Atividade nos Últimos 7 Dias', color: '#fff', font: { size: 16 } } }
+                    plugins: { legend: { display: false }, title: { display: true, text: 'Atividade nos Últimos 7 Dias', color: titleColor, font: { size: 16 } } }
                 }
             });
         }
         
         function renderTopSongsChart(history) {
             const ctx = document.getElementById('topSongsChart').getContext('2d');
+            const computedStyle = getComputedStyle(document.body);
+            const textColor = computedStyle.getPropertyValue('--text-secondary').trim();
+            const titleColor = computedStyle.getPropertyValue('--text-primary').trim();
+
             const songPlayDurations = history.reduce((acc, h) => {
                 const song = songs.find(s => s.id === h.songId);
                 if (song) {
@@ -1337,8 +1391,8 @@
                 options: {
                     responsive: true,
                     plugins: {
-                        legend: { position: 'top', labels: { color: '#b3b3b3' } },
-                        title: { display: true, text: 'Top 5 Músicas (por tempo)', color: '#fff', font: { size: 16 } }
+                        legend: { position: 'top', labels: { color: textColor } },
+                        title: { display: true, text: 'Top 5 Músicas (por tempo)', color: titleColor, font: { size: 16 } }
                     }
                 }
             });
@@ -1355,7 +1409,7 @@
                 if (playlistSongs[i] && playlistSongs[i].imageBlob) {
                     coverHTML += `<img src="${URL.createObjectURL(playlistSongs[i].imageBlob)}" class="w-full h-full object-cover">`;
                 } else {
-                    coverHTML += `<div class="w-full h-full bg-gray-700 flex items-center justify-center"><i class="ph-bold ph-music-notes text-3xl text-gray-500"></i></div>`;
+                    coverHTML += `<div class="w-full h-full bg-tertiary flex items-center justify-center"><i class="ph-bold ph-music-notes text-3xl text-secondary"></i></div>`;
                 }
             }
             return coverHTML;
@@ -1372,15 +1426,15 @@
                 let firstColHTML = '';
                 if (isSelectionMode && context === 'library') {
                     const isChecked = selectedSongIds.has(song.id);
-                    firstColHTML = `<input type="checkbox" class="song-select-checkbox form-checkbox h-5 w-5 bg-transparent border-gray-600 text-custom-blue focus:ring-custom-blue" data-song-id="${song.id}" ${isChecked ? 'checked' : ''}>`;
+                    firstColHTML = `<input type="checkbox" class="song-select-checkbox form-checkbox h-5 w-5 bg-transparent border-gray-600 text-brand focus:ring-brand" data-song-id="${song.id}" ${isChecked ? 'checked' : ''}>`;
                 } else {
                     firstColHTML = isPlayingSong 
                         ? `<div class="playing-indicator"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>` 
-                        : `<span class="text-secondary group-hover:hidden">${index + 1}</span><i class="ph-bold ph-play text-main hidden group-hover:block"></i>`;
+                        : `<span class="text-secondary group-hover:hidden">${index + 1}</span><i class="ph-bold ph-play text-primary hidden group-hover:block"></i>`;
                 }
 
                 const songItemEl = document.createElement('div');
-                songItemEl.className = `grid grid-cols-[auto,2fr,1fr,1fr,auto] gap-4 items-center p-2 rounded-lg hover:bg-white/10 group song-item-row cursor-pointer ${selectedSongIds.has(song.id) ? 'selected' : ''}`;
+                songItemEl.className = `grid grid-cols-[auto,2fr,1fr,1fr,auto] gap-4 items-center p-2 rounded-lg hover:bg-highlight group song-item-row cursor-pointer ${selectedSongIds.has(song.id) ? 'selected' : ''}`;
                 songItemEl.dataset.songId = song.id;
 
                 songItemEl.innerHTML = `
@@ -1390,14 +1444,14 @@
                     <div class="flex items-center gap-4 pointer-events-none">
                         <img src="${imageUrl}" alt="Capa" class="w-10 h-10 rounded">
                         <div>
-                            <p class="font-semibold truncate ${isPlayingSong ? 'text-custom-blue' : 'text-main'}">${song.title}</p>
+                            <p class="font-semibold truncate ${isPlayingSong ? 'text-brand' : 'text-primary'}">${song.title}</p>
                         </div>
                     </div>
                     <div class="text-secondary truncate pointer-events-none">${song.artist}</div>
                     <div class="text-secondary truncate pointer-events-none">${song.album}</div>
                     <div class="flex items-center gap-4 justify-end">
                         <span class="text-sm text-secondary pointer-events-none">${formatTime(song.duration)}</span>
-                        <button class="text-secondary hover:text-main opacity-0 group-hover:opacity-100 transition-opacity context-menu-btn" data-song-id="${song.id}">
+                        <button class="text-secondary hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity context-menu-btn" data-song-id="${song.id}">
                             <i class="ph-bold ph-dots-three text-xl"></i>
                         </button>
                     </div>
@@ -1449,7 +1503,7 @@
             // Render playlists first
             playlists.forEach(playlist => {
                 const coverHTML = generatePlaylistCover(playlist);
-                const playlistItemHTML = `<div class="flex items-center gap-3 p-2 rounded hover:bg-white/10 cursor-pointer playlist-item" data-id="${playlist.id}"><div class="w-12 h-12 bg-gray-700 rounded grid grid-cols-2 grid-rows-2 overflow-hidden flex-shrink-0">${coverHTML}</div><div><p class="font-semibold text-main truncate">${playlist.name}</p><p class="text-sm text-secondary">Playlist</p></div></div>`;
+                const playlistItemHTML = `<div class="flex items-center gap-3 p-2 rounded hover:bg-highlight cursor-pointer playlist-item" data-id="${playlist.id}"><div class="w-12 h-12 bg-tertiary rounded grid grid-cols-2 grid-rows-2 overflow-hidden flex-shrink-0">${coverHTML}</div><div><p class="font-semibold text-primary truncate">${playlist.name}</p><p class="text-sm text-secondary">Playlist</p></div></div>`;
                 libraryContent.innerHTML += playlistItemHTML;
             });
             libraryContent.querySelectorAll('.playlist-item').forEach(item => {
@@ -1482,6 +1536,7 @@
             
             playbackQueue = currentPlaybackContext.slice(indexInContext + 1);
             renderQueue();
+            updateAllPlayerControls();
         }
 
         async function startHistoryTracking(songId) {
@@ -1562,7 +1617,7 @@
         }
 
         async function refreshCurrentSongList() {
-            const currentView = document.body.dataset.currentView;
+            const currentView = document.body.dataset.libraryView || document.body.dataset.currentView;
             
             if (currentView === 'songs') {
                 renderSongList(songs, 'library-song-list', 'library');
@@ -1600,14 +1655,14 @@
                 queueItemEl.dataset.songId = song.id;
                 
                 const imageUrl = song.imageBlob ? URL.createObjectURL(song.imageBlob) : 'https://placehold.co/40x40/181818/b3b3b3?text=🎵';
-                queueItemEl.className = 'queue-item flex items-center gap-3 p-1.5 rounded-lg group cursor-pointer hover:bg-white/10 transition-colors';
+                queueItemEl.className = 'queue-item flex items-center gap-3 p-1.5 rounded-lg group cursor-pointer hover:bg-highlight transition-colors';
                 queueItemEl.innerHTML = `
                     <img src="${imageUrl}" alt="Capa" class="w-10 h-10 rounded pointer-events-none">
                     <div class="flex-1 pointer-events-none overflow-hidden">
-                        <p class="text-sm font-semibold text-main">${song.title}</p>
+                        <p class="text-sm font-semibold text-primary">${song.title}</p>
                         <p class="text-xs text-secondary">${song.artist}</p>
                     </div>
-                    <button class="text-secondary hover:text-main opacity-0 group-hover:opacity-100 transition-opacity remove-from-queue-btn" data-queue-index="${index}" title="Remover da fila">
+                    <button class="text-secondary hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity remove-from-queue-btn" data-queue-index="${index}" title="Remover da fila">
                         <i class="ph-bold ph-x text-lg"></i>
                     </button>
                 `;
@@ -1907,10 +1962,10 @@
             // --- Add to Playlist ---
             const addToPlaylistEl = document.createElement('div');
             addToPlaylistEl.textContent = 'Adicionar à playlist';
-            addToPlaylistEl.className = 'px-4 py-2 hover:bg-[#3e3e3e] cursor-pointer relative whitespace-nowrap';
+            addToPlaylistEl.className = 'px-4 py-2 hover:bg-highlight cursor-pointer relative whitespace-nowrap';
             
             const subMenu = document.createElement('div');
-            subMenu.className = 'hidden absolute top-0 bg-[#282828] rounded-md shadow-lg p-2';
+            subMenu.className = 'hidden absolute top-0 bg-tertiary rounded-md shadow-lg p-2';
             
             if (playlists.length === 0) {
                 const noPlaylistsEl = document.createElement('div');
@@ -1921,7 +1976,7 @@
                 playlists.forEach(playlist => {
                     const playlistItemEl = document.createElement('div');
                     playlistItemEl.textContent = playlist.name;
-                    playlistItemEl.className = 'px-4 py-2 hover:bg-[#3e3e3e] cursor-pointer whitespace-nowrap';
+                    playlistItemEl.className = 'px-4 py-2 hover:bg-highlight cursor-pointer whitespace-nowrap';
                     playlistItemEl.onclick = async () => {
                         await addSongToPlaylist(songId, playlist.id);
                         contextMenu.classList.add('hidden');
@@ -1939,7 +1994,7 @@
             if (currentView === 'playlist') {
                 const removeFromPlaylistEl = document.createElement('div');
                 removeFromPlaylistEl.textContent = 'Remover desta playlist';
-                removeFromPlaylistEl.className = 'px-4 py-2 hover:bg-[#3e3e3e] cursor-pointer';
+                removeFromPlaylistEl.className = 'px-4 py-2 hover:bg-highlight cursor-pointer';
                 removeFromPlaylistEl.onclick = () => {
                      showConfirmation('Remover Música', `Tem certeza que deseja remover esta música da playlist?`, () => removeSongFromPlaylist(songId, currentViewId));
                     contextMenu.classList.add('hidden');
@@ -2279,14 +2334,14 @@
             addSongsList.innerHTML = filteredSongs.map(song => {
                 const alreadyInPlaylist = existingSongIds.includes(song.id);
                 return `
-                    <div class="flex items-center gap-4 p-2 rounded-lg hover:bg-white/10">
+                    <div class="flex items-center gap-4 p-2 rounded-lg hover:bg-highlight">
                         <img src="${song.imageBlob ? URL.createObjectURL(song.imageBlob) : 'https://placehold.co/40x40/121212/b3b3b3?text=🎵'}" class="w-10 h-10 rounded">
                         <div class="flex-1">
-                            <p class="font-semibold text-main truncate">${song.title}</p>
+                            <p class="font-semibold text-primary truncate">${song.title}</p>
                             <p class="text-sm text-secondary truncate">${song.artist}</p>
                         </div>
                         <button 
-                            class="add-song-btn ${alreadyInPlaylist ? 'bg-green-500 text-white' : 'bg-custom-blue text-white'} font-bold py-1 px-3 rounded-full text-sm" 
+                            class="add-song-btn ${alreadyInPlaylist ? 'bg-green-500 text-white' : 'bg-brand text-white'} font-bold py-1 px-3 rounded-full text-sm" 
                             data-song-id="${song.id}" 
                             ${alreadyInPlaylist ? 'disabled' : ''}>
                             ${alreadyInPlaylist ? 'Adicionada' : 'Adicionar'}
@@ -2300,7 +2355,7 @@
                     const songId = parseInt(btn.dataset.songId);
                     await addSongToPlaylist(songId, playlistIdToAddSongs);
                     btn.textContent = 'Adicionada';
-                    btn.classList.remove('bg-custom-blue');
+                    btn.classList.remove('bg-brand');
                     btn.classList.add('bg-green-500');
                     btn.disabled = true;
                 });
@@ -2359,6 +2414,29 @@
             function closeDragElement() {
                 document.onmouseup = null;
                 document.onmousemove = null;
+            }
+        }
+
+        // --- THEME MANAGEMENT ---
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light');
+                themeIcon.className = 'ph-bold ph-moon text-xl';
+            } else {
+                document.body.classList.remove('light');
+                themeIcon.className = 'ph-bold ph-sun text-xl';
+            }
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('light');
+            const isLight = document.body.classList.contains('light');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            themeIcon.className = isLight ? 'ph-bold ph-moon text-xl' : 'ph-bold ph-sun text-xl';
+            // Re-render charts if history view is active
+            if (document.body.dataset.currentView === 'history') {
+                renderHistoryView();
             }
         }
 
@@ -2531,6 +2609,9 @@
             const playlist = await db.get('playlists', playlistIdToAddSongs);
             renderAddSongsList(playlist.songIds || [], addSongsSearchInput.value);
         });
+        
+        // Event listener for Theme Toggle
+        themeToggleBtn.addEventListener('click', toggleTheme);
 
         // Global click listener to close context menus
         document.addEventListener('click', (e) => {
