@@ -255,6 +255,35 @@
             color: var(--text-primary);
             background-color: var(--bg-tertiary);
         }
+        
+        /* Highlight Story Styles */
+        .highlight-card .progress-bar-container {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            display: flex;
+            gap: 4px;
+            z-index: 10;
+        }
+        .highlight-card .progress-segment {
+            flex: 1;
+            height: 3px;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .highlight-card .progress-fill {
+            height: 100%;
+            width: 0;
+            background-color: #ffffff;
+            border-radius: 2px;
+            transition: width 5s linear;
+        }
+        .highlight-card .progress-segment.active .progress-fill {
+            width: 100%;
+        }
+
 
     </style>
 </head>
@@ -765,6 +794,9 @@
         let showTimerElapsed = 0;
         let wasShowTimerActiveBeforePause = false;
         let showTimerPlayHistoryIds = [];
+        
+        // Highlight Story State
+        let highlightIntervals = {};
 
 
         // --- ERROR HANDLING & STATUS ---
@@ -1037,8 +1069,73 @@
             } else if (hours < 18) {
                 greeting = 'Boa tarde';
             }
+            
+            // --- Highlights Data Calculation ---
+            const topSongs = [...new Set(playHistory.map(p => p.songId))]
+                .map(id => songs.find(s => s.id === id))
+                .filter(Boolean)
+                .sort((a,b) => (b.playCount || 0) - (a.playCount || 0))
+                .slice(0, 5);
 
-            // --- Section 1: Recently Played ---
+            const artistPlayCounts = playHistory.reduce((acc, play) => {
+                const song = songs.find(s => s.id === play.songId);
+                if(song && song.artist !== 'Artista Desconhecido') {
+                    acc[song.artist] = (acc[song.artist] || 0) + 1;
+                }
+                return acc;
+            }, {});
+            const topArtists = Object.entries(artistPlayCounts)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 5)
+                .map(([name, count]) => {
+                    const topSongForArtist = songs.find(s => s.artist === name);
+                    return { name, count, imageBlob: topSongForArtist?.imageBlob };
+                });
+
+            const albumPlayCounts = playHistory.reduce((acc, play) => {
+                const song = songs.find(s => s.id === play.songId);
+                if(song && song.album !== 'Álbum Desconhecido') {
+                    acc[song.album] = (acc[song.album] || 0) + 1;
+                }
+                return acc;
+            }, {});
+            const topAlbums = Object.entries(albumPlayCounts)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 5)
+                .map(([name, count]) => {
+                    const topSongForAlbum = songs.find(s => s.album === name);
+                    return { name, count, imageBlob: topSongForAlbum?.imageBlob };
+                });
+
+            const highlightsHTML = [
+                { title: 'Top Músicas', data: topSongs, type: 'song' },
+                { title: 'Top Artistas', data: topArtists, type: 'artist' },
+                { title: 'Top Álbuns', data: topAlbums, type: 'album' }
+            ].map((category, index) => {
+                if (category.data.length === 0) return '';
+                const firstItem = category.data[0];
+                const imageUrl = firstItem.imageBlob ? URL.createObjectURL(firstItem.imageBlob) : 'https://placehold.co/200x200/181818/b3b3b3?text=🎵';
+                
+                const progressSegments = category.data.map((_, i) => `
+                    <div class="progress-segment ${i === 0 ? 'active' : ''}"><div class="progress-fill"></div></div>
+                `).join('');
+
+                return `
+                    <div id="highlight-card-${category.type}" class="highlight-card aspect-square w-full bg-tertiary rounded-lg overflow-hidden shadow-lg relative flex flex-col justify-end p-4 group cursor-pointer">
+                        <div class="progress-bar-container">${progressSegments}</div>
+                        <img src="${imageUrl}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                        <div class="relative z-10">
+                            <p class="text-sm text-white/80">${category.title}</p>
+                            <h3 class="text-2xl font-bold text-white truncate" id="highlight-title-${category.type}">${firstItem.title || firstItem.name}</h3>
+                            <p class="text-md text-white/80 truncate" id="highlight-subtitle-${category.type}">${firstItem.artist || `${firstItem.count} reproduções`}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+
+            // --- Recently Played & Playlists Sections ---
             const recentPlays = [...playHistory].reverse();
             const uniqueRecentSongIds = [...new Set(recentPlays.map(p => p.songId))];
             const recentSongs = uniqueRecentSongIds.slice(0, 10).map(id => songs.find(s => s.id === id)).filter(Boolean);
@@ -1061,7 +1158,6 @@
                 `;
             }).join('');
 
-            // --- Section 2: Your Playlists ---
             const topPlaylists = [...playlists].sort((a, b) => (b.songIds?.length || 0) - (a.songIds?.length || 0)).slice(0, 10);
             const topPlaylistsHTML = topPlaylists.map(playlist => {
                 const coverHTML = generatePlaylistCover(playlist);
@@ -1079,11 +1175,21 @@
             }).join('');
 
 
-            // Main container with scroll
+            // --- Final Assembly ---
             container.innerHTML = `
                 <div class="overflow-y-auto flex-grow">
                     <div class="p-6 space-y-12">
                         <h1 class="text-3xl font-extrabold text-primary">${greeting}</h1>
+                        
+                        <!-- Highlights Section -->
+                        ${topSongs.length > 0 ? `
+                        <div>
+                             <h2 class="text-2xl font-bold text-primary mb-4">Destaques para Você</h2>
+                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                ${highlightsHTML}
+                             </div>
+                        </div>
+                        ` : ''}
                         
                         <!-- Recently Played Section -->
                         ${recentSongs.length > 0 ? `
@@ -1106,7 +1212,7 @@
                         ` : ''}
 
                         <!-- Placeholder if everything is empty -->
-                        ${recentSongs.length === 0 && playlists.length === 0 ? `
+                        ${recentSongs.length === 0 && playlists.length === 0 && topSongs.length === 0 ? `
                         <div class="text-center text-secondary p-8 bg-tertiary rounded-lg mt-8">
                             <i class="ph-bold ph-music-notes-plus text-5xl text-brand"></i>
                             <p class="font-semibold text-primary mt-4">Sua biblioteca está vazia</p>
@@ -1116,6 +1222,11 @@
                     </div>
                 </div>
             `;
+            
+            // Initialize Highlight Carousels
+            if (topSongs.length > 0) initHighlightCarousel('song', topSongs);
+            if (topArtists.length > 0) initHighlightCarousel('artist', topArtists);
+            if (topAlbums.length > 0) initHighlightCarousel('album', topAlbums);
         }
 
 
@@ -2641,6 +2752,69 @@
             await refreshActiveHistoryTab();
             resetShowTimer();
         }
+        
+        // --- HIGHLIGHTS CAROUSEL LOGIC ---
+        function initHighlightCarousel(type, data) {
+            const card = document.getElementById(`highlight-card-${type}`);
+            if (!card || !data || data.length < 1) return;
+
+            const imageEl = card.querySelector('img');
+            const titleEl = card.querySelector(`#highlight-title-${type}`);
+            const subtitleEl = card.querySelector(`#highlight-subtitle-${type}`);
+            const progressSegments = card.querySelectorAll('.progress-segment');
+
+            let currentIndex = 0;
+            let intervalId;
+
+            function updateCardContent(index) {
+                const item = data[index];
+                imageEl.src = item.imageBlob ? URL.createObjectURL(item.imageBlob) : 'https://placehold.co/200x200/181818/b3b3b3?text=🎵';
+                titleEl.textContent = item.title || item.name;
+                subtitleEl.textContent = item.artist || `${item.count} reproduções`;
+
+                progressSegments.forEach((segment, i) => {
+                    segment.classList.remove('active');
+                    segment.querySelector('.progress-fill').style.transition = 'none';
+                    segment.querySelector('.progress-fill').style.width = '0%';
+                    if (i < index) {
+                         segment.querySelector('.progress-fill').style.width = '100%';
+                    }
+                });
+
+                // Force reflow to restart animation
+                const activeSegment = progressSegments[index];
+                if(activeSegment) {
+                    activeSegment.classList.add('active');
+                    const fill = activeSegment.querySelector('.progress-fill');
+                    void fill.offsetWidth; // Reflow
+                    fill.style.transition = 'width 5s linear';
+                    fill.style.width = '100%';
+                }
+            }
+
+            function showNextItem() {
+                currentIndex = (currentIndex + 1) % data.length;
+                updateCardContent(currentIndex);
+            }
+
+            function startCarousel() {
+                stopCarousel(); // Ensure no multiple intervals are running
+                if (data.length > 1) {
+                   updateCardContent(currentIndex);
+                   intervalId = setInterval(showNextItem, 5000);
+                }
+            }
+
+            function stopCarousel() {
+                clearInterval(intervalId);
+            }
+
+            card.addEventListener('mouseenter', stopCarousel);
+            card.addEventListener('mouseleave', startCarousel);
+
+            startCarousel();
+        }
+
 
         // --- ADD SONGS TO PLAYLIST MODAL LOGIC ---
         async function openAddSongsModal(pId) {
