@@ -805,56 +805,74 @@
             if (!files.length) return;
 
             const processingPromises = Array.from(files).map(file => {
-                return new Promise((resolve, reject) => {
-                    if (file.type !== 'audio/mpeg') return resolve(); // Skip non-mp3 files
+                return new Promise(async (resolve) => { // Only need resolve
+                    if (file.type !== 'audio/mpeg') {
+                        console.warn(`Skipping non-mp3 file: ${file.name}`);
+                        return resolve();
+                    }
                     setStatus(`Processando ${file.name}...`, 'info');
-                    window.jsmediatags.read(file, {
-                        onSuccess: async (tag) => {
-                            const { title, artist, album, picture } = tag.tags;
+
+                    // This function will be called on success or on error
+                    const saveSong = async (tags = {}) => {
+                        const { title, artist, album, picture } = tags;
+                        try {
+                            let imageBlob = picture ? new Blob([new Uint8Array(picture.data)], { type: picture.format }) : null;
+                            const tempAudio = new Audio(URL.createObjectURL(file));
+                            let duration = 0;
                             try {
-                                let imageBlob = picture ? new Blob([new Uint8Array(picture.data)], { type: picture.format }) : null;
-                                const tempAudio = new Audio(URL.createObjectURL(file));
-                                let duration = 0;
-                                try {
-                                    await new Promise((resolveDuration, rejectDuration) => {
-                                        const timer = setTimeout(() => rejectDuration('Timeout'), 2000);
-                                        tempAudio.addEventListener('loadedmetadata', () => { 
-                                            clearTimeout(timer); 
-                                            duration = tempAudio.duration; 
-                                            resolveDuration(); 
-                                        });
+                                await new Promise((resolveDuration, rejectDuration) => {
+                                    const timer = setTimeout(() => rejectDuration('Timeout'), 2000);
+                                    tempAudio.addEventListener('loadedmetadata', () => {
+                                        clearTimeout(timer);
+                                        duration = tempAudio.duration;
+                                        resolveDuration();
                                     });
-                                } catch (err) { console.warn("Could not get audio duration for", file.name); }
-                                
-                                const songData = {
-                                    title: title || file.name.replace('.mp3', ''), artist: artist || 'Artista Desconhecido', album: album || 'Álbum Desconhecido',
-                                    audioBlob: file, imageBlob: imageBlob, duration: duration, fileName: file.name, uploadedAt: new Date(), lyrics: '', playCount: 0
-                                };
-                                await db.add('songs', songData);
-                                resolve();
-                            } catch (error) { 
-                                console.error("Error saving song:", error); 
-                                reject(error);
+                                    tempAudio.addEventListener('error', (err) => {
+                                        clearTimeout(timer);
+                                        rejectDuration(err);
+                                    });
+                                });
+                            } catch (err) {
+                                console.warn("Could not get audio duration for", file.name, err);
                             }
+
+                            const songData = {
+                                title: title || file.name.replace(/\.mp3$/i, ''),
+                                artist: artist || 'Artista Desconhecido',
+                                album: album || 'Álbum Desconhecido',
+                                audioBlob: file,
+                                imageBlob: imageBlob,
+                                duration: duration,
+                                fileName: file.name,
+                                uploadedAt: new Date(),
+                                lyrics: '',
+                                playCount: 0
+                            };
+                            await db.add('songs', songData);
+                        } catch (error) {
+                            console.error("Error saving song:", file.name, error);
+                        } finally {
+                            resolve(); // Resolve the promise for this file
+                        }
+                    };
+
+                    window.jsmediatags.read(file, {
+                        onSuccess: (tag) => {
+                            saveSong(tag.tags);
                         },
-                        onError: (error) => { 
-                            console.error('Error reading media tags for', file.name, error); 
-                            reject(error);
+                        onError: (error) => {
+                            console.warn('Error reading media tags for', file.name, error.info);
+                            saveSong(); // Save with default tags
                         }
                     });
                 });
             });
 
-            try {
-                await Promise.all(processingPromises);
-                setStatus('Importação concluída!', 'success');
-            } catch (error) {
-                setStatus('Ocorreu um erro durante a importação.', 'error');
-            }
+            await Promise.all(processingPromises);
+            setStatus('Importação concluída!', 'success');
             
-            // Navigate after all files are processed
             await loadAllData();
-            renderView('songs'); 
+            renderView('songs');
             e.target.value = '';
         });
 
