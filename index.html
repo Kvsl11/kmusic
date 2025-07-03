@@ -98,24 +98,18 @@
         }
 
         .overflow-y-auto::-webkit-scrollbar-thumb,
-        .overflow-x-auto::-webkit-scrollbar-thumb,
-        #library-content::-webkit-scrollbar-thumb,
-        #queue-list::-webkit-scrollbar-thumb,
-        #lyrics-view::-webkit-scrollbar-thumb,
-        #lyrics-textarea::-webkit-scrollbar-thumb {
-            background-color: transparent;
-            border-radius: 10px;
-            border: 3px solid transparent;
-            background-clip: content-box;
-        }
-
-        .overflow-y-auto:hover::-webkit-scrollbar-thumb,
-        .overflow-x-auto:hover::-webkit-scrollbar-thumb,
         #library-content:hover::-webkit-scrollbar-thumb,
         #queue-list:hover::-webkit-scrollbar-thumb,
         #lyrics-view:hover::-webkit-scrollbar-thumb,
         #lyrics-textarea:hover::-webkit-scrollbar-thumb {
             background-color: var(--brand-color);
+            border-radius: 10px;
+            border: 3px solid transparent;
+            background-clip: content-box;
+        }
+        
+        .overflow-x-auto::-webkit-scrollbar-thumb {
+             background-color: transparent;
         }
 
 
@@ -129,7 +123,7 @@
         }
         
         input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none; appearance: none; width: 14px; height: 14px;
+            -webkit-appearance: none; appearance: none; width: 10px; height: 10px;
             border-radius: 50%; background: #fff; cursor: pointer; opacity: 0;
             transition: opacity 0.2s ease-in-out;
         }
@@ -218,8 +212,13 @@
         }
 
         /* Sync Mode Styles */
-        #sync-panel .sync-line { transition: all 0.3s; opacity: 0.5; }
-        #sync-panel .sync-line.current { opacity: 1; transform: scale(1.1); color: var(--text-primary); }
+        #sync-panel {
+            background-color: #000000;
+        }
+        #sync-panel .sync-line { transition: all 0.3s ease-in-out; }
+        #sync-panel .sync-line-prev { opacity: 0.5; font-size: 1.5rem; }
+        #sync-panel .sync-line-current { opacity: 1; font-size: 3rem; transform: scale(1.05); color: #ffffff; }
+        #sync-panel .sync-line-next { opacity: 0.3; font-size: 1.25rem; }
         
         /* Drag and Drop styles */
         .queue-item.dragging { opacity: 0.5; }
@@ -552,16 +551,45 @@
     </div>
     
     <!-- Sync Panel (Fullscreen Modal) -->
-    <div id="sync-panel" class="hidden fixed inset-0 bg-primary z-50 p-8 flex flex-col items-center justify-center gap-8">
-        <button id="exit-sync-btn" class="absolute top-8 right-8 text-secondary hover:text-primary text-2xl z-10" title="Cancelar Sincronização"><i class="ph-bold ph-x"></i></button>
-        <div class="text-center">
-            <p class="text-2xl text-secondary sync-line" id="sync-line-prev"></p>
-            <p class="text-5xl font-extrabold text-primary sync-line current" id="sync-line-current">Pressione "Próxima Linha" para começar</p>
-            <p class="text-2xl text-secondary sync-line" id="sync-line-next"></p>
+    <div id="sync-panel" class="hidden fixed inset-0 z-50 p-8 flex flex-col justify-between">
+        <!-- Top Bar -->
+        <div class="w-full flex justify-between items-start">
+            <div class="flex items-center gap-4">
+                <img id="sync-album-art" src="https://placehold.co/64x64/121212/b3b3b3?text=KVSL" class="w-16 h-16 rounded-md shadow-lg">
+                <div>
+                    <h2 id="sync-title" class="text-xl font-bold text-white">Título da Música</h2>
+                    <p id="sync-artist" class="text-md text-gray-400">Nome do Artista</p>
+                </div>
+            </div>
+            <button id="exit-sync-btn" class="text-gray-400 hover:text-white text-2xl" title="Cancelar Sincronização"><i class="ph-bold ph-x"></i></button>
         </div>
-        <button id="tap-sync-btn" class="bg-white text-black font-bold py-6 px-12 rounded-full text-2xl hover:scale-105 transition-transform">Próxima Linha</button>
-        <button id="finish-sync-btn" class="absolute bottom-8 right-8 bg-brand text-white font-bold py-3 px-6 rounded-full hover:scale-105 transition-transform">Finalizar e Salvar</button>
+
+        <!-- Lyrics Display -->
+        <div class="text-center flex-grow flex flex-col justify-center gap-4">
+            <p class="font-semibold text-gray-400 sync-line-prev" id="sync-line-prev"></p>
+            <p class="font-extrabold text-white sync-line-current" id="sync-line-current">Pressione "Iniciar" para começar</p>
+            <p class="font-semibold text-gray-400 sync-line-next" id="sync-line-next"></p>
+        </div>
+
+        <!-- Bottom Controls -->
+        <div class="w-full max-w-2xl mx-auto flex flex-col items-center gap-4">
+            <!-- Progress Bar -->
+            <div class="flex items-center gap-2 w-full slider-container">
+                <span id="sync-current-time" class="text-xs text-gray-400 w-10 text-right">0:00</span>
+                <input id="sync-progress-bar" type="range" min="0" max="100" value="0" class="w-full">
+                <span id="sync-duration" class="text-xs text-gray-400 w-10">0:00</span>
+            </div>
+            <!-- Action Buttons -->
+            <div class="flex items-center gap-6">
+                 <button id="sync-play-pause-btn" class="text-white rounded-full w-12 h-12 flex items-center justify-center hover:bg-white/10 transition-colors" title="Tocar/Pausar">
+                    <i id="sync-play-pause-icon" class="ph-bold ph-play text-3xl"></i>
+                </button>
+                <button id="tap-sync-btn" class="bg-white text-black font-bold py-5 px-10 rounded-full text-xl hover:scale-105 transition-transform">Iniciar</button>
+            </div>
+             <button id="finish-sync-btn" class="hidden absolute bottom-8 right-8 bg-brand text-white font-bold py-3 px-6 rounded-full hover:scale-105 transition-transform">Finalizar e Salvar</button>
+        </div>
     </div>
+
 
     <!-- Error Modal -->
     <div id="error-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
@@ -737,9 +765,17 @@
         // Sync Panel Elements
         const syncPanel = document.getElementById('sync-panel');
         const exitSyncBtn = document.getElementById('exit-sync-btn');
+        const syncAlbumArt = document.getElementById('sync-album-art');
+        const syncTitle = document.getElementById('sync-title');
+        const syncArtist = document.getElementById('sync-artist');
         const syncLinePrev = document.getElementById('sync-line-prev');
         const syncLineCurrent = document.getElementById('sync-line-current');
         const syncLineNext = document.getElementById('sync-line-next');
+        const syncCurrentTime = document.getElementById('sync-current-time');
+        const syncDuration = document.getElementById('sync-duration');
+        const syncProgressBar = document.getElementById('sync-progress-bar');
+        const syncPlayPauseBtn = document.getElementById('sync-play-pause-btn');
+        const syncPlayPauseIcon = document.getElementById('sync-play-pause-icon');
         const tapSyncBtn = document.getElementById('tap-sync-btn');
         const finishSyncBtn = document.getElementById('finish-sync-btn');
         
@@ -802,6 +838,7 @@
         let currentLyrics = [];
         let syncLines = [];
         let syncIndex = 0;
+        let syncTimerInterval = null;
         let syncedLyricsData = [];
         let isPlaying = false;
         let isShuffled = false;
@@ -815,6 +852,7 @@
         let isQueueOpen = false;
         let isMuted = false;
         let lastVolume = 0.5;
+        let isSyncWaitingForStart = false;
 
         // Show Timer State
         let showTimerActive = false;
@@ -1038,7 +1076,7 @@
                 navLibrary.classList.add('active');
             }
             
-            if (isSelectionMode && view !== 'songs') {
+            if (isSelectionMode && !['songs', 'playlist'].includes(view)) {
                 toggleSelectionMode(false); 
             }
 
@@ -1298,16 +1336,9 @@
                              <button id="library-select-btn" class="btn-icon text-secondary hover:text-primary p-2 rounded-full hover:bg-highlight" title="Selecionar músicas">
                                  <i class="ph-bold ph-list-checks text-2xl"></i>
                              </button>
-                             <div class="relative">
-                                 <button id="library-options-btn" class="text-secondary hover:text-primary p-2 rounded-full hover:bg-highlight" title="Mais opções">
-                                     <i class="ph-bold ph-dots-three text-2xl"></i>
-                                 </button>
-                                 <div id="library-context-menu" class="hidden absolute right-0 top-full mt-2 bg-tertiary text-primary rounded-md shadow-lg p-2 z-50 whitespace-nowrap">
-                                     <div id="delete-selected-menu-item" class="hidden px-4 py-2 hover:bg-red-600/20 hover:text-red-400 cursor-pointer">Excluir selecionadas</div>
-                                     <div id="delete-all-songs-btn" class="px-4 py-2 hover:bg-red-600/20 hover:text-red-400 cursor-pointer">Excluir todas as músicas</div>
-                                     <div id="cancel-selection-menu-item" class="hidden px-4 py-2 hover:bg-highlight cursor-pointer">Cancelar seleção</div>
-                                 </div>
-                             </div>
+                             <button id="delete-selected-songs-btn" class="hidden btn-icon text-red-400 hover:text-red-500 p-2 rounded-full hover:bg-red-600/20" title="Excluir selecionadas">
+                                 <i class="ph-bold ph-trash text-2xl"></i>
+                             </button>
                         </div>
                     </div>
                     <div class="grid grid-cols-[auto,2fr,1fr,1fr,auto] gap-4 text-secondary border-b border-theme p-2 mb-2">
@@ -1323,24 +1354,8 @@
             renderSongList(songsToRender, 'library-song-list', 'library');
             updateLibraryMenuState();
             
-            document.getElementById('library-select-btn').addEventListener('click', () => toggleSelectionMode(true));
-            document.getElementById('cancel-selection-menu-item').addEventListener('click', () => toggleSelectionMode(false));
-            document.getElementById('delete-selected-menu-item').addEventListener('click', deleteSelectedSongs);
-
-            const optionsBtn = document.getElementById('library-options-btn');
-            const optionsMenu = document.getElementById('library-context-menu');
-            optionsBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                optionsMenu.classList.toggle('hidden');
-            });
-            document.getElementById('delete-all-songs-btn').addEventListener('click', () => {
-                optionsMenu.classList.add('hidden');
-                showConfirmation(
-                    'Excluir Todas as Músicas',
-                    `Você tem certeza? TODAS as ${songs.length} músicas serão excluídas permanentemente da sua biblioteca e de todas as playlists. Esta ação é irreversível.`,
-                    deleteAllSongs
-                );
-            });
+            document.getElementById('library-select-btn').addEventListener('click', () => toggleSelectionMode(!isSelectionMode, 'library'));
+            document.getElementById('delete-selected-songs-btn').addEventListener('click', deleteSelectedSongs);
         }
 
         function renderSearchView() {
@@ -1442,8 +1457,14 @@
                             <button id="add-songs-to-playlist-btn" class="text-secondary hover:text-primary p-2 rounded-full hover:bg-highlight" title="Adicionar músicas">
                                 <i class="ph-bold ph-plus-circle text-3xl"></i>
                             </button>
+                            <button id="playlist-select-btn" class="btn-icon text-secondary hover:text-primary p-2 rounded-full hover:bg-highlight" title="Selecionar músicas">
+                                 <i class="ph-bold ph-list-checks text-3xl"></i>
+                            </button>
+                            <button id="delete-selected-from-playlist-btn" class="hidden btn-icon text-red-400 hover:text-red-500 p-2 rounded-full hover:bg-red-600/20" title="Remover selecionadas da playlist">
+                                 <i class="ph-bold ph-trash text-3xl"></i>
+                             </button>
                             <button id="delete-playlist-btn" class="text-secondary hover:text-primary p-2 rounded-full hover:bg-highlight" title="Excluir playlist">
-                                <i class="ph-bold ph-trash text-3xl"></i>
+                                <i class="ph-bold ph-x text-3xl"></i>
                             </button>
                         </div>
                         <div class="relative flex-grow max-w-xs">
@@ -1454,7 +1475,7 @@
                 </header>
                 <div class="flex-grow overflow-y-auto px-4">
                     <div class="grid grid-cols-[auto,2fr,1fr,1fr,auto] gap-4 text-secondary border-b border-theme p-2 mb-2">
-                        <div class="w-8 text-center">#</div>
+                        <div id="song-list-header-col" class="w-8 text-center">#</div>
                         <div>Título</div>
                         <div>Artista</div>
                         <div>Álbum</div>
@@ -1464,6 +1485,7 @@
                 </div>
             `;
             renderSongList(playlistSongs, 'playlist-song-list', 'playlist');
+            updatePlaylistMenuState();
 
             document.getElementById('play-playlist-btn').addEventListener('click', () => {
                 if (playlistSongs.length > 0) playSong(0, playlistSongs);
@@ -1476,6 +1498,8 @@
                     () => deletePlaylist(playlistId)
                 );
             });
+            document.getElementById('playlist-select-btn').addEventListener('click', () => toggleSelectionMode(!isSelectionMode, 'playlist'));
+            document.getElementById('delete-selected-from-playlist-btn').addEventListener('click', () => deleteSelectedSongsFromPlaylist(playlistId));
 
             document.getElementById('playlist-search-input').addEventListener('input', (e) => {
                 const query = e.target.value.toLowerCase();
@@ -1567,59 +1591,132 @@
 
         async function renderDashboardTab() {
             const container = document.getElementById('tab-content-dashboard');
-            const historyWithSongs = playHistory.map(h => ({...h, song: songs.find(s => s.id === h.songId)})).filter(h => h.song);
+            if (playHistory.length < 1) {
+                container.innerHTML = '<p class="text-secondary text-center py-8">Ouça algumas músicas para ver suas estatísticas aqui.</p>';
+                return;
+            }
 
-            const totalTimeAll = historyWithSongs.reduce((sum, h) => sum + h.durationPlayed, 0);
-            const totalTimeToday = historyWithSongs.filter(h => new Date(h.playedAt) >= new Date().setHours(0, 0, 0, 0)).reduce((sum, h) => sum + h.durationPlayed, 0);
+            // --- Data Calculation ---
+            const historyWithSongs = playHistory.map(h => ({...h, song: songs.find(s => s.id === h.songId)})).filter(h => h.song);
             const weekStart = new Date();
             weekStart.setDate(weekStart.getDate() - 7);
             weekStart.setHours(0, 0, 0, 0);
-            const totalTimeWeek = historyWithSongs.filter(h => new Date(h.playedAt) >= weekStart).reduce((sum, h) => sum + h.durationPlayed, 0);
-            
-            const songPlayCounts = historyWithSongs.reduce((acc, h) => {
-                acc[h.songId] = (acc[h.songId] || 0) + 1;
-                return acc;
-            }, {});
-
-            const topSongEntry = Object.entries(songPlayCounts).sort(([,a],[,b]) => b-a)[0];
-            const topSong = topSongEntry ? songs.find(s => s.id === parseInt(topSongEntry[0])) : null;
-
             const weeklyPlays = historyWithSongs.filter(h => new Date(h.playedAt) >= weekStart);
+            
+            // Top Song of the Week
             const weeklySongCounts = weeklyPlays.reduce((acc, h) => {
                 acc[h.songId] = (acc[h.songId] || 0) + 1;
                 return acc;
             }, {});
-            const top5WeeklySongs = Object.entries(weeklySongCounts)
-                .sort(([,a],[,b]) => b-a)
-                .slice(0, 8)
-                .map(([id, count]) => ({ song: songs.find(s => s.id === parseInt(id)), count }));
+            const topWeeklySongEntry = Object.entries(weeklySongCounts).sort(([,a],[,b]) => b-a)[0];
+            const topSongOfWeek = topWeeklySongEntry ? { song: songs.find(s => s.id === parseInt(topWeeklySongEntry[0])), count: topWeeklySongEntry[1] } : null;
 
-            let storiesHTML = top5WeeklySongs.map(({song, count}) => {
-                if (!song) return '';
-                const imageUrl = song.imageBlob ? URL.createObjectURL(song.imageBlob) : 'https://placehold.co/150x200/181818/b3b3b3?text=🎵';
-                return `<div class="story-card rounded-lg overflow-hidden shadow-lg cursor-pointer" onclick="playSong(${songs.findIndex(s => s.id === song.id)}, songs)"><div class="story-card-inner relative w-full h-full"><div class="story-front absolute w-full h-full bg-center bg-cover" style="background-image: url('${imageUrl}')"><div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div><p class="absolute bottom-2 left-2 font-bold text-white text-sm">${song.title}</p></div><div class="story-back absolute w-full h-full bg-tertiary flex flex-col items-center justify-center p-2 text-center"><p class="font-extrabold text-4xl text-brand">${count}</p><p class="text-sm">reproduções</p><p class="text-xs text-secondary mt-1">nos últimos 7 dias</p></div></div></div>`;
-            }).join('');
+            // Top Artist of the Week
+            const weeklyArtistCounts = weeklyPlays.reduce((acc, h) => {
+                acc[h.song.artist] = (acc[h.song.artist] || 0) + 1;
+                return acc;
+            }, {});
+            const topWeeklyArtistEntry = Object.entries(weeklyArtistCounts).sort(([,a],[,b]) => b-a)[0];
+            const topArtistOfWeek = topWeeklyArtistEntry ? { name: topWeeklyArtistEntry[0], count: topWeeklyArtistEntry[1] } : null;
+
+            // Top 5 Lists
+            const top5Songs = Object.entries(weeklySongCounts).sort(([,a],[,b]) => b-a).slice(0, 5).map(([id, count]) => ({ song: songs.find(s => s.id === parseInt(id)), count }));
+            const top5Artists = Object.entries(weeklyArtistCounts).sort(([,a],[,b]) => b-a).slice(0, 5).map(([name, count]) => ({ name, count, song: songs.find(s => s.artist === name) }));
+            
+            const weeklyAlbumCounts = weeklyPlays.reduce((acc, h) => {
+                acc[h.song.album] = (acc[h.song.album] || 0) + 1;
+                return acc;
+            }, {});
+            const top5Albums = Object.entries(weeklyAlbumCounts).sort(([,a],[,b]) => b-a).slice(0, 5).map(([name, count]) => ({ name, count, song: songs.find(s => s.album === name) }));
+
+            // --- HTML Generation ---
+            const topSongHTML = topSongOfWeek ? `
+                <div class="bg-tertiary rounded-lg p-6 flex flex-col md:flex-row items-center gap-6 lg:col-span-2">
+                    <img src="${topSongOfWeek.song.imageBlob ? URL.createObjectURL(topSongOfWeek.song.imageBlob) : 'https://placehold.co/150x150/181818/b3b3b3?text=🎵'}" class="w-36 h-36 rounded-lg shadow-lg flex-shrink-0">
+                    <div class="text-center md:text-left">
+                        <p class="text-sm text-brand font-bold">TOP MÚSICA DA SEMANA</p>
+                        <h3 class="text-4xl font-extrabold text-primary truncate">${topSongOfWeek.song.title}</h3>
+                        <p class="text-lg text-secondary">${topSongOfWeek.song.artist}</p>
+                        <p class="text-lg text-primary mt-2">${topSongOfWeek.count} reproduções</p>
+                    </div>
+                </div>
+            ` : '<div class="bg-tertiary rounded-lg p-6 flex items-center justify-center lg:col-span-2"><p class="text-secondary">Sem dados de música da semana.</p></div>';
+
+            const topArtistHTML = topArtistOfWeek ? `
+                <div class="bg-tertiary rounded-lg p-6">
+                    <p class="text-sm text-brand font-bold">TOP ARTISTA DA SEMANA</p>
+                    <h3 class="text-3xl font-extrabold text-primary truncate">${topArtistOfWeek.name}</h3>
+                    <p class="text-lg text-secondary">${topArtistOfWeek.count} reproduções</p>
+                </div>
+            ` : '<div class="bg-tertiary rounded-lg p-6 flex items-center justify-center"><p class="text-secondary">Sem dados de artista da semana.</p></div>';
+            
+            const totalTimeWeek = weeklyPlays.reduce((sum, h) => sum + h.durationPlayed, 0);
+            const listeningTimeHTML = `
+                <div class="bg-tertiary rounded-lg p-6">
+                    <p class="text-sm text-brand font-bold">TEMPO DE ESCUTA</p>
+                    <h3 class="text-3xl font-extrabold text-primary truncate">${formatTime(totalTimeWeek, true)}</h3>
+                    <p class="text-lg text-secondary">nos últimos 7 dias</p>
+                </div>
+            `;
+
+            const generateTopListHTML = (list, type) => {
+                if(list.length === 0) return '';
+                return `
+                    <div class="bg-tertiary p-4 rounded-lg">
+                        <h4 class="font-bold text-primary mb-3">${type === 'song' ? 'Top Músicas' : (type === 'artist' ? 'Top Artistas' : 'Top Álbuns')}</h4>
+                        <div class="space-y-3">
+                            ${list.map((item, index) => {
+                                const data = item.song || item;
+                                const imageUrl = data.imageBlob ? URL.createObjectURL(data.imageBlob) : 'https://placehold.co/40x40/181818/b3b3b3?text=�';
+                                return `
+                                <div class="flex items-center gap-3">
+                                    <span class="w-5 text-center text-secondary">${index + 1}</span>
+                                    <img src="${imageUrl}" class="w-10 h-10 rounded-md">
+                                    <div class="flex-1 overflow-hidden">
+                                        <p class="text-sm font-semibold text-primary truncate">${data.title || data.name}</p>
+                                        <p class="text-xs text-secondary truncate">${item.count} reproduções</p>
+                                    </div>
+                                </div>
+                                `
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            };
 
             container.innerHTML = `
-                <div class="space-y-8">
+                <div class="space-y-8 py-6">
+                    <!-- Section 1: Weekly Summary -->
                     <div>
-                        <h3 class="text-xl font-bold text-primary mb-4">Destaques da Semana</h3>
-                        <div class="flex gap-4 overflow-x-auto pb-4" style="scroll-snap-type: x mandatory;">${storiesHTML || '<p class="text-secondary">Ouça algumas músicas para ver seus destaques aqui.</p>'}</div>
+                        <h3 class="text-2xl font-bold text-primary mb-4">Seu Resumo da Semana</h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            ${topSongHTML}
+                            <div class="space-y-6">
+                                ${topArtistHTML}
+                                ${listeningTimeHTML}
+                            </div>
+                        </div>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <div class="bg-tertiary p-4 rounded-lg"><p class="text-sm text-secondary">Tempo Ouvindo (Hoje)</p><p class="text-2xl font-bold text-primary">${formatTime(totalTimeToday, true)}</p></div>
-                        <div class="bg-tertiary p-4 rounded-lg"><p class="text-sm text-secondary">Tempo Ouvindo (Semana)</p><p class="text-2xl font-bold text-primary">${formatTime(totalTimeWeek, true)}</p></div>
-                        <div class="bg-tertiary p-4 rounded-lg"><p class="text-sm text-secondary">Tempo Ouvindo (Total)</p><p class="text-2xl font-bold text-primary">${formatTime(totalTimeAll, true)}</p></div>
-                        <div class="bg-tertiary p-4 rounded-lg"><p class="text-sm text-secondary">Música Mais Tocada</p><p class="text-2xl font-bold text-primary truncate">${topSong ? topSong.title : 'N/A'}</p></div>
+
+                    <!-- Section 2: Top Lists -->
+                    <div>
+                        <h3 class="text-2xl font-bold text-primary mb-4">Suas Listas</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            ${generateTopListHTML(top5Songs, 'song')}
+                            ${generateTopListHTML(top5Artists, 'artist')}
+                            ${generateTopListHTML(top5Albums, 'album')}
+                        </div>
                     </div>
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                    <!-- Section 3: Listening Activity -->
+                     <div>
+                        <h3 class="text-2xl font-bold text-primary mb-4">Atividade de Escuta</h3>
                         <div class="bg-tertiary p-4 rounded-lg"><canvas id="listeningTimeChart"></canvas></div>
-                        <div class="bg-tertiary p-4 rounded-lg"><canvas id="topSongsChart"></canvas></div>
                     </div>
-                </div>`;
+                </div>
+            `;
             
             renderListeningTimeChart(historyWithSongs);
-            renderTopSongsChart(historyWithSongs);
         }
         
         async function renderShowHistoryTab() {
@@ -1627,7 +1724,7 @@
             const showHistory = (await db.getAll('showHistory')).reverse();
 
             if (showHistory.length === 0) {
-                container.innerHTML = '<p class="text-secondary">Nenhum tempo de show salvo ainda. Use o temporizador na tela de letras para salvar um.</p>';
+                container.innerHTML = '<p class="text-secondary text-center py-8">Nenhum tempo de show salvo ainda. Use o temporizador na tela de letras para salvar um.</p>';
                 return;
             }
 
@@ -1696,7 +1793,7 @@
                                             <div class="text-right text-secondary">${formatTime(duration)}</div>
                                         </div>
                                     `).join('')}
-                                 `;
+                                `;
                             } else {
                                 detailsEl.innerHTML = '<p class="text-center p-4">Nenhuma música foi tocada durante este show.</p>';
                             }
@@ -1860,7 +1957,7 @@
                 const isPlayingSong = song.id === (songs[currentSongIndex] || {}).id && isPlaying;
                 
                 let firstColHTML = '';
-                if (isSelectionMode && context === 'library') {
+                if (isSelectionMode && ['library', 'playlist'].includes(context)) {
                     const isChecked = selectedSongIds.has(song.id);
                     firstColHTML = `<input type="checkbox" class="song-select-checkbox form-checkbox h-5 w-5 bg-transparent border-gray-600 text-brand focus:ring-brand" data-song-id="${song.id}" ${isChecked ? 'checked' : ''}>`;
                 } else {
@@ -1902,7 +1999,7 @@
                         return;
                     }
 
-                    if (isSelectionMode && context === 'library') {
+                    if (isSelectionMode && ['library', 'playlist'].includes(context)) {
                         const checkbox = row.querySelector('.song-select-checkbox');
                         if (e.target !== checkbox) {
                              checkbox.checked = !checkbox.checked;
@@ -1961,10 +2058,9 @@
                 return;
             }
             currentSongIndex = definitiveSongIndex;
-            const song = songs[currentSongIndex];
             
-            const songFromDB = await db.get('songs', song.id);
-            song.lyrics = songFromDB.lyrics;
+            const song = await db.get('songs', songs[currentSongIndex].id);
+            songs[currentSongIndex] = song; 
             
             song.playCount = (song.playCount || 0) + 1;
             await db.put('songs', song);
@@ -1976,8 +2072,7 @@
             updatePlayerUI(song);
             parseAndRenderLyrics(song.lyrics || '');
             
-            playbackQueue = currentPlaybackContext.slice(indexInContext + 1);
-            renderQueue();
+            updatePlaybackQueue(currentPlaybackContext, indexInContext);
             updateAllPlayerControls();
         }
 
@@ -2045,21 +2140,25 @@
         }
 
         function updateAllPlayerControls() {
-            playPauseIcon.className = isPlaying ? 'ph-bold ph-pause text-xl' : 'ph-bold ph-play text-xl';
+            const isAudioPlaying = isPlaying && !isSyncWaitingForStart;
+            playPauseIcon.className = isAudioPlaying ? 'ph-bold ph-pause text-xl' : 'ph-bold ph-play text-xl';
             shuffleBtn.classList.toggle('active-blue', isShuffled);
             repeatBtn.classList.toggle('active-blue', repeatMode !== 'none');
             repeatOneIndicator.classList.toggle('hidden', repeatMode !== 'one');
 
-            lyricsPlayPauseIcon.className = isPlaying ? 'ph-bold ph-pause text-xl' : 'ph-bold ph-play text-xl';
+            lyricsPlayPauseIcon.className = isAudioPlaying ? 'ph-bold ph-pause text-xl' : 'ph-bold ph-play text-xl';
             lyricsShuffleBtn.classList.toggle('active-blue', isShuffled);
             lyricsRepeatBtn.classList.toggle('active-blue', repeatMode !== 'none');
             lyricsRepeatOneIndicator.classList.toggle('hidden', repeatMode !== 'one');
+            
+            syncPlayPauseIcon.className = isAudioPlaying ? 'ph-bold ph-pause text-3xl' : 'ph-bold ph-play text-3xl';
+
 
             refreshCurrentSongList();
         }
 
         async function refreshCurrentSongList() {
-            const currentView = document.body.dataset.libraryView || document.body.dataset.currentView;
+            const currentView = document.body.dataset.currentView;
             const currentId = document.body.dataset.currentViewId ? parseInt(document.body.dataset.currentViewId) : null;
             
             if (currentView === 'songs') {
@@ -2096,6 +2195,17 @@
             }
         }
         
+        function updatePlaybackQueue(context, index) {
+            if (repeatMode === 'all') {
+                const upcoming = context.slice(index + 1);
+                const wrapped = context.slice(0, index + 1); // Include current song in wrapped part
+                playbackQueue = [...upcoming, ...wrapped];
+            } else {
+                playbackQueue = context.slice(index + 1);
+            }
+            renderQueue();
+        }
+
         function renderQueue() {
             queueList.innerHTML = '';
             if (playbackQueue.length === 0) {
@@ -2261,6 +2371,11 @@
             if (repeatMode === 'none') repeatMode = 'all';
             else if (repeatMode === 'all') repeatMode = 'one';
             else repeatMode = 'none';
+            
+            if (currentSongIndex > -1) {
+                const currentSongInContextIndex = currentPlaybackContext.findIndex(s => s.id === songs[currentSongIndex].id);
+                updatePlaybackQueue(currentPlaybackContext, currentSongInContextIndex);
+            }
             updateAllPlayerControls();
         }
 
@@ -2371,26 +2486,89 @@
         }
 
         function startSyncMode() {
-            const rawLyrics = lyricsTextarea.value || songs[currentSongIndex].lyrics;
-            if (!rawLyrics.trim()) { setStatus('Adicione ou edite a letra primeiro.', 'error'); return; }
+            const rawLyrics = lyricsTextarea.value || songs[currentSongIndex]?.lyrics;
+            if (!rawLyrics || !rawLyrics.trim()) { 
+                setStatus('Adicione ou edite a letra primeiro.', 'error'); 
+                return; 
+            }
+            
             syncLines = rawLyrics.split('\n').filter(line => line.trim() !== '');
+            if (syncLines.length === 0) {
+                setStatus('A letra está vazia. Adicione a letra primeiro.', 'error');
+                return;
+            }
+
             syncIndex = 0;
             syncedLyricsData = [];
+            isSyncWaitingForStart = true;
+            
+            const song = songs[currentSongIndex];
+            syncAlbumArt.src = song.imageBlob ? URL.createObjectURL(song.imageBlob) : 'https://placehold.co/64x64/121212/b3b3b3?text=KVSL';
+            syncTitle.textContent = song.title;
+            syncArtist.textContent = song.artist;
+
             lyricsPanel.classList.add('hidden');
             syncPanel.classList.remove('hidden');
+            syncPanel.classList.add('flex');
+
+
             audioPlayer.currentTime = 0;
-            audioPlayer.play();
-            updateSyncView();
+            audioPlayer.pause();
+            updateAllPlayerControls();
+            
+            clearInterval(syncTimerInterval);
+            syncTimerInterval = null;
+            
+            syncDuration.textContent = formatTime(song.duration);
+            syncCurrentTime.textContent = formatTime(0);
+            syncProgressBar.value = 0;
+            syncProgressBar.style.backgroundSize = '0% 100%';
+
+            syncLineCurrent.textContent = 'Pressione Iniciar para começar a música.';
+            syncLinePrev.textContent = '';
+            syncLineNext.textContent = `A seguir: ${syncLines[0] || ''}`;
+            
+            tapSyncBtn.textContent = 'Iniciar';
+            tapSyncBtn.classList.remove('hidden');
+            finishSyncBtn.classList.add('hidden');
         }
 
         function updateSyncView() {
-            syncLineCurrent.textContent = syncLines[syncIndex] || 'Fim da Letra';
             syncLinePrev.textContent = syncLines[syncIndex - 1] || '';
-            syncLineNext.textContent = syncLines[syncIndex + 1] || '';
+            syncLineCurrent.textContent = syncLines[syncIndex] || 'Tudo pronto! Pressione "Finalizar e Salvar".';
+            syncLineNext.textContent = syncLines[syncIndex + 1] ? `A seguir: ${syncLines[syncIndex + 1]}` : '';
+
+            if (syncIndex >= syncLines.length) {
+                tapSyncBtn.classList.add('hidden');
+                 finishSyncBtn.classList.remove('hidden');
+            } else {
+                tapSyncBtn.textContent = 'Marcar Tempo';
+                tapSyncBtn.classList.remove('hidden');
+            }
         }
 
         function tapSync() {
-            if (syncIndex >= syncLines.length) return;
+            if (isSyncWaitingForStart) {
+                isSyncWaitingForStart = false;
+                audioPlayer.play();
+
+                // Mark the first line at t=0
+                const firstLineText = syncLines[0];
+                if (firstLineText) {
+                    syncedLyricsData.push({ time: 0, text: firstLineText });
+                }
+                
+                syncIndex = 1; // Prepare for the second line
+                
+                finishSyncBtn.classList.remove('hidden');
+                updateSyncView(); // Update view to show the second line as current
+                return;
+            }
+
+            if (syncIndex >= syncLines.length) {
+                return;
+            }
+            
             const time = audioPlayer.currentTime;
             const text = syncLines[syncIndex];
             syncedLyricsData.push({ time, text });
@@ -2399,6 +2577,8 @@
         }
 
         async function finishSync() {
+            clearInterval(syncTimerInterval);
+            syncTimerInterval = null;
             let lrcString = '';
             syncedLyricsData.forEach(line => {
                 const totalSeconds = line.time;
@@ -2413,6 +2593,15 @@
             await db.put('songs', currentSong);
 
             syncPanel.classList.add('hidden');
+            syncPanel.classList.remove('flex');
+            lyricsPanel.classList.remove('hidden');
+            document.body.classList.add('lyrics-active');
+
+            parseAndRenderLyrics(lrcString);
+            toggleLyricsEditMode(false);
+            
+            tapSyncBtn.classList.remove('hidden');
+
             setStatus('Letra sincronizada e salva!', 'success');
         }
         
@@ -2540,7 +2729,6 @@
             }
         }
 
-        // MODIFIED: Added calls to loadAllData and renderView to force UI refresh.
         async function removeSongFromPlaylist(songId, playlistId) {
             const playlist = await db.get('playlists', playlistId);
             if (!playlist || !playlist.songIds) return;
@@ -2585,12 +2773,18 @@
             renderView('history');
         }
 
-        function toggleSelectionMode(force) {
-            isSelectionMode = typeof force === 'boolean' ? force : !isSelectionMode;
+        function toggleSelectionMode(force, context) {
+            isSelectionMode = force;
             if (!isSelectionMode) {
                 selectedSongIds.clear();
             }
-            renderView('songs');
+            
+            if (context === 'playlist') {
+                const playlistId = parseInt(document.body.dataset.currentViewId);
+                renderView('playlist', playlistId);
+            } else {
+                renderView('songs');
+            }
         }
 
         function updateSelection(songId, isChecked) {
@@ -2600,31 +2794,43 @@
                 selectedSongIds.delete(songId);
             }
             updateLibraryMenuState();
+            updatePlaylistMenuState();
         }
 
         function updateLibraryMenuState() {
             const selectBtn = document.getElementById('library-select-btn');
-            const optionsMenu = document.getElementById('library-context-menu');
-            if (!selectBtn || !optionsMenu) return;
+            const deleteBtn = document.getElementById('delete-selected-songs-btn');
+            if (!selectBtn) return;
 
-            const deleteSelectedMenuItem = document.getElementById('delete-selected-menu-item');
-            const deleteAllMenuItem = document.getElementById('delete-all-songs-btn');
-            const cancelSelectionMenuItem = document.getElementById('cancel-selection-menu-item');
+            selectBtn.classList.toggle('active-blue', isSelectionMode);
 
-            selectBtn.classList.toggle('active', isSelectionMode);
-
-            if (isSelectionMode) {
-                deleteAllMenuItem.classList.add('hidden');
-                cancelSelectionMenuItem.classList.remove('hidden');
-                if (selectedSongIds.size > 0) {
-                    deleteSelectedMenuItem.classList.remove('hidden');
-                } else {
-                    deleteSelectedMenuItem.classList.add('hidden');
-                }
+            if (isSelectionMode && selectedSongIds.size > 0) {
+                if (deleteBtn) deleteBtn.classList.remove('hidden');
             } else {
-                deleteAllMenuItem.classList.remove('hidden');
-                cancelSelectionMenuItem.classList.add('hidden');
-                deleteSelectedMenuItem.classList.add('hidden');
+                if (deleteBtn) deleteBtn.classList.add('hidden');
+            }
+        }
+        
+        function updatePlaylistMenuState() {
+            const selectBtn = document.getElementById('playlist-select-btn');
+            const deleteSelectedBtn = document.getElementById('delete-selected-from-playlist-btn');
+            const deletePlaylistBtn = document.getElementById('delete-playlist-btn');
+            const addSongsBtn = document.getElementById('add-songs-to-playlist-btn');
+            const playBtn = document.getElementById('play-playlist-btn');
+
+            if (!selectBtn) return;
+
+            selectBtn.classList.toggle('active-blue', isSelectionMode);
+
+            const shouldShowRegularButtons = !isSelectionMode;
+            if(deletePlaylistBtn) deletePlaylistBtn.classList.toggle('hidden', !shouldShowRegularButtons);
+            if(addSongsBtn) addSongsBtn.classList.toggle('hidden', !shouldShowRegularButtons);
+            if(playBtn) playBtn.classList.toggle('hidden', !shouldShowRegularButtons);
+
+            if (isSelectionMode && selectedSongIds.size > 0) {
+                if(deleteSelectedBtn) deleteSelectedBtn.classList.remove('hidden');
+            } else {
+                if(deleteSelectedBtn) deleteSelectedBtn.classList.add('hidden');
             }
         }
         
@@ -2658,6 +2864,28 @@
                     toggleSelectionMode(false);
                     await loadAllData();
                     renderView('songs');
+                }
+            );
+        }
+
+        async function deleteSelectedSongsFromPlaylist(playlistId) {
+            const count = selectedSongIds.size;
+            if (count === 0) return;
+            const playlist = await db.get('playlists', playlistId);
+            if (!playlist) return;
+
+            showConfirmation(
+                `Remover ${count} Música${count > 1 ? 's' : ''}`,
+                `Tem certeza que deseja remover as ${count} músicas selecionadas da playlist "${playlist.name}"?`,
+                async () => {
+                    playlist.songIds = playlist.songIds.filter(id => !selectedSongIds.has(id));
+                    await db.put('playlists', playlist);
+
+                    setStatus(`${count} música${count > 1 ? 's' : ''} removida${count > 1 ? 's' : ''} da playlist.`, 'success');
+                    selectedSongIds.clear();
+                    isSelectionMode = false;
+                    await loadAllData();
+                    renderView('playlist', playlistId);
                 }
             );
         }
@@ -2934,7 +3162,6 @@
             });
         }
 
-        // MODIFIED: Added calls to loadAllData and renderView to force UI refresh.
         async function addSongToPlaylist(songId, playlistId) {
             const playlist = await db.get('playlists', playlistId);
             if (!playlist.songIds) playlist.songIds = [];
@@ -3108,7 +3335,10 @@
                 'Cancelar Sincronização',
                 'Seus dados de sincronização não salvos serão perdidos. Deseja sair?',
                 () => {
+                    clearInterval(syncTimerInterval);
+                    syncTimerInterval = null;
                     syncPanel.classList.add('hidden');
+                    syncPanel.classList.remove('flex');
                     lyricsPanel.classList.remove('hidden');
                     if (isPlaying) {
                         audioPlayer.pause();
@@ -3116,10 +3346,16 @@
                     syncLines = [];
                     syncIndex = 0;
                     syncedLyricsData = [];
+                    isSyncWaitingForStart = false;
                 }
             );
         });
-
+        
+        syncPlayPauseBtn.addEventListener('click', () => {
+            if (isSyncWaitingForStart) return;
+            togglePlayPause();
+        });
+        
         tapSyncBtn.addEventListener('click', tapSync);
         finishSyncBtn.addEventListener('click', finishSync);
 
@@ -3135,6 +3371,12 @@
                     lyricsProgressBar.value = progressPercent;
                     lyricsProgressBar.style.backgroundSize = `${progressPercent}% 100%`;
                     lyricsCurrentTimeEl.textContent = formatTime(audioPlayer.currentTime);
+                }
+                
+                if (!syncPanel.classList.contains('hidden')) {
+                    syncProgressBar.value = progressPercent;
+                    syncProgressBar.style.backgroundSize = `${progressPercent}% 100%`;
+                    syncCurrentTime.textContent = formatTime(audioPlayer.currentTime);
                 }
 
                 if (!lyricsPanel.classList.contains('hidden')) syncLyrics(audioPlayer.currentTime);
@@ -3162,7 +3404,6 @@
             updateAllPlayerControls(); 
         });
         
-        // MODIFIED: Added specific logic for repeat-all mode.
         audioPlayer.addEventListener('ended', () => {
             if (repeatMode === 'all' && playbackQueue.length === 0) {
                 playSong(0, currentPlaybackContext);
@@ -3181,6 +3422,7 @@
         };
         setupProgressBarInput(progressBar, audioPlayer);
         setupProgressBarInput(lyricsProgressBar, audioPlayer);
+        setupProgressBarInput(syncProgressBar, audioPlayer);
 
         volumeIconBtn.addEventListener('click', toggleMute);
         volumeBar.addEventListener('input', (e) => {
