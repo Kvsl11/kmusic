@@ -80,13 +80,16 @@
         /* --- SCROLLBAR STYLES (REVISED) --- */
         /* Target any element with this class for consistent scrollbar styling */
         .overflow-y-auto::-webkit-scrollbar,
+        .overflow-x-auto::-webkit-scrollbar,
         #library-content::-webkit-scrollbar,
         #queue-list::-webkit-scrollbar,
         #lyrics-view::-webkit-scrollbar {
             width: 12px;
+            height: 12px;
         }
 
         .overflow-y-auto::-webkit-scrollbar-track,
+        .overflow-x-auto::-webkit-scrollbar-track,
         #library-content::-webkit-scrollbar-track,
         #queue-list::-webkit-scrollbar-track,
         #lyrics-view::-webkit-scrollbar-track {
@@ -94,6 +97,7 @@
         }
 
         .overflow-y-auto::-webkit-scrollbar-thumb,
+        .overflow-x-auto::-webkit-scrollbar-thumb,
         #library-content::-webkit-scrollbar-thumb,
         #queue-list::-webkit-scrollbar-thumb,
         #lyrics-view::-webkit-scrollbar-thumb {
@@ -105,6 +109,7 @@
 
         /* On hover of the scrollable container, make the thumb visible with the brand color */
         .overflow-y-auto:hover::-webkit-scrollbar-thumb,
+        .overflow-x-auto:hover::-webkit-scrollbar-thumb,
         #library-content:hover::-webkit-scrollbar-thumb,
         #queue-list:hover::-webkit-scrollbar-thumb,
         #lyrics-view:hover::-webkit-scrollbar-thumb {
@@ -975,8 +980,6 @@
         // --- VIEW MANAGEMENT ---
         async function renderView(view, id = null) {
             mainView.innerHTML = '';
-            // [FIX] Set a consistent layout for mainView: a flex column.
-            // This allows child elements to control their own scrolling.
             mainView.className = 'bg-secondary rounded-lg flex-1 min-h-0 flex flex-col';
 
             document.body.dataset.currentView = view;
@@ -1035,58 +1038,94 @@
                 greeting = 'Boa tarde';
             }
 
-            // Recently Played Songs
+            // --- Section 1: Recently Played ---
             const recentPlays = [...playHistory].reverse();
             const uniqueRecentSongIds = [...new Set(recentPlays.map(p => p.songId))];
-            const recentSongs = uniqueRecentSongIds.slice(0, 6).map(id => songs.find(s => s.id === id)).filter(Boolean);
+            const recentSongs = uniqueRecentSongIds.slice(0, 10).map(id => songs.find(s => s.id === id)).filter(Boolean);
 
-            const recentSongsHTML = recentSongs.map(song => `
-                <div class="bg-highlight rounded-md flex items-center gap-4 overflow-hidden group cursor-pointer" onclick="playSong(${songs.findIndex(s => s.id === song.id)}, songs)">
-                    <img src="${song.imageBlob ? URL.createObjectURL(song.imageBlob) : 'https://placehold.co/80x80/121212/b3b3b3?text=🎵'}" class="w-20 h-20 object-cover">
-                    <p class="font-semibold text-primary flex-1 truncate pr-4">${song.title}</p>
-                </div>
-            `).join('');
-
-            // Top Playlists
-            const topPlaylists = [...playlists].sort((a, b) => (b.songIds?.length || 0) - (a.songIds?.length || 0)).slice(0, 8);
-            const topPlaylistsHTML = topPlaylists.map(playlist => {
-                const coverHTML = generatePlaylistCover(playlist);
+            const recentSongsHTML = recentSongs.map(song => {
+                const imageUrl = song.imageBlob ? URL.createObjectURL(song.imageBlob) : 'https://placehold.co/200x200/181818/b3b3b3?text=🎵';
                 return `
-                    <div class="bg-tertiary p-4 rounded-lg hover:bg-highlight transition-colors cursor-pointer" onclick="renderView('playlist', ${playlist.id})">
-                        <div class="w-full aspect-square mb-4 shadow-lg grid grid-cols-2 grid-rows-2 overflow-hidden rounded-md">${coverHTML}</div>
-                        <p class="font-bold text-primary truncate">${playlist.name}</p>
-                        <p class="text-sm text-secondary truncate">${playlist.songIds?.length || 0} músicas</p>
+                    <div class="flex-shrink-0 w-48 group relative cursor-pointer" onclick="playSong(${songs.findIndex(s => s.id === song.id)}, songs)">
+                        <div class="aspect-square w-full bg-tertiary rounded-lg overflow-hidden shadow-lg transform group-hover:scale-105 transition-transform duration-300">
+                            <img src="${imageUrl}" class="w-full h-full object-cover">
+                        </div>
+                        <div class="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg">
+                            <i class="ph-bold ph-play-circle text-white text-6xl"></i>
+                        </div>
+                        <div class="mt-2">
+                           <p class="font-bold text-primary truncate">${song.title}</p>
+                           <p class="text-sm text-secondary truncate">${song.artist}</p>
+                        </div>
                     </div>
                 `;
             }).join('');
 
-            // Wrap home content in a scrollable div
+            // --- Section 2: Your Playlists ---
+            const topPlaylists = [...playlists].sort((a, b) => (b.songIds?.length || 0) - (a.songIds?.length || 0)).slice(0, 10);
+            const topPlaylistsHTML = topPlaylists.map(playlist => {
+                const coverHTML = generatePlaylistCover(playlist);
+                return `
+                     <div class="flex-shrink-0 w-48 group relative cursor-pointer" onclick="renderView('playlist', ${playlist.id})">
+                        <div class="aspect-square w-full bg-tertiary rounded-lg overflow-hidden shadow-lg transform group-hover:scale-105 transition-transform duration-300 grid grid-cols-2 grid-rows-2">
+                            ${coverHTML}
+                        </div>
+                         <div class="mt-2">
+                            <p class="font-bold text-primary truncate">${playlist.name}</p>
+                            <p class="text-sm text-secondary truncate">${playlist.songIds?.length || 0} músicas</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+
+            // Main container with scroll
             container.innerHTML = `
                 <div class="overflow-y-auto flex-grow">
-                    <div class="p-6 space-y-8">
+                    <div class="p-6 space-y-12">
                         <h1 class="text-3xl font-extrabold text-primary">${greeting}</h1>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                            ${recentSongsHTML || ''}
-                        </div>
+                        
+                        <!-- Recently Played Section -->
+                        ${recentSongs.length > 0 ? `
                         <div>
-                            <h2 class="text-2xl font-bold text-primary mb-4">Suas Playlists</h2>
-                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6">
-                                ${topPlaylistsHTML || '<p class="text-secondary col-span-full">Crie algumas playlists para vê-las aqui.</p>'}
+                            <h2 class="text-2xl font-bold text-primary mb-4">Tocadas recentemente</h2>
+                            <div class="flex gap-6 overflow-x-auto pb-4">
+                                ${recentSongsHTML}
                             </div>
                         </div>
+                        ` : ''}
+
+                        <!-- Playlists Section -->
+                        ${playlists.length > 0 ? `
+                        <div>
+                            <h2 class="text-2xl font-bold text-primary mb-4">Suas playlists</h2>
+                            <div class="flex gap-6 overflow-x-auto pb-4">
+                                ${topPlaylistsHTML}
+                            </div>
+                        </div>
+                        ` : ''}
+
+                        <!-- Placeholder if everything is empty -->
+                        ${recentSongs.length === 0 && playlists.length === 0 ? `
+                        <div class="text-center text-secondary p-8 bg-tertiary rounded-lg mt-8">
+                            <i class="ph-bold ph-music-notes-plus text-5xl text-brand"></i>
+                            <p class="font-semibold text-primary mt-4">Sua biblioteca está vazia</p>
+                            <p class="text-sm mt-1">Adicione músicas ou crie playlists para começar.</p>
+                        </div>
+                        ` : ''}
                     </div>
                 </div>
             `;
         }
 
 
-        function renderLibraryView(filter = 'playlists') {
+        function renderLibraryView(filter = 'songs') {
             document.body.dataset.libraryView = filter; // Store the current filter
             mainView.innerHTML = `
                 <header class="p-6 flex-shrink-0 sticky top-0 bg-secondary z-10">
                     <div class="flex items-center gap-4">
-                        <button id="library-filter-playlists" class="library-filter-btn px-4 py-2 rounded-full text-sm font-semibold transition-colors ${filter === 'playlists' ? 'active' : ''}" data-filter="playlists">Playlists</button>
                         <button id="library-filter-songs" class="library-filter-btn px-4 py-2 rounded-full text-sm font-semibold transition-colors ${filter === 'songs' ? 'active' : ''}" data-filter="songs">Músicas</button>
+                        <button id="library-filter-playlists" class="library-filter-btn px-4 py-2 rounded-full text-sm font-semibold transition-colors ${filter === 'playlists' ? 'active' : ''}" data-filter="playlists">Playlists</button>
                     </div>
                 </header>
                 <div id="library-view-content" class="flex-grow overflow-y-auto px-6"></div>
@@ -2858,7 +2897,7 @@
         navHome.addEventListener('click', (e) => { e.preventDefault(); renderView('home'); });
         navSearch.addEventListener('click', (e) => { e.preventDefault(); renderView('search'); });
         navHistory.addEventListener('click', (e) => { e.preventDefault(); renderView('history'); });
-        navLibrary.addEventListener('click', (e) => { e.preventDefault(); renderView('playlists'); });
+        navLibrary.addEventListener('click', (e) => { e.preventDefault(); renderView('songs'); });
 
         createPlaylistBtn.addEventListener('click', () => openPlaylistModal());
         closePlaylistEditModalBtn.addEventListener('click', () => playlistEditModal.classList.add('hidden'));
