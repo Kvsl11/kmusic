@@ -296,7 +296,7 @@
             border-radius: 2px;
         }
         .highlight-card img, .recent-song-card img {
-            transition: opacity 0.4s ease-in-out, transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: opacity 0.4s ease-in-out, transform 1s ease-in-out;
         }
         .highlight-card .relative.z-10 {
             transition: opacity 0.4s ease-in-out;
@@ -322,11 +322,8 @@
 </head>
 <body class="bg-primary text-secondary">
 
-    <!-- Main Grid Layout -->
     <div class="h-screen w-full grid grid-rows-[1fr,auto]">
-        <!-- Container for the main content area (sidebar + main view) -->
         <div class="grid grid-cols-[auto,1fr] gap-2 p-2 relative overflow-y-hidden">
-            <!-- Left Sidebar -->
             <aside class="w-72 bg-primary rounded-lg flex flex-col gap-2">
                 <nav class="bg-secondary rounded-lg p-3">
                     <div class="px-3 py-2">
@@ -374,21 +371,17 @@
                 </div>
             </aside>
 
-            <!-- Main Content -->
             <div class="relative flex flex-col min-h-0">
                  <main id="main-view" class="bg-secondary rounded-lg flex-1 min-h-0 flex flex-col">
-                     <!-- Content will be dynamically rendered here -->
                  </main>
-                 <!-- Theme Toggle Button -->
-                 <div class="absolute top-4 right-4 z-20">
-                     <button id="theme-toggle-btn" class="text-secondary hover:text-primary cursor-pointer bg-primary hover:bg-highlight rounded-full p-2 transition-colors duration-300" title="Mudar Tema">
+               <div class="absolute top-4 right-4 z-20">
+                   <button id="theme-toggle-btn" class="text-secondary hover:text-primary cursor-pointer bg-primary hover:bg-highlight rounded-full p-2 transition-colors duration-300" title="Mudar Tema">
                          <i id="theme-icon" class="ph-bold ph-sun text-xl"></i>
-                     </button>
-                 </div>
+                   </button>
+               </div>
             </div>
         </div>
 
-        <!-- Player Bar -->
         <footer class="bg-glass p-3 h-[92px]">
              <div class="grid grid-cols-3 items-center">
                  <div class="flex items-center gap-3">
@@ -431,10 +424,8 @@
         </footer>
     </div>
     
-    <!-- Audio Element -->
     <audio id="audio-player" class="hidden"></audio>
     
-    <!-- Queue Panel -->
     <aside id="queue-panel" class="p-4 flex flex-col gap-4">
         <div class="flex justify-between items-center">
             <h2 class="text-lg font-bold text-primary">Fila de Reprodução</h2>
@@ -458,7 +449,6 @@
         </div>
     </aside>
 
-    <!-- Now Playing Fullscreen View -->
     <div id="now-playing-fullscreen" class="hidden fixed inset-0 z-40 flex flex-col items-center justify-center overflow-hidden">
         <div id="now-playing-fullscreen-bg" class="absolute inset-0 bg-center bg-cover transition-all duration-1000" style="filter: blur(50px) brightness(0.4);"></div>
         <div class="relative z-10 flex flex-col items-center justify-center text-center p-8">
@@ -470,11 +460,9 @@
         </div>
     </div>
 
-    <!-- Lyrics Panel (Fullscreen Modal) -->
     <div id="lyrics-panel" class="hidden fixed inset-0 z-40 flex flex-col items-center overflow-hidden">
         <div id="lyrics-bg" class="absolute inset-0 bg-center bg-cover transition-all duration-1000" style="filter: blur(50px) brightness(0.4);"></div>
         
-        <!-- Show Timer Panel (Draggable & Resizable) -->
         <div id="show-timer-panel" class="hidden fixed top-28 left-1/2 -translate-x-1/2 bg-glass p-3 rounded-xl shadow-2xl z-50 flex flex-col" style="min-width: 320px; resize: both; overflow: auto;">
             <div id="show-timer-panel-drag-handle" class="w-full h-8 cursor-move -mt-3 -mx-3 mb-1"></div>
             <div class="flex items-center justify-between w-full -mt-7">
@@ -536,7 +524,6 @@
                 <button id="save-lyrics-changes-btn" class="mt-4 bg-brand text-white font-bold py-3 px-6 rounded-full hover:scale-105 transition-transform">Salvar Alterações</button>
             </div>
             
-            <!-- Player Controls for Lyrics View -->
             <div class="w-full max-w-4xl mt-auto pt-2 border-t border-theme flex-shrink-0">
                 <div class="flex flex-col items-center justify-center gap-0">
                     <div class="flex items-center gap-6">
@@ -562,9 +549,7 @@
         </div>
     </div>
     
-    <!-- Sync Panel (Fullscreen Modal) -->
     <div id="sync-panel" class="hidden fixed inset-0 z-50 p-8 flex flex-col justify-between">
-        <!-- Top Bar -->
         <div class="w-full flex justify-between items-start flex-shrink-0">
             <div class="flex items-center gap-4">
                 <img id="sync-album-art" src="https://placehold.co/64x64/121212/b3b3b3?text=KVSL" class="w-16 h-16 rounded-md shadow-lg">
@@ -576,10 +561,8 @@
             <button id="exit-sync-btn" class="text-secondary hover:text-primary text-2xl" title="Cancelar Sincronização"><i class="ph-bold ph-x"></i></button>
         </div>
 
-        <!-- Lyrics Display -->
         <div class="text-center flex-grow flex flex-col justify-center overflow-hidden py-4">
             <div id="sync-history-container" class="flex-grow overflow-y-auto flex flex-col-reverse text-2xl">
-                <!-- Synced lines will be prepended here -->
             </div>
             <div class="py-8 flex-shrink-0">
                 <p class="font-extrabold text-primary sync-line-current" id="sync-line-current">Pressione "Iniciar" para começar</p>
@@ -587,15 +570,12 @@
             </div>
         </div>
 
-        <!-- Bottom Controls -->
         <div class="w-full max-w-2xl mx-auto flex flex-col items-center gap-4 flex-shrink-0">
-            <!-- Progress Bar -->
             <div class="flex items-center gap-2 w-full slider-container">
                 <span id="sync-current-time" class="text-xs text-secondary w-10 text-right">0:00</span>
                 <input id="sync-progress-bar" type="range" min="0" max="100" value="0" class="w-full">
                 <span id="sync-duration" class="text-xs text-secondary w-10">0:00</span>
             </div>
-            <!-- Action Buttons -->
             <div class="flex items-center gap-6">
                 <button id="sync-play-pause-btn" class="text-white rounded-full w-12 h-12 flex items-center justify-center hover:bg-white/10 transition-colors" title="Tocar/Pausar">
                     <i id="sync-play-pause-icon" class="ph-bold ph-play text-3xl"></i>
@@ -607,7 +587,6 @@
     </div>
 
 
-    <!-- Error Modal -->
     <div id="error-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
         <div class="bg-tertiary border border-red-500 text-primary rounded-lg p-6 max-w-2xl w-full shadow-lg">
             <div class="flex justify-between items-center mb-4">
@@ -618,12 +597,9 @@
         </div>
     </div>
 
-    <!-- Context Menu -->
     <div id="context-menu" class="hidden absolute bg-tertiary text-primary rounded-md shadow-lg p-1 z-50">
-        <!-- Context menu options will be added here -->
     </div>
     
-    <!-- Playlist Edit Modal -->
     <div id="playlist-edit-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
         <div class="bg-tertiary rounded-lg p-6 w-full max-w-md shadow-lg space-y-4">
             <div class="flex justify-between items-center">
@@ -645,7 +621,6 @@
         </div>
     </div>
 
-    <!-- Add Songs to Playlist Modal -->
     <div id="add-songs-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
         <div class="bg-tertiary rounded-lg p-6 w-full max-w-2xl shadow-lg flex flex-col h-[90vh]">
             <div class="flex justify-between items-center mb-4 flex-shrink-0">
@@ -654,12 +629,10 @@
             </div>
             <input type="text" id="add-songs-search-input" class="w-full bg-highlight text-primary p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-brand mb-4 flex-shrink-0" placeholder="Buscar em todas as músicas...">
             <div id="add-songs-list" class="overflow-y-auto flex-1">
-                <!-- Song list will be rendered here -->
             </div>
         </div>
     </div>
 
-    <!-- Confirmation Modal -->
     <div id="confirmation-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
         <div class="bg-tertiary text-primary rounded-lg p-6 max-w-md w-full shadow-lg">
             <h2 id="confirmation-title" class="text-xl font-bold mb-4">Você tem certeza?</h2>
@@ -671,7 +644,6 @@
         </div>
     </div>
     
-    <!-- "Up Next" Notification -->
     <div id="up-next-notification" class="hidden fixed bottom-24 right-96 bg-tertiary rounded-lg shadow-2xl p-3 w-72 z-50 flex items-center gap-3 transform transition-transform duration-500 ease-out translate-x-[calc(100%+2rem)] opacity-0">
         <img id="up-next-art" src="https://placehold.co/48x48/121212/b3b3b3?text=🎵" class="w-12 h-12 rounded-md flex-shrink-0">
         <div class="overflow-hidden">
@@ -1188,7 +1160,7 @@
                 return `
                     <div id="highlight-card-${category.type}" class="highlight-card aspect-square w-full bg-tertiary rounded-lg overflow-hidden shadow-lg relative flex flex-col justify-end p-4 group cursor-pointer">
                         <div class="progress-bar-container">${progressSegments}</div>
-                        <img src="${imageUrl}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110">
+                        <img src="${imageUrl}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 ease-in-out group-hover:scale-125">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
                         <div class="relative z-10">
                             <p class="text-sm text-white/80">${category.title}</p>
@@ -1209,7 +1181,7 @@
                     <div class="flex-shrink-0 w-48 group" onclick="startPlaybackFromContext(${songs.findIndex(s => s.id === song.id)}, songs)">
                         <div class="p-3 rounded-lg hover:bg-highlight transition-colors duration-300 cursor-pointer">
                             <div class="recent-song-card aspect-square w-full bg-tertiary rounded-md overflow-hidden shadow-lg relative mb-3">
-                                <img src="${imageUrl}" class="w-full h-full object-cover group-hover:scale-110">
+                                <img src="${imageUrl}" class="w-full h-full object-cover transition-transform duration-1000 ease-in-out group-hover:scale-110">
                                 <button class="absolute bottom-2 right-2 bg-brand text-white rounded-full w-12 h-12 flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:translate-y-0 translate-y-2 transform transition-all duration-300 shadow-lg">
                                     <i class="ph-bold ph-play text-2xl"></i>
                                 </button>
@@ -1229,11 +1201,11 @@
                 return `
                      <div class="flex-shrink-0 w-48 group relative cursor-pointer" onclick="renderView('playlist', ${playlist.id})">
                           <div class="aspect-square w-full bg-tertiary rounded-lg overflow-hidden shadow-lg transform group-hover:scale-105 transition-transform duration-300 grid grid-cols-2 grid-rows-2">
-                              ${coverHTML}
+                                ${coverHTML}
                           </div>
                            <div class="mt-2">
-                               <p class="font-bold text-primary truncate">${playlist.name}</p>
-                               <p class="text-sm text-secondary truncate">${playlist.songIds?.length || 0} músicas</p>
+                                <p class="font-bold text-primary truncate">${playlist.name}</p>
+                                <p class="text-sm text-secondary truncate">${playlist.songIds?.length || 0} músicas</p>
                           </div>
                      </div>
                 `;
@@ -1754,6 +1726,7 @@
             renderListeningTimeChart(historyWithSongs);
         }
         
+        // CORREÇÃO: Função de renderização de "Shows Salvos" com design e interatividade melhorados
         async function renderShowHistoryTab() {
             const container = document.getElementById('tab-content-shows');
             const showHistory = (await db.getAll('showHistory')).reverse();
@@ -1766,104 +1739,176 @@
             const showCardsHTML = showHistory.map(show => {
                 const songCount = show.playHistoryIds.length;
                 return `
-                    <div class="bg-tertiary rounded-lg p-4 flex flex-col gap-3">
-                        <div class="flex justify-between items-start">
-                             <div>
-                                 <p class="font-bold text-primary text-lg">${formatFullDateTime(show.savedAt)}</p>
-                                 <p class="text-sm text-secondary">${songCount} música${songCount !== 1 ? 's' : ''} • ${formatTime(show.duration, true)}</p>
+                    <div class="bg-tertiary rounded-lg p-2 flex flex-col gap-2 history-show-card">
+                        <div class="history-show-card-header flex justify-between items-center cursor-pointer hover:bg-highlight/50 transition-colors rounded-md p-2">
+                            <div>
+                                <p class="font-bold text-primary text-lg">${formatFullDateTime(show.savedAt)}</p>
+                                <p class="text-sm text-secondary">${songCount} música${songCount !== 1 ? 's' : ''} • ${formatTime(show.duration, true)}</p>
                             </div>
-                            <button class="text-secondary hover:text-primary show-details-btn"><i class="ph-bold ph-caret-down text-xl transition-transform"></i></button>
+                            <button class="text-secondary hover:text-primary p-1 pointer-events-none">
+                                <i class="ph-bold ph-caret-down text-xl transition-transform"></i>
+                            </button>
                         </div>
-                        <div class="hidden show-details-content border-t border-theme pt-3 mt-2">
-                             <p class="text-center p-4">Carregando detalhes...</p>
+                        <div class="hidden history-show-details-content border-t border-theme/50 pt-3 mt-1 px-2">
+                            <p class="text-center p-4">Carregando detalhes...</p>
                         </div>
                     </div>
                 `;
             }).join('');
+            
+            // CORREÇÃO: Adicionado 'items-start' para corrigir o bug de alinhamento da grade
+            container.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 gap-6 py-6 items-start">${showCardsHTML}</div>`;
 
-            container.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 py-6">${showCardsHTML}</div>`;
+            container.addEventListener('click', async (e) => {
+                const header = e.target.closest('.history-show-card-header');
+                if (!header) return;
 
-            document.querySelectorAll('.show-details-btn').forEach((btn, index) => {
-                btn.addEventListener('click', async (e) => {
-                    const card = btn.closest('.bg-tertiary');
-                    const detailsEl = card.querySelector('.show-details-content');
-                    const icon = btn.querySelector('i');
-                    const isHidden = detailsEl.classList.toggle('hidden');
-                    icon.classList.toggle('rotate-180', !isHidden);
+                const card = header.closest('.history-show-card');
+                const detailsEl = card.querySelector('.history-show-details-content');
+                const icon = header.querySelector('i');
+                const isHidden = detailsEl.classList.toggle('hidden');
+                icon.classList.toggle('rotate-180', !isHidden);
 
-                    if (!isHidden && detailsEl.dataset.loaded !== 'true') {
-                         try {
-                            const show = showHistory[index];
-                            if (!Array.isArray(show.playHistoryIds)) {
-                                throw new Error("Dados de histórico do show estão corrompidos.");
-                            }
-                            
-                            const playHistoryPromises = show.playHistoryIds.map(id => db.get('playHistory', id));
-                            const showPlays = (await Promise.all(playHistoryPromises)).filter(Boolean);
-                            
-                            const songPlays = showPlays.reduce((acc, play) => {
-                                const song = songs.find(s => s.id === play.songId);
-                                if (song) {
-                                    if (!acc[song.id]) {
-                                        acc[song.id] = { song, count: 0, duration: 0 };
-                                    }
-                                    acc[song.id].count++;
-                                    acc[song.id].duration += play.durationPlayed;
-                                }
-                                return acc;
-                            }, {});
-
-                            if (Object.keys(songPlays).length > 0) {
-                                 detailsEl.innerHTML = `
-                                     <div class="space-y-2">
-                                     ${Object.values(songPlays).map(({song, count, duration}) => `
-                                         <div class="flex items-center gap-3 p-1.5 rounded-md hover:bg-highlight">
-                                             <img src="${song.imageBlob ? URL.createObjectURL(song.imageBlob) : 'https://placehold.co/40x40/121212/b3b3b3?text=🎵'}" class="w-10 h-10 rounded-md">
-                                             <div class="flex-1 overflow-hidden">
-                                                 <p class="font-semibold text-primary truncate">${song.title}</p>
-                                                 <p class="text-sm text-secondary truncate">${count}x • ${formatTime(duration)}</p>
-                                             </div>
-                                         </div>
-                                     `).join('')}
-                                     </div>
-                                 `;
-                            } else {
-                                detailsEl.innerHTML = '<p class="text-center p-2">Nenhuma música foi tocada durante este show.</p>';
-                            }
-                            detailsEl.dataset.loaded = 'true';
-                        } catch (err) {
-                            console.error("Erro ao carregar detalhes do show:", err);
-                            detailsEl.innerHTML = `<p class="text-center p-2 text-red-400">Erro ao carregar detalhes. ${err.message}</p>`;
+                if (!isHidden && detailsEl.dataset.loaded !== 'true') {
+                     try {
+                        const showIndex = Array.from(container.querySelectorAll('.history-show-card')).indexOf(card);
+                        const show = showHistory[showIndex];
+                        if (!Array.isArray(show.playHistoryIds)) {
+                            throw new Error("Dados de histórico do show estão corrompidos.");
                         }
+                        
+                        const playHistoryPromises = show.playHistoryIds.map(id => db.get('playHistory', id));
+                        const showPlays = (await Promise.all(playHistoryPromises)).filter(Boolean);
+                        
+                        const songPlays = showPlays.reduce((acc, play) => {
+                            const song = songs.find(s => s.id === play.songId);
+                            if (song) {
+                                if (!acc[song.id]) {
+                                    acc[song.id] = { song, count: 0, duration: 0 };
+                                }
+                                acc[song.id].count++;
+                                acc[song.id].duration += play.durationPlayed;
+                            }
+                            return acc;
+                        }, {});
+
+                        if (Object.keys(songPlays).length > 0) {
+                             detailsEl.innerHTML = `
+                                 <div class="space-y-2">
+                                 ${Object.values(songPlays).map(({song, count, duration}) => `
+                                     <div class="flex items-center gap-3 p-1.5 rounded-md hover:bg-highlight">
+                                         <img src="${song.imageBlob ? URL.createObjectURL(song.imageBlob) : 'https://placehold.co/40x40/121212/b3b3b3?text=🎵'}" class="w-10 h-10 rounded-md">
+                                         <div class="flex-1 overflow-hidden">
+                                             <p class="font-semibold text-primary truncate">${song.title}</p>
+                                             <p class="text-sm text-secondary truncate">${count}x • ${formatTime(duration)}</p>
+                                         </div>
+                                     </div>
+                                 `).join('')}
+                                 </div>
+                             `;
+                        } else {
+                            detailsEl.innerHTML = '<p class="text-center p-2">Nenhuma música foi tocada durante este show.</p>';
+                        }
+                        detailsEl.dataset.loaded = 'true';
+                    } catch (err) {
+                        console.error("Erro ao carregar detalhes do show:", err);
+                        detailsEl.innerHTML = `<p class="text-center p-2 text-red-400">Erro ao carregar detalhes. ${err.message}</p>`;
                     }
-                });
+                }
             });
         }
 
+        // CORREÇÃO: Função de "Músicas Tocadas" com design e interatividade melhorados
         async function renderRecentPlaysTab() {
             const container = document.getElementById('tab-content-plays');
-            const historyWithSongs = playHistory.map(h => ({...h, song: songs.find(s => s.id === h.songId)})).filter(h => h.song).reverse().slice(0, 100);
             
-             if (historyWithSongs.length === 0) {
+            if (playHistory.length === 0) {
                 container.innerHTML = '<p class="text-secondary text-center py-8">Seu histórico de músicas tocadas está vazio.</p>';
                 return;
             }
 
-            const historyCardsHTML = historyWithSongs.map(h => `
-                <div class="bg-tertiary rounded-lg p-3 flex items-center gap-4">
-                    <img src="${h.song.imageBlob ? URL.createObjectURL(h.song.imageBlob) : 'https://placehold.co/48x48/181818/b3b3b3?text=🎵'}" class="w-12 h-12 rounded-md">
-                    <div class="flex-1 overflow-hidden">
-                        <p class="font-semibold text-primary truncate">${h.song.title}</p>
-                        <p class="text-sm text-secondary truncate">${h.song.artist}</p>
-                    </div>
-                    <div class="text-right text-sm text-secondary whitespace-nowrap">
-                        <p>${new Date(h.playedAt).toLocaleDateString('pt-BR')}</p>
-                        <p>${formatTime(h.durationPlayed)}</p>
-                    </div>
-                </div>
-            `).join('');
+            const songPlaysSummary = playHistory.reduce((acc, play) => {
+                const song = songs.find(s => s.id === play.songId);
+                if (!song) return acc;
 
-            container.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 py-6">${historyCardsHTML}</div>`;
+                if (!acc[play.songId]) {
+                    acc[play.songId] = {
+                        song: song,
+                        totalPlays: 0,
+                        totalDuration: 0,
+                        plays: []
+                    };
+                }
+
+                acc[play.songId].totalPlays++;
+                acc[play.songId].totalDuration += play.durationPlayed;
+                acc[play.songId].plays.push({
+                    playedAt: play.playedAt,
+                    durationPlayed: play.durationPlayed
+                });
+
+                return acc;
+            }, {});
+
+            const sortedSongs = Object.values(songPlaysSummary).sort((a, b) => {
+                const lastPlayA = new Date(Math.max(...a.plays.map(p => new Date(p.playedAt))));
+                const lastPlayB = new Date(Math.max(...b.plays.map(p => new Date(p.playedAt))));
+                return lastPlayB - lastPlayA;
+            });
+
+            const historyCardsHTML = sortedSongs.map(summary => {
+                const { song, totalPlays, totalDuration, plays } = summary;
+                
+                const sortedPlays = plays.sort((a, b) => new Date(b.playedAt) - new Date(a.playedAt));
+
+                const detailsHTML = sortedPlays.map(play => `
+                    <div class="flex justify-between items-center text-sm p-1.5 rounded-md hover:bg-highlight/50">
+                        <span class="text-secondary">${formatFullDateTime(play.playedAt)}</span>
+                        <span class="text-primary font-mono">${formatTime(play.durationPlayed)}</span>
+                    </div>
+                `).join('');
+
+                return `
+                    <div class="bg-tertiary rounded-lg p-2 flex flex-col gap-2 history-play-card">
+                        <div class="history-play-card-header flex justify-between items-center cursor-pointer hover:bg-highlight/50 transition-colors rounded-md p-2">
+                            <div class="flex items-center gap-4 flex-1 overflow-hidden">
+                                <img src="${song.imageBlob ? URL.createObjectURL(song.imageBlob) : 'https://placehold.co/64x64/181818/b3b3b3?text=🎵'}" class="w-16 h-16 rounded-md flex-shrink-0">
+                                <div class="flex-1 overflow-hidden">
+                                    <p class="font-bold text-primary text-lg truncate">${song.title}</p>
+                                    <p class="text-sm text-secondary truncate">${song.artist}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4 flex-shrink-0 ml-4">
+                                <div class="text-right text-sm">
+                                    <p class="text-secondary">${totalPlays} vez${totalPlays > 1 ? 'es' : ''}</p>
+                                    <p class="font-bold text-primary text-base">${formatTime(totalDuration)}</p>
+                                </div>
+                                <button class="text-secondary hover:text-primary history-details-btn p-1 pointer-events-none">
+                                    <i class="ph-bold ph-caret-down text-2xl transition-transform"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="hidden history-details-content border-t border-theme/50 pt-3 mt-1 px-2 space-y-1">
+                            ${detailsHTML}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // CORREÇÃO: Adicionado 'items-start' para corrigir o bug de alinhamento da grade
+            container.innerHTML = `<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 py-6 items-start">${historyCardsHTML}</div>`;
+
+            container.addEventListener('click', (e) => {
+                const header = e.target.closest('.history-play-card-header');
+                if (!header) return;
+
+                const card = header.closest('.history-play-card');
+                const detailsEl = card.querySelector('.history-details-content');
+                const icon = header.querySelector('.history-details-btn i');
+                
+                const isHidden = detailsEl.classList.toggle('hidden');
+                icon.classList.toggle('rotate-180', !isHidden);
+            });
         }
 
 
@@ -2321,14 +2366,12 @@
             }
             queuePlaceholder.classList.add('hidden');
 
-            playbackQueue.forEach((song, index) => {
+            playbackQueue.forEach((song) => {
                 const queueItemEl = document.createElement('div');
                 queueItemEl.draggable = true;
                 queueItemEl.dataset.songId = song.id;
-                // Este índice agora é crucial para a lógica de arrastar e soltar
-                queueItemEl.dataset.queueIndex = index;
                 
-                const imageUrl = song.imageBlob ? URL.createObjectURL(song.imageBlob) : 'https://placehold.co/40x40/181818/b3b3b3?text=🎵';
+                const imageUrl = song.imageBlob ? URL.createObjectURL(song.imageBlob) : 'https://placehold.co/40x40/181818/b3b3b3?text=�';
                 queueItemEl.className = 'queue-item flex items-center gap-3 p-1.5 rounded-lg group cursor-grab hover:bg-highlight transition-colors';
                 queueItemEl.innerHTML = `
                     <img src="${imageUrl}" alt="Capa" class="w-10 h-10 rounded pointer-events-none">
@@ -3627,7 +3670,7 @@
         });
 
         // =================================================================================
-        // AJUSTE DEFINITIVO PARA O PROBLEMA DE ARRASTAR E SOLTAR
+        // CORREÇÃO: Lógica de arrastar e soltar da fila de reprodução
         // =================================================================================
         function initializeDragAndDrop() {
             let draggedItem = null;
@@ -3668,29 +3711,19 @@
                 e.preventDefault();
                 if (!draggedItem) return;
                 
-                draggedItem.classList.remove('dragging');
+                // 1. Obter a nova ordem de IDs de música do DOM.
+                const newIdOrder = Array.from(queueList.querySelectorAll('.queue-item'))
+                    .map(item => parseInt(item.dataset.songId, 10));
 
-                // 1. Obtém uma lista de todos os elementos da fila na sua NOVA ordem visual.
-                const itemsInNewOrder = Array.from(queueList.querySelectorAll('.queue-item'));
+                // 2. Criar um mapa para busca rápida dos objetos de música completos da fila antiga.
+                const songMap = new Map(playbackQueue.map(song => [song.id, song]));
 
-                // 2. Mapeia estes elementos do DOM para os seus objetos de música correspondentes.
-                //    Esta é a parte crucial: reconstruímos a fila usando os objetos que já estão na `playbackQueue`,
-                //    mas na nova ordem ditada pelo DOM.
-                const newQueueOrder = itemsInNewOrder.map(item => {
-                    // Obtém o índice ORIGINAL do objeto da música a partir do atributo data- que foi definido em `renderQueue`.
-                    const originalIndex = parseInt(item.dataset.queueIndex, 10);
-                    // Retorna o objeto da música daquele índice na `playbackQueue` *antes* da reordenação.
-                    return playbackQueue[originalIndex];
-                }).filter(Boolean); // Filtra quaisquer itens indefinidos por segurança.
+                // 3. Reconstruir a array playbackQueue na nova ordem.
+                // Isso garante que a ordem dos objetos corresponda à nova ordem dos IDs.
+                playbackQueue = newIdOrder.map(id => songMap.get(id)).filter(Boolean);
 
-                // 3. Atualiza a `playbackQueue` para ser a nova fonte da verdade.
-                playbackQueue = newQueueOrder;
-                
-                // 4. Renderiza novamente a fila inteira. Isto é vital para redefinir os atributos `data-queue-index`
-                //    para todos os itens, garantindo que a próxima operação de arrastar funcione corretamente.
-                renderQueue(); 
-                
-                draggedItem = null;
+                // 4. Re-renderizar a fila para atualizar a UI e garantir a consistência.
+                renderQueue();
             });
         }
 
