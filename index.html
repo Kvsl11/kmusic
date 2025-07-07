@@ -235,7 +235,7 @@
         #sync-panel .sync-line-next { opacity: 0.4; font-size: 1.5rem; }
         
         /* Drag and Drop styles */
-        .queue-item.dragging { opacity: 0.5; }
+        .queue-item.dragging { opacity: 0.5; background-color: var(--bg-highlight); }
         .song-item-row.selected { background-color: rgba(41, 170, 226, 0.2); }
         
         #up-next-notification.show { transform: translateX(0); opacity: 1; }
@@ -304,8 +304,8 @@
 
     </style>
 
-        <script>
-            (function disableInspect() {
+    <script>
+        (function disableInspect() {
             // Bloqueia clique direito
             document.addEventListener('contextmenu', e => e.preventDefault());
 
@@ -317,13 +317,8 @@
                 (e.ctrlKey && e.key === 'U');
                 if (forbidden) e.preventDefault();
             });
-
-            // Impede abertura do console pelo DevTools
-            Object.defineProperty(window, 'console', {
-                get() { throw new Error('Acesso ao console bloqueado'); }
-            });
-            })();
-        </script>
+        })();
+    </script>
 </head>
 <body class="bg-primary text-secondary">
 
@@ -396,43 +391,43 @@
         <!-- Player Bar -->
         <footer class="bg-glass p-3 h-[92px]">
              <div class="grid grid-cols-3 items-center">
-                <div class="flex items-center gap-3">
-                    <img id="player-album-art" src="https://placehold.co/64x64/121212/b3b3b3?text=KVSL" alt="Capa" class="w-14 h-14 rounded-md shadow-md cursor-pointer">
-                    <div>
-                        <p id="player-title" class="font-bold text-primary truncate cursor-pointer">Nenhuma música tocando</p>
-                        <p id="player-artist" class="text-sm text-secondary truncate">---</p>
-                    </div>
-                </div>
-                <div class="flex flex-col items-center justify-center gap-2">
-                    <div class="flex items-center gap-6">
-                        <button id="shuffle-btn" class="btn-icon text-secondary hover:text-primary transition-colors" title="Aleatório"><i class="ph-bold ph-shuffle text-xl"></i></button>
-                        <button id="prev-btn" class="btn-icon text-secondary hover:text-primary transition-colors" title="Anterior"><i class="ph-bold ph-skip-back text-2xl"></i></button>
-                        <button id="play-pause-btn" class="bg-white text-black rounded-full w-10 h-10 flex items-center justify-center hover:scale-105 transition-transform" title="Tocar/Pausar">
-                            <i id="play-pause-icon" class="ph-bold ph-play text-xl"></i>
-                        </button>
-                        <button id="next-btn" class="btn-icon text-secondary hover:text-primary transition-colors" title="Próxima"><i class="ph-bold ph-skip-forward text-2xl"></i></button>
-                        <button id="repeat-btn" class="btn-icon text-secondary hover:text-primary transition-colors relative" title="Repetir">
-                            <i class="ph-bold ph-repeat text-xl"></i>
-                            <span id="repeat-one-indicator" class="absolute -top-1 -right-1 text-xs bg-brand text-black rounded-full h-3 w-3 flex items-center justify-center font-bold hidden">1</span>
-                        </button>
-                    </div>
-                    <div class="flex items-center gap-2 w-full max-w-xl slider-container">
-                        <span id="current-time" class="text-xs text-secondary w-10 text-right">0:00</span>
-                        <input id="progress-bar" type="range" min="0" max="100" value="0" class="w-full">
-                        <span id="duration" class="text-xs text-secondary w-10">0:00</span>
-                    </div>
-                </div>
-                <div class="flex items-center justify-end gap-4">
-                    <button id="lyrics-btn" class="btn-icon text-secondary hover:text-primary transition-colors" title="Letra"><i class="ph-bold ph-microphone-stage text-xl"></i></button>
-                    <button id="queue-btn" class="btn-icon text-secondary hover:text-primary transition-colors" title="Fila de reprodução"><i class="ph-bold ph-list-bullets text-xl"></i></button>
-                    <div class="flex items-center gap-2 w-32 slider-container">
-                        <button id="volume-icon-btn" class="btn-icon text-secondary hover:text-primary transition-colors" title="Mudo">
-                            <i id="volume-icon" class="ph-bold ph-speaker-high text-xl"></i>
-                        </button>
-                        <input id="volume-bar" type="range" min="0" max="100" value="50" class="w-full">
-                    </div>
-                </div>
-            </div>
+                 <div class="flex items-center gap-3">
+                     <img id="player-album-art" src="https://placehold.co/64x64/121212/b3b3b3?text=KVSL" alt="Capa" class="w-14 h-14 rounded-md shadow-md cursor-pointer">
+                     <div>
+                         <p id="player-title" class="font-bold text-primary truncate cursor-pointer">Nenhuma música tocando</p>
+                         <p id="player-artist" class="text-sm text-secondary truncate">---</p>
+                     </div>
+                 </div>
+                 <div class="flex flex-col items-center justify-center gap-2">
+                     <div class="flex items-center gap-6">
+                         <button id="shuffle-btn" class="btn-icon text-secondary hover:text-primary transition-colors" title="Aleatório"><i class="ph-bold ph-shuffle text-xl"></i></button>
+                         <button id="prev-btn" class="btn-icon text-secondary hover:text-primary transition-colors" title="Anterior"><i class="ph-bold ph-skip-back text-2xl"></i></button>
+                         <button id="play-pause-btn" class="bg-white text-black rounded-full w-10 h-10 flex items-center justify-center hover:scale-105 transition-transform" title="Tocar/Pausar">
+                             <i id="play-pause-icon" class="ph-bold ph-play text-xl"></i>
+                         </button>
+                         <button id="next-btn" class="btn-icon text-secondary hover:text-primary transition-colors" title="Próxima"><i class="ph-bold ph-skip-forward text-2xl"></i></button>
+                         <button id="repeat-btn" class="btn-icon text-secondary hover:text-primary transition-colors relative" title="Repetir">
+                             <i class="ph-bold ph-repeat text-xl"></i>
+                             <span id="repeat-one-indicator" class="absolute -top-1 -right-1 text-xs bg-brand text-black rounded-full h-3 w-3 flex items-center justify-center font-bold hidden">1</span>
+                         </button>
+                     </div>
+                     <div class="flex items-center gap-2 w-full max-w-xl slider-container">
+                         <span id="current-time" class="text-xs text-secondary w-10 text-right">0:00</span>
+                         <input id="progress-bar" type="range" min="0" max="100" value="0" class="w-full">
+                         <span id="duration" class="text-xs text-secondary w-10">0:00</span>
+                     </div>
+                 </div>
+                 <div class="flex items-center justify-end gap-4">
+                     <button id="lyrics-btn" class="btn-icon text-secondary hover:text-primary transition-colors" title="Letra"><i class="ph-bold ph-microphone-stage text-xl"></i></button>
+                     <button id="queue-btn" class="btn-icon text-secondary hover:text-primary transition-colors" title="Fila de reprodução"><i class="ph-bold ph-list-bullets text-xl"></i></button>
+                     <div class="flex items-center gap-2 w-32 slider-container">
+                         <button id="volume-icon-btn" class="btn-icon text-secondary hover:text-primary transition-colors" title="Mudo">
+                             <i id="volume-icon" class="ph-bold ph-speaker-high text-xl"></i>
+                         </button>
+                         <input id="volume-bar" type="range" min="0" max="100" value="50" class="w-full">
+                     </div>
+                 </div>
+             </div>
         </footer>
     </div>
     
@@ -624,8 +619,8 @@
     </div>
 
     <!-- Context Menu -->
-    <div id="context-menu" class="hidden absolute bg-tertiary text-primary rounded-md shadow-lg p-2 z-50">
-        <!-- Playlist options will be added here -->
+    <div id="context-menu" class="hidden absolute bg-tertiary text-primary rounded-md shadow-lg p-1 z-50">
+        <!-- Context menu options will be added here -->
     </div>
     
     <!-- Playlist Edit Modal -->
@@ -847,25 +842,26 @@
         const upNextTitle = document.getElementById('up-next-title');
         const upNextTimer = document.getElementById('up-next-timer');
 
-        // App state
+        // --- App state ---
+        let db;
         let songs = [];
         let playlists = [];
-        let playHistory = [];
-        let playbackQueue = [];
-        let currentPlaybackContext = [];
-        let currentSongIndex = -1;
-        let currentSongIndexInContext = -1; // FIX: Added to track index within a context
+        let playHistory = []; // For long-term DB history
+        
+        // Playback State
+        let currentSong = null; // The song object that is currently playing or paused.
+        let playbackQueue = []; // The list of upcoming songs. The single source of truth for "next".
+        let playedSongsStack = []; // A LIFO stack of songs just played in this session, for the "back" button.
+        let lastPlayedContext = []; // The original, unmodified list (playlist, album, all songs) for the "repeat all" feature.
         let currentHistoryEntryId = null;
         let historyUpdateInterval = null;
-        let currentLyrics = [];
-        let syncLines = [];
-        let syncIndex = 0;
-        let syncedLyricsData = [];
         let isPlaying = false;
         let isShuffled = false;
         let repeatMode = 'none'; // 'none', 'all', 'one'
+        
+        // UI State
+        let currentLyrics = [];
         let lyricsFontSize = 2; // in rem
-        let db;
         let isSelectionMode = false;
         let selectedSongIds = new Set();
         let upNextNotificationShown = false;
@@ -873,6 +869,11 @@
         let isQueueOpen = false;
         let isMuted = false;
         let lastVolume = 0.5;
+
+        // Sync State
+        let syncLines = [];
+        let syncIndex = 0;
+        let syncedLyricsData = [];
         let isSyncWaitingForStart = false;
 
         // Show Timer State
@@ -942,6 +943,7 @@
             await loadAllData(true);
             initializePlayerState();
             initializeTheme();
+            initializeDragAndDrop(); // Initialize DnD listeners once
             renderView('home');
         }
 
@@ -1204,7 +1206,7 @@
             const recentSongsHTML = recentSongs.map(song => {
                 const imageUrl = song.imageBlob ? URL.createObjectURL(song.imageBlob) : 'https://placehold.co/200x200/181818/b3b3b3?text=🎵';
                 return `
-                    <div class="flex-shrink-0 w-48 group" onclick="playSong(${songs.findIndex(s => s.id === song.id)}, songs)">
+                    <div class="flex-shrink-0 w-48 group" onclick="startPlaybackFromContext(${songs.findIndex(s => s.id === song.id)}, songs)">
                         <div class="p-3 rounded-lg hover:bg-highlight transition-colors duration-300 cursor-pointer">
                             <div class="recent-song-card aspect-square w-full bg-tertiary rounded-md overflow-hidden shadow-lg relative mb-3">
                                 <img src="${imageUrl}" class="w-full h-full object-cover group-hover:scale-110">
@@ -1226,14 +1228,14 @@
                 const coverHTML = generatePlaylistCover(playlist);
                 return `
                      <div class="flex-shrink-0 w-48 group relative cursor-pointer" onclick="renderView('playlist', ${playlist.id})">
-                         <div class="aspect-square w-full bg-tertiary rounded-lg overflow-hidden shadow-lg transform group-hover:scale-105 transition-transform duration-300 grid grid-cols-2 grid-rows-2">
-                             ${coverHTML}
-                         </div>
-                          <div class="mt-2">
-                             <p class="font-bold text-primary truncate">${playlist.name}</p>
-                             <p class="text-sm text-secondary truncate">${playlist.songIds?.length || 0} músicas</p>
-                         </div>
-                    </div>
+                          <div class="aspect-square w-full bg-tertiary rounded-lg overflow-hidden shadow-lg transform group-hover:scale-105 transition-transform duration-300 grid grid-cols-2 grid-rows-2">
+                              ${coverHTML}
+                          </div>
+                           <div class="mt-2">
+                               <p class="font-bold text-primary truncate">${playlist.name}</p>
+                               <p class="text-sm text-secondary truncate">${playlist.songIds?.length || 0} músicas</p>
+                          </div>
+                     </div>
                 `;
             }).join('');
 
@@ -1377,7 +1379,7 @@
                     <div id="library-song-list"></div>
                 </div>
             `;
-            renderSongList(songsToRender, 'library-song-list', 'library');
+            renderSongList(songsToRender, 'library-song-list', songsToRender);
             updateLibraryMenuState();
             
             document.getElementById('library-select-btn').addEventListener('click', () => toggleSelectionMode(!isSelectionMode, 'library'));
@@ -1455,7 +1457,7 @@
                     </div>
                     <div id="search-song-list"></div>
                 `;
-                renderSongList(results, 'search-song-list', 'search');
+                renderSongList(results, 'search-song-list', results);
             });
         }
 
@@ -1517,11 +1519,11 @@
                     <div id="playlist-song-list"></div>
                 </div>
             `;
-            renderSongList(playlistSongs, 'playlist-song-list', 'playlist');
+            renderSongList(playlistSongs, 'playlist-song-list', playlistSongs);
             updatePlaylistMenuState();
 
             document.getElementById('play-playlist-btn').addEventListener('click', () => {
-                if (playlistSongs.length > 0) playSong(0, playlistSongs);
+                if (playlistSongs.length > 0) startPlaybackFromContext(0, playlistSongs);
             });
             document.getElementById('add-songs-to-playlist-btn').addEventListener('click', () => openAddSongsModal(playlistId));
             document.getElementById('delete-playlist-btn').addEventListener('click', () => {
@@ -1541,7 +1543,7 @@
                     s.artist.toLowerCase().includes(query) ||
                     s.album.toLowerCase().includes(query)
                 );
-                renderSongList(filteredSongs, 'playlist-song-list', 'playlist');
+                renderSongList(filteredSongs, 'playlist-song-list', playlistSongs);
             });
         }
 
@@ -1974,7 +1976,7 @@
             return coverHTML;
         }
 
-        function renderSongList(songArray, containerId, context = 'default') {
+        function renderSongList(songArray, containerId, contextArray) {
             const container = document.getElementById(containerId);
             if (!container) return;
             container.innerHTML = '';
@@ -1984,10 +1986,10 @@
             }
             songArray.forEach((song, index) => {
                 const imageUrl = song.imageBlob ? URL.createObjectURL(song.imageBlob) : 'https://placehold.co/40x40/121212/b3b3b3?text=🎵';
-                const isPlayingSong = song.id === (songs[currentSongIndex] || {}).id && isPlaying;
+                const isPlayingSong = song.id === (currentSong || {}).id && isPlaying;
                 
                 let firstColHTML = '';
-                if (isSelectionMode && ['library', 'playlist'].includes(context)) {
+                if (isSelectionMode && (document.body.dataset.currentView === 'songs' || document.body.dataset.currentView === 'playlist')) {
                     const isChecked = selectedSongIds.has(song.id);
                     firstColHTML = `<input type="checkbox" class="song-select-checkbox form-checkbox h-5 w-5 bg-transparent border-gray-600 text-brand focus:ring-brand" data-song-id="${song.id}" ${isChecked ? 'checked' : ''}>`;
                 } else {
@@ -2001,7 +2003,7 @@
                 songItemEl.dataset.songId = song.id;
 
                 songItemEl.innerHTML = `
-                    <div class="w-8 text-center relative flex items-center justify-center h-full pointer-events-none">
+                    <div class="w-8 text-center relative flex items-center justify-center pointer-events-none">
                         ${firstColHTML}
                     </div>
                     <div class="flex items-center gap-4 pointer-events-none">
@@ -2029,7 +2031,7 @@
                         return;
                     }
 
-                    if (isSelectionMode && ['library', 'playlist'].includes(context)) {
+                    if (isSelectionMode && (document.body.dataset.currentView === 'songs' || document.body.dataset.currentView === 'playlist')) {
                         const checkbox = row.querySelector('.song-select-checkbox');
                         if (e.target !== checkbox) {
                              checkbox.checked = !checkbox.checked;
@@ -2039,9 +2041,9 @@
                         return; 
                     }
                     
-                    const songIndex = songArray.findIndex(s => s.id === songId);
+                    const songIndex = contextArray.findIndex(s => s.id === songId);
                     if (songIndex > -1) {
-                        playSong(songIndex, songArray);
+                        startPlaybackFromContext(songIndex, contextArray);
                     }
                 });
             });
@@ -2070,46 +2072,126 @@
             });
         }
 
-        // --- PLAYER & LYRICS & HISTORY LOGIC ---
-        async function playSong(indexInContext, contextArray) {
-            if (indexInContext < 0 || indexInContext >= contextArray.length) return;
+        // --- PLAYER & QUEUE LOGIC (REFACTORED) ---
+
+        /**
+         * Starts a new playback session from a list of songs (a context).
+         * This function is called when a user clicks a song in any list.
+         * It sets the queue for what will play *after* the selected song.
+         * @param {number} startIndex - The index of the song to play within the contextArray.
+         * @param {Array<Object>} contextArray - The array of songs to use as the playback context (e.g., a playlist or all songs).
+         */
+        async function startPlaybackFromContext(startIndex, contextArray) {
+            if (startIndex < 0 || startIndex >= contextArray.length) {
+                console.error("startPlaybackFromContext: index out of bounds.");
+                return;
+            }
+
+            lastPlayedContext = contextArray; // Store the original context for "repeat all"
+            playedSongsStack = []; // Reset the session history
+
+            const upcomingSongs = contextArray.slice(startIndex);
             
-            currentSongIndexInContext = indexInContext;
-            
+            if (isShuffled) {
+                // Shuffle the upcoming songs, but keep the first one (the one clicked) at the top.
+                const firstSong = upcomingSongs.shift();
+                const shuffledUpcoming = upcomingSongs.sort(() => Math.random() - 0.5);
+                playbackQueue = [firstSong, ...shuffledUpcoming];
+            } else {
+                playbackQueue = upcomingSongs;
+            }
+
+            // This will take the first song from the newly created queue and play it.
+            await playNextSongFromQueue(false); // `false` because we don't want to add a non-existent previous song to the stack.
+        }
+
+        /**
+         * Plays the next song from the queue. This is the main playback engine.
+         * @param {boolean} fromEndOfTrack - True if called automatically by the 'ended' event.
+         */
+        async function playNextSongFromQueue(fromEndOfTrack = false) {
+            // If the last song was ended (not skipped), and it's 'repeat one', play it again.
+            if (fromEndOfTrack && repeatMode === 'one' && currentSong) {
+                await playSongObject(currentSong);
+                return;
+            }
+
+            // Add the song that just finished to the history stack.
+            if (currentSong) {
+                playedSongsStack.push(currentSong);
+                 if (playedSongsStack.length > 50) { // Limit stack size
+                     playedSongsStack.shift();
+                }
+            }
+
+            // Check if the queue is empty
+            if (playbackQueue.length === 0) {
+                if (repeatMode === 'all' && lastPlayedContext.length > 0) {
+                    // If repeat all is on, start the original context over.
+                    await startPlaybackFromContext(0, lastPlayedContext);
+                } else {
+                    // Stop playback
+                    currentSong = null;
+                    audioPlayer.src = '';
+                    isPlaying = false;
+                    updatePlayerUI({ title: 'Nenhuma música tocando', artist: '---', imageBlob: null, duration: 0 });
+                    updateAllPlayerControls();
+                    await stopHistoryTracking();
+                }
+                return;
+            }
+
+            // Get the next song and play it
+            const nextSong = playbackQueue.shift();
+            await playSongObject(nextSong);
+        }
+
+        /**
+         * Plays a single song object.
+         * This is the core function that updates the audio player and UI for a new song.
+         * It does NOT modify the playback queue.
+         * @param {Object} song - The song object to play.
+         */
+        async function playSongObject(song) {
+            if (!song || !song.id) {
+                console.error("playSongObject: Invalid song object provided.");
+                return;
+            }
             await stopHistoryTracking();
+
+            currentSong = song; // Set the new current song
+
+            const songFromDb = await db.get('songs', song.id);
+            if (!songFromDb) {
+                showError('Erro', 'A música selecionada não foi encontrada na biblioteca.');
+                playNextSongFromQueue(false); // Skip to the next one
+                return;
+            }
+
+            // Update the main `songs` array reference if needed, and play count
+            const masterIndex = songs.findIndex(s => s.id === songFromDb.id);
+            if (masterIndex > -1 && songs[masterIndex].playCount !== songFromDb.playCount + 1) {
+                songs[masterIndex].playCount = (songFromDb.playCount || 0) + 1;
+                await db.put('songs', songs[masterIndex]);
+            } else if (masterIndex === -1) {
+                 songFromDb.playCount = (songFromDb.playCount || 0) + 1;
+                 await db.put('songs', songFromDb);
+            }
+            
+            await startHistoryTracking(songFromDb.id);
+
             upNextNotificationShown = false;
             clearTimeout(upNextTimeout);
             hideUpNextNotification();
 
-            currentPlaybackContext = contextArray;
-            const songFromContext = contextArray[indexInContext];
+            audioPlayer.src = URL.createObjectURL(songFromDb.audioBlob);
+            audioPlayer.play();
 
-            const definitiveSongIndex = songs.findIndex(s => s.id === songFromContext.id);
-            if (definitiveSongIndex === -1) {
-                showError('Erro', 'A música não pôde ser encontrada na biblioteca principal.');
-                return;
-            }
-            currentSongIndex = definitiveSongIndex;
+            updatePlayerUI(songFromDb);
+            parseAndRenderLyrics(songFromDb.lyrics || '');
+            if (lyricsView) lyricsView.scrollTop = 0;
             
-            const song = await db.get('songs', songs[currentSongIndex].id);
-            songs[currentSongIndex] = song; 
-            
-            song.playCount = (song.playCount || 0) + 1;
-            await db.put('songs', song);
-            
-            await startHistoryTracking(song.id);
-
-            audioPlayer.src = URL.createObjectURL(song.audioBlob);
-            audioPlayer.play(); 
-            updatePlayerUI(song);
-            parseAndRenderLyrics(song.lyrics || '');
-            
-            // Reset scroll position for lyrics view
-            if (lyricsView) {
-                lyricsView.scrollTop = 0;
-            }
-
-            updatePlaybackQueue(currentPlaybackContext, indexInContext);
+            renderQueue();
             updateAllPlayerControls();
         }
 
@@ -2148,7 +2230,6 @@
             }
             currentHistoryEntryId = null;
         }
-
         
         function updatePlayerUI(song) {
             const imageUrl = song.imageBlob ? URL.createObjectURL(song.imageBlob) : 'https://placehold.co/64x64/121212/b3b3b3?text=KVSL';
@@ -2206,7 +2287,7 @@
                     s.artist.toLowerCase().includes(query) || 
                     s.album.toLowerCase().includes(query)
                 );
-                renderSongList(filteredSongs, 'library-song-list', 'library');
+                renderSongList(filteredSongs, 'library-song-list', filteredSongs);
             } else if (currentView === 'playlist' && currentId) {
                 const playlist = await db.get('playlists', currentId);
                 const playlistSongs = (playlist.songIds || []).map(id => songs.find(s => s.id === id)).filter(Boolean);
@@ -2217,7 +2298,7 @@
                     s.artist.toLowerCase().includes(query) || 
                     s.album.toLowerCase().includes(query)
                 );
-                renderSongList(filteredSongs, 'playlist-song-list', 'playlist');
+                renderSongList(filteredSongs, 'playlist-song-list', playlistSongs);
             } else if (currentView === 'search') {
                 const searchInput = document.getElementById('search-input');
                 if (searchInput && searchInput.value) {
@@ -2227,22 +2308,11 @@
                          s.artist.toLowerCase().includes(query) ||
                          s.album.toLowerCase().includes(query)
                      );
-                     renderSongList(results, 'search-song-list', 'search');
+                     renderSongList(results, 'search-song-list', results);
                 }
             }
         }
         
-        function updatePlaybackQueue(context, index) {
-            if (repeatMode === 'all') {
-                const upcoming = context.slice(index + 1);
-                const wrapped = context.slice(0, index + 1); // Include current song in wrapped part
-                playbackQueue = [...upcoming, ...wrapped];
-            } else {
-                playbackQueue = context.slice(index + 1);
-            }
-            renderQueue();
-        }
-
         function renderQueue() {
             queueList.innerHTML = '';
             if (playbackQueue.length === 0) {
@@ -2255,31 +2325,44 @@
                 const queueItemEl = document.createElement('div');
                 queueItemEl.draggable = true;
                 queueItemEl.dataset.songId = song.id;
+                // Este índice agora é crucial para a lógica de arrastar e soltar
+                queueItemEl.dataset.queueIndex = index;
                 
                 const imageUrl = song.imageBlob ? URL.createObjectURL(song.imageBlob) : 'https://placehold.co/40x40/181818/b3b3b3?text=🎵';
-                queueItemEl.className = 'queue-item flex items-center gap-3 p-1.5 rounded-lg group cursor-pointer hover:bg-highlight transition-colors';
+                queueItemEl.className = 'queue-item flex items-center gap-3 p-1.5 rounded-lg group cursor-grab hover:bg-highlight transition-colors';
                 queueItemEl.innerHTML = `
                     <img src="${imageUrl}" alt="Capa" class="w-10 h-10 rounded pointer-events-none">
                     <div class="flex-1 pointer-events-none overflow-hidden">
                         <p class="text-sm font-semibold text-primary">${song.title}</p>
                         <p class="text-xs text-secondary">${song.artist}</p>
                     </div>
-                    <button class="text-secondary hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity remove-from-queue-btn" data-queue-index="${index}" title="Remover da fila">
+                    <button class="text-secondary hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity remove-from-queue-btn" data-song-id="${song.id}" title="Remover da fila">
                         <i class="ph-bold ph-x text-lg"></i>
                     </button>
                 `;
                 queueList.appendChild(queueItemEl);
             });
 
-            addDragAndDropListeners();
-
+            // Add listeners for click-to-play and remove
             queueList.querySelectorAll('.queue-item').forEach(item => {
                 item.addEventListener('click', (e) => {
                     if (e.target.closest('.remove-from-queue-btn')) return;
-                    const songId = parseInt(item.dataset.songId);
-                    const indexInContext = currentPlaybackContext.findIndex(s => s.id === songId);
-                    if (indexInContext !== -1) {
-                        playSong(indexInContext, currentPlaybackContext);
+
+                    const songIdToPlay = parseInt(item.dataset.songId);
+                    const indexInQueue = playbackQueue.findIndex(s => s.id === songIdToPlay);
+
+                    if (indexInQueue > -1) {
+                        // Songs before the clicked one are now part of the "previous" history
+                        const skippedSongs = playbackQueue.slice(0, indexInQueue);
+                        for (let i = skippedSongs.length - 1; i >= 0; i--) {
+                            playedSongsStack.push(skippedSongs[i]);
+                        }
+                        
+                        // The new queue is the clicked song and everything after it.
+                        playbackQueue = playbackQueue.slice(indexInQueue);
+                        
+                        // Play the next song from the queue (which is now the one that was clicked)
+                        playNextSongFromQueue(false);
                     }
                 });
             });
@@ -2287,62 +2370,13 @@
             document.querySelectorAll('.remove-from-queue-btn').forEach(button => {
                 button.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    removeFromQueue(parseInt(button.dataset.queueIndex));
-                });
-            });
-        }
-
-        function addDragAndDropListeners() {
-            const queueItems = queueList.querySelectorAll('.queue-item');
-            let draggedItem = null;
-
-            queueItems.forEach(item => {
-                item.addEventListener('dragstart', (e) => {
-                    draggedItem = item;
-                    setTimeout(() => item.classList.add('dragging'), 0);
-                });
-
-                item.addEventListener('dragend', () => {
-                    if(draggedItem) {
-                        draggedItem.classList.remove('dragging');
-                        draggedItem = null;
+                    const songIdToRemove = parseInt(button.dataset.songId);
+                    const indexToRemove = playbackQueue.findIndex(s => s.id === songIdToRemove);
+                    if (indexToRemove > -1) {
+                        playbackQueue.splice(indexToRemove, 1);
+                        renderQueue();
                     }
                 });
-            });
-
-            queueList.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                const afterElement = getDragAfterElement(queueList, e.clientY);
-                const currentDragged = document.querySelector('.dragging');
-                if (!currentDragged) return;
-                
-                if (afterElement == null) {
-                    queueList.appendChild(currentDragged);
-                } else {
-                    queueList.insertBefore(currentDragged, afterElement);
-                }
-            });
-
-            queueList.addEventListener('drop', () => {
-                if (!draggedItem) return;
-                draggedItem.classList.remove('dragging');
-
-                const newQueue = [];
-                queueList.querySelectorAll('.queue-item').forEach(item => {
-                    const songId = parseInt(item.dataset.songId);
-                    const song = songs.find(s => s.id === songId);
-                    if (song) newQueue.push(song);
-                });
-                
-                playbackQueue = newQueue;
-                
-                // FIX: Rebuild the context using the reliable context index, not by finding the song ID again.
-                if (currentSongIndexInContext !== -1) {
-                    const partBefore = currentPlaybackContext.slice(0, currentSongIndexInContext + 1);
-                    currentPlaybackContext = [...partBefore, ...playbackQueue];
-                }
-
-                renderQueue();
             });
         }
 
@@ -2359,60 +2393,77 @@
             }, { offset: Number.NEGATIVE_INFINITY }).element;
         }
 
-        function addToQueue(songId) { const songToAdd = songs.find(s => s.id === songId); if (songToAdd) { playbackQueue.push(songToAdd); renderQueue(); } }
-        function removeFromQueue(queueIndex) { playbackQueue.splice(queueIndex, 1); renderQueue(); }
-        
-        function togglePlayPause() { if (currentSongIndex === -1 && songs.length > 0) { playSong(0, songs); return; } if (!audioPlayer.src) return; isPlaying ? audioPlayer.pause() : audioPlayer.play(); }
-        
-        // FIX: Replaced playNext to use the reliable context index.
-        function playNext() {
-            // 1. Handle repeat 'one'
-            if (repeatMode === 'one' && currentSongIndex !== -1) {
-                // Replay the current song by calling playSong with the same context and index
-                playSong(currentSongIndexInContext, currentPlaybackContext);
-                return;
+        function addSongToNextUp(songId) {
+            const songToAdd = songs.find(s => s.id === songId);
+            if (songToAdd) {
+                playbackQueue = playbackQueue.filter(s => s.id !== songId);
+                playbackQueue.unshift(songToAdd);
+                renderQueue();
+                setStatus(`"${songToAdd.title}" será a próxima.`, 'success');
             }
-
-            // If there's no context, do nothing.
-            if (!currentPlaybackContext || currentPlaybackContext.length === 0) {
-                isPlaying = false;
-                updateAllPlayerControls();
-                stopHistoryTracking();
-                return;
-            }
-
-            // 2. Determine the next index
-            let nextIndex = currentSongIndexInContext + 1;
-
-            // 3. Handle end of context
-            if (nextIndex >= currentPlaybackContext.length) {
-                if (repeatMode === 'all') {
-                    nextIndex = 0; // Wrap around to the start
-                } else {
-                    // End of playlist, not repeating
-                    isPlaying = false;
-                    updateAllPlayerControls();
-                    stopHistoryTracking();
-                    return;
-                }
-            }
-
-            // 4. Play the song at the determined next index
-            playSong(nextIndex, currentPlaybackContext);
         }
 
-        // FIX: Replaced playPrev to use the reliable context index.
-        function playPrev() {
-            if (!currentPlaybackContext || currentPlaybackContext.length === 0) return;
-            let prevIndex = currentSongIndexInContext - 1;
-            if (prevIndex < 0) {
-                prevIndex = currentPlaybackContext.length - 1; 
+        function addSongToEndOfQueue(songId) {
+            const songToAdd = songs.find(s => s.id === songId);
+            if (songToAdd) {
+                if (playbackQueue.some(s => s.id === songId)) {
+                    setStatus(`"${songToAdd.title}" já está na fila.`, 'info');
+                    return;
+                }
+                playbackQueue.push(songToAdd);
+                renderQueue();
+                setStatus(`"${songToAdd.title}" adicionada à fila.`, 'success');
             }
-            playSong(prevIndex, currentPlaybackContext);
+        }
+        
+        function togglePlayPause() { 
+            if (!currentSong && songs.length > 0) { 
+                startPlaybackFromContext(0, songs); 
+                return; 
+            } 
+            if (!audioPlayer.src) return; 
+            isPlaying ? audioPlayer.pause() : audioPlayer.play(); 
+        }
+        
+        function playNext() {
+            playNextSongFromQueue(false);
+        }
+
+        async function playPrev() {
+            if (audioPlayer.currentTime > 3) {
+                audioPlayer.currentTime = 0;
+                return;
+            }
+
+            if (playedSongsStack.length > 0) {
+                const previousSong = playedSongsStack.pop();
+                // Put the current song back at the front of the queue to be played next
+                if (currentSong) {
+                    playbackQueue.unshift(currentSong);
+                }
+                await playSongObject(previousSong);
+            } else {
+                audioPlayer.currentTime = 0;
+            }
         }
         
         function toggleShuffle() {
             isShuffled = !isShuffled;
+            if (isShuffled && playbackQueue.length > 1) {
+                for (let i = playbackQueue.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [playbackQueue[i], playbackQueue[j]] = [playbackQueue[j], playbackQueue[i]];
+                }
+            } else {
+                if (currentSong) {
+                    const currentSongId = currentSong.id;
+                    const currentSongIndexInLastContext = lastPlayedContext.findIndex(s => s.id === currentSongId);
+                    if (currentSongIndexInLastContext > -1) {
+                        playbackQueue = lastPlayedContext.slice(currentSongIndexInLastContext + 1);
+                    }
+                }
+            }
+            renderQueue();
             updateAllPlayerControls();
         }
 
@@ -2420,11 +2471,6 @@
             if (repeatMode === 'none') repeatMode = 'all';
             else if (repeatMode === 'all') repeatMode = 'one';
             else repeatMode = 'none';
-            
-            if (currentSongIndex > -1) {
-                const currentSongInContextIndex = currentPlaybackContext.findIndex(s => s.id === songs[currentSongIndex].id);
-                updatePlaybackQueue(currentPlaybackContext, currentSongInContextIndex);
-            }
             updateAllPlayerControls();
         }
 
@@ -2496,9 +2542,9 @@
         }
 
         async function saveLyricsChanges() {
-            if (currentSongIndex === -1) return;
+            if (!currentSong) return;
             
-            const songId = songs[currentSongIndex].id;
+            const songId = currentSong.id;
             const newLyrics = lyricsTextarea.value;
 
             const songToUpdate = await db.get('songs', songId);
@@ -2518,14 +2564,15 @@
         }
 
         async function deleteLyrics() {
-            if (currentSongIndex === -1) return;
+            if (!currentSong) return;
             showConfirmation(
                 'Excluir Letra',
-                'Tem certeza que deseja excluir a letra desta música?',
+                'Tem certeza que deseja excluir la letra desta música?',
                 async () => {
-                    const currentSong = songs[currentSongIndex];
+                    const songToUpdate = await db.get('songs', currentSong.id);
+                    songToUpdate.lyrics = '';
+                    await db.put('songs', songToUpdate);
                     currentSong.lyrics = '';
-                    await db.put('songs', currentSong);
                     lyricsTextarea.value = '';
                     parseAndRenderLyrics('');
                     toggleLyricsEditMode(false);
@@ -2535,11 +2582,11 @@
         }
 
         async function startSyncMode() {
-            if (currentSongIndex === -1) {
+            if (!currentSong) {
                 setStatus('Nenhuma música selecionada para sincronizar.', 'error');
                 return;
             }
-            const song = await db.get('songs', songs[currentSongIndex].id);
+            const song = await db.get('songs', currentSong.id);
             const rawLyrics = song.lyrics;
             
             if (!rawLyrics || !rawLyrics.trim()) { 
@@ -2646,9 +2693,10 @@
                 lrcString += `[${minutes}:${seconds}.${milliseconds}]${line.text}\n`;
             });
             
-            const currentSong = songs[currentSongIndex];
+            const songToUpdate = await db.get('songs', currentSong.id);
+            songToUpdate.lyrics = lrcString;
+            await db.put('songs', songToUpdate);
             currentSong.lyrics = lrcString;
-            await db.put('songs', currentSong);
 
             syncPanel.classList.add('hidden');
             syncPanel.classList.remove('flex');
@@ -2670,24 +2718,46 @@
             const currentView = document.body.dataset.currentView;
             const currentViewId = parseInt(document.body.dataset.currentViewId);
 
+            // Play Next
+            const playNextEl = document.createElement('div');
+            playNextEl.innerHTML = '<i class="ph-bold ph-arrow-bend-up-right text-lg mr-3"></i><span>Tocar a seguir</span>';
+            playNextEl.className = 'flex items-center px-3 py-2 hover:bg-highlight cursor-pointer whitespace-nowrap';
+            playNextEl.onclick = () => {
+                addSongToNextUp(songId);
+                contextMenu.classList.add('hidden');
+            };
+            contextMenu.appendChild(playNextEl);
+
+            // Add to Queue
+            const addToQueueEl = document.createElement('div');
+            addToQueueEl.innerHTML = '<i class="ph-bold ph-list-plus text-lg mr-3"></i><span>Adicionar à fila</span>';
+            addToQueueEl.className = 'flex items-center px-3 py-2 hover:bg-highlight cursor-pointer whitespace-nowrap';
+            addToQueueEl.onclick = () => {
+                addSongToEndOfQueue(songId);
+                contextMenu.classList.add('hidden');
+            };
+            contextMenu.appendChild(addToQueueEl);
+
+            // Add to Playlist (Submenu)
             const addToPlaylistEl = document.createElement('div');
-            addToPlaylistEl.textContent = 'Adicionar à playlist';
-            addToPlaylistEl.className = 'px-4 py-2 hover:bg-highlight cursor-pointer relative whitespace-nowrap';
+            addToPlaylistEl.innerHTML = '<i class="ph-bold ph-plus text-lg mr-3"></i><span>Adicionar à playlist</span><i class="ph-bold ph-caret-right text-lg ml-auto"></i>';
+            addToPlaylistEl.className = 'flex items-center px-3 py-2 hover:bg-highlight cursor-pointer relative whitespace-nowrap';
             
             const subMenu = document.createElement('div');
-            subMenu.className = 'hidden absolute top-0 bg-tertiary rounded-md shadow-lg p-2';
+            subMenu.className = 'hidden absolute top-0 bg-tertiary rounded-md shadow-lg p-1 min-w-[150px]';
             
             if (playlists.length === 0) {
                 const noPlaylistsEl = document.createElement('div');
-                noPlaylistsEl.textContent = 'Nenhuma playlist criada';
-                noPlaylistsEl.className = 'px-4 py-2 text-secondary';
+                noPlaylistsEl.textContent = 'Nenhuma playlist';
+                noPlaylistsEl.className = 'px-3 py-2 text-secondary';
                 subMenu.appendChild(noPlaylistsEl);
             } else {
                 playlists.forEach(playlist => {
                     const playlistItemEl = document.createElement('div');
                     playlistItemEl.textContent = playlist.name;
-                    playlistItemEl.className = 'px-4 py-2 hover:bg-highlight cursor-pointer whitespace-nowrap';
-                    playlistItemEl.onclick = async () => {
+                    playlistItemEl.className = 'px-3 py-2 hover:bg-highlight cursor-pointer whitespace-nowrap';
+                    playlistItemEl.onclick = async (e) => {
+                        e.stopPropagation(); // Prevent parent from closing menu
                         await addSongToPlaylist(songId, playlist.id);
                         contextMenu.classList.add('hidden');
                     };
@@ -2700,10 +2770,13 @@
             addToPlaylistEl.onmouseleave = () => subMenu.classList.add('hidden');
             contextMenu.appendChild(addToPlaylistEl);
 
+            // Separator
+            contextMenu.appendChild(document.createElement('hr')).className = 'border-theme my-1';
+
             if (currentView === 'playlist') {
                 const removeFromPlaylistEl = document.createElement('div');
                 removeFromPlaylistEl.textContent = 'Remover desta playlist';
-                removeFromPlaylistEl.className = 'px-4 py-2 hover:bg-highlight cursor-pointer';
+                removeFromPlaylistEl.className = 'px-3 py-2 hover:bg-highlight cursor-pointer';
                 removeFromPlaylistEl.onclick = () => {
                      showConfirmation('Remover Música', `Tem certeza que deseja remover esta música da playlist?`, () => removeSongFromPlaylist(songId, currentViewId));
                     contextMenu.classList.add('hidden');
@@ -2713,7 +2786,7 @@
 
             const deleteFromLibraryEl = document.createElement('div');
             deleteFromLibraryEl.textContent = 'Excluir da biblioteca';
-            deleteFromLibraryEl.className = 'px-4 py-2 text-red-400 hover:bg-red-600/20 cursor-pointer';
+            deleteFromLibraryEl.className = 'px-3 py-2 text-red-400 hover:bg-red-600/20 cursor-pointer';
             deleteFromLibraryEl.onclick = () => {
                 showConfirmation('Excluir Música', 'Esta ação é irreversível. A música será removida da sua biblioteca e de todas as playlists.', () => deleteSongFromLibrary(songId));
                 contextMenu.classList.add('hidden');
@@ -2731,7 +2804,7 @@
             contextMenu.style.top = `${top}px`;
             contextMenu.style.left = `${left}px`;
             
-            if (left > window.innerWidth / 2) {
+            if (left + menuWidth * 2 > window.innerWidth) {
                 subMenu.style.left = 'auto'; subMenu.style.right = '100%';
             } else {
                 subMenu.style.right = 'auto'; subMenu.style.left = '100%';
@@ -2963,9 +3036,10 @@
             setStatus('Todas as músicas foram excluídas.', 'success');
             
             // Reset player state
-            currentSongIndex = -1;
+            currentSong = null;
             playbackQueue = [];
-            currentPlaybackContext = [];
+            lastPlayedContext = [];
+            playedSongsStack = [];
             audioPlayer.src = '';
             updatePlayerUI({ title: 'Nenhuma música tocando', artist: '---', imageBlob: null, duration: 0 });
             
@@ -2982,22 +3056,10 @@
         }
 
         function getNextSong() {
-            if (isShuffled) return null;
-            if (repeatMode === 'one' && currentSongIndex !== -1) return songs[currentSongIndex];
+            if (repeatMode === 'one' && currentSong) return currentSong;
             if (playbackQueue.length > 0) return playbackQueue[0];
-            if (!currentPlaybackContext || currentPlaybackContext.length === 0) return null;
-
-            const currentSongInContextIndex = currentPlaybackContext.findIndex(s => s.id === (songs[currentSongIndex] || {}).id);
-            if (currentSongInContextIndex === -1) return null;
-
-            let nextIndexInContext = currentSongInContextIndex + 1;
-
-            if (nextIndexInContext >= currentPlaybackContext.length) {
-                if (repeatMode === 'all') return currentPlaybackContext[0];
-                else return null;
-            }
-            
-            return currentPlaybackContext[nextIndexInContext];
+            if (repeatMode === 'all' && lastPlayedContext.length > 0) return lastPlayedContext[0];
+            return null;
         }
 
         function showUpNextNotification() {
@@ -3364,8 +3426,8 @@
         closeQueueBtn.addEventListener('click', () => setQueueOpen(false));
         
         lyricsBtn.addEventListener('click', () => {
-            if (currentSongIndex === -1) { setStatus('Selecione uma música primeiro', 'error'); return; }
-            const song = songs[currentSongIndex];
+            if (!currentSong) { setStatus('Selecione uma música primeiro', 'error'); return; }
+            const song = currentSong;
             lyricsAlbumArt.src = song.imageBlob ? URL.createObjectURL(song.imageBlob) : 'https://placehold.co/128x128/121212/b3b3b3?text=KVSL';
             lyricsTitle.textContent = song.title; lyricsArtist.textContent = song.artist;
             lyricsTextarea.value = song.lyrics || '';
@@ -3393,8 +3455,8 @@
         });
 
         editLyricsBtn.addEventListener('click', () => { 
-            if (currentSongIndex > -1) {
-                lyricsTextarea.value = songs[currentSongIndex].lyrics || '';
+            if (currentSong) {
+                lyricsTextarea.value = currentSong.lyrics || '';
             }
             toggleLyricsEditMode(true); 
             moreOptionsDropdown.classList.add('hidden'); 
@@ -3481,7 +3543,7 @@
                 updateAllPlayerControls();
                 return;
             }
-            playNext();
+            playNextSongFromQueue(true);
         });
         
         const setupProgressBarInput = (bar, audio) => {
@@ -3526,8 +3588,8 @@
             }
         });
 
-        playerAlbumArt.addEventListener('click', () => { if(currentSongIndex > -1) nowPlayingFullscreen.classList.remove('hidden')});
-        playerTitle.addEventListener('click', () => { if(currentSongIndex > -1) nowPlayingFullscreen.classList.remove('hidden')});
+        playerAlbumArt.addEventListener('click', () => { if(currentSong) nowPlayingFullscreen.classList.remove('hidden')});
+        playerTitle.addEventListener('click', () => { if(currentSong) nowPlayingFullscreen.classList.remove('hidden')});
         closeNowPlayingFullscreenBtn.addEventListener('click', () => nowPlayingFullscreen.classList.add('hidden'));
         goToLyricsBtn.addEventListener('click', () => {
             nowPlayingFullscreen.classList.add('hidden');
@@ -3553,16 +3615,6 @@
         document.addEventListener('click', (e) => {
             if (!contextMenu.contains(e.target)) contextMenu.classList.add('hidden');
             
-            const playlistMenu = document.getElementById('playlist-context-menu');
-            if (playlistMenu && !playlistMenu.closest('.relative').contains(e.target)) {
-                playlistMenu.classList.add('hidden');
-            }
-            
-            const libraryMenu = document.getElementById('library-context-menu');
-            if (libraryMenu && !libraryMenu.closest('.relative').contains(e.target)) {
-                libraryMenu.classList.add('hidden');
-            }
-
             const fontMenuContainer = document.getElementById('font-size-menu-container');
             if (fontMenuContainer && !fontMenuContainer.contains(e.target)) {
                 fontSizeDropdown.classList.add('hidden');
@@ -3573,6 +3625,75 @@
                 moreOptionsDropdown.classList.add('hidden');
             }
         });
+
+        // =================================================================================
+        // AJUSTE DEFINITIVO PARA O PROBLEMA DE ARRASTAR E SOLTAR
+        // =================================================================================
+        function initializeDragAndDrop() {
+            let draggedItem = null;
+
+            queueList.addEventListener('dragstart', (e) => {
+                if (e.target.classList.contains('queue-item')) {
+                    draggedItem = e.target;
+                    // Adiciona um pequeno atraso para que o navegador possa renderizar a "imagem fantasma" do item arrastado
+                    setTimeout(() => {
+                        if (draggedItem) {
+                            draggedItem.classList.add('dragging');
+                        }
+                    }, 0);
+                }
+            });
+
+            queueList.addEventListener('dragend', () => {
+                if (draggedItem) {
+                    draggedItem.classList.remove('dragging');
+                    draggedItem = null;
+                }
+            });
+            
+            queueList.addEventListener('dragover', (e) => {
+                e.preventDefault(); // Isto é necessário para permitir o evento 'drop'
+                if (!draggedItem) return;
+
+                const afterElement = getDragAfterElement(queueList, e.clientY);
+                
+                if (afterElement == null) {
+                    queueList.appendChild(draggedItem);
+                } else {
+                    queueList.insertBefore(draggedItem, afterElement);
+                }
+            });
+
+            queueList.addEventListener('drop', (e) => {
+                e.preventDefault();
+                if (!draggedItem) return;
+                
+                draggedItem.classList.remove('dragging');
+
+                // 1. Obtém uma lista de todos os elementos da fila na sua NOVA ordem visual.
+                const itemsInNewOrder = Array.from(queueList.querySelectorAll('.queue-item'));
+
+                // 2. Mapeia estes elementos do DOM para os seus objetos de música correspondentes.
+                //    Esta é a parte crucial: reconstruímos a fila usando os objetos que já estão na `playbackQueue`,
+                //    mas na nova ordem ditada pelo DOM.
+                const newQueueOrder = itemsInNewOrder.map(item => {
+                    // Obtém o índice ORIGINAL do objeto da música a partir do atributo data- que foi definido em `renderQueue`.
+                    const originalIndex = parseInt(item.dataset.queueIndex, 10);
+                    // Retorna o objeto da música daquele índice na `playbackQueue` *antes* da reordenação.
+                    return playbackQueue[originalIndex];
+                }).filter(Boolean); // Filtra quaisquer itens indefinidos por segurança.
+
+                // 3. Atualiza a `playbackQueue` para ser a nova fonte da verdade.
+                playbackQueue = newQueueOrder;
+                
+                // 4. Renderiza novamente a fila inteira. Isto é vital para redefinir os atributos `data-queue-index`
+                //    para todos os itens, garantindo que a próxima operação de arrastar funcione corretamente.
+                renderQueue(); 
+                
+                draggedItem = null;
+            });
+        }
+
 
         initDB();
         makePanelInteractive("show-timer-panel");
