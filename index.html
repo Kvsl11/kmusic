@@ -6,7 +6,6 @@
     <title>KMusic</title>
     
     <link rel="icon" href="KMusic.png" type="image/png">
-
     <script src="https://cdn.tailwindcss.com"></script>
     
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
@@ -54,6 +53,7 @@
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-primary);
             color: var(--text-secondary);
+            -webkit-tap-highlight-color: transparent;
         }
         .bg-primary { background-color: var(--bg-primary); }
         .bg-secondary { background-color: var(--bg-secondary); }
@@ -63,7 +63,7 @@
             background-color: var(--bg-glass);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border-color);
+            border-top: 1px solid var(--border-color);
         }
         .text-primary { color: var(--text-primary); }
         .text-secondary { color: var(--text-secondary); }
@@ -137,7 +137,7 @@
             transition: opacity 0.2s ease-in-out;
         }
         .slider-container:hover input[type="range"]::-webkit-slider-thumb { opacity: 1; }
-        .active-blue, .btn-icon.active, .nav-item.active { color: var(--brand-color); }
+        .active-blue, .btn-icon.active, .nav-item.active, .mobile-nav-item.active { color: var(--brand-color); }
 
         /* Playing Song Indicator */
         .playing-indicator { display: flex; gap: 2px; height: 16px; align-items: flex-end; }
@@ -162,7 +162,7 @@
         #lyrics-panel .btn-icon.active-blue, body.light #lyrics-panel .btn-icon.active-blue { color: var(--brand-color); }
         #lyrics-panel .border-theme { border-color: rgba(255, 255, 255, 0.1); }
         #lyrics-panel .bg-tertiary { background-color: #242424; }
-        #lyrics-panel .hover\\:bg-highlight:hover { background-color: #2a2a2a; }
+        #lyrics-panel .hover\:bg-highlight:hover { background-color: #2a2a2a; }
 
         /* --- Now Playing Fullscreen (Always Dark) --- */
         #now-playing-fullscreen {
@@ -232,19 +232,38 @@
         
         /* Drag and Drop styles */
         .queue-item.dragging { opacity: 0.5; background-color: var(--bg-highlight); }
+        .song-item-row.dragging { opacity: 0.5; background-color: var(--bg-highlight); } /* Adicionado para drag and drop de playlist */
         .song-item-row.selected { background-color: rgba(41, 170, 226, 0.2); }
         
         #up-next-notification.show { transform: translateX(0); opacity: 1; }
 
         /* --- Queue Panel Styling --- */
         #queue-panel {
-            position: fixed; top: 0.5rem; right: 0.5rem; bottom: calc(0.5rem + 92px);
-            width: 20rem; border-radius: 0.5rem; transform: translateX(calc(100% + 1rem));
+            position: fixed; top: 0.5rem; right: 0.5rem; 
+            width: 100%;
+            max-width: 20rem; 
+            border-radius: 0.5rem; 
+            transform: translateX(calc(100% + 1rem));
             transition: transform 0.3s ease-in-out, background-color 0.3s, backdrop-filter 0.3s;
-            z-index: 45; background-color: var(--bg-secondary);
+            z-index: 51; /* Aumentado para ficar acima do lyrics-panel */
+            background-color: var(--bg-secondary);
         }
+        
+        /* Dynamic bottom positioning for Queue Panel */
+        body.player-active.mobile-nav-active #queue-panel { bottom: calc(0.5rem + 92px + 80px); }
+        body.player-active:not(.mobile-nav-active) #queue-panel { bottom: calc(0.5rem + 92px); }
+        body.player-inactive.mobile-nav-active #queue-panel { bottom: calc(0.5rem + 80px); }
+        body.player-inactive:not(.mobile-nav-active) #queue-panel { bottom: 0.5rem; }
+
         body.queue-open #queue-panel { transform: translateX(0); }
-        body.queue-open:not(.lyrics-active) > .h-screen > div:first-child { padding-right: calc(20rem + 0.5rem); transition: padding-right 0.3s ease-in-out; }
+        
+        @media (min-width: 768px) {
+            body.queue-open .main-content-wrapper { 
+                padding-right: calc(20rem + 0.5rem); 
+                transition: padding-right 0.3s ease-in-out; 
+            }
+        }
+
         body.lyrics-active #queue-panel {
             background-color: rgba(28, 28, 28, 0.75); backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px); border: 1px solid var(--border-color);
@@ -318,114 +337,129 @@
 </head>
 <body class="bg-primary text-secondary">
 
-    <div class="h-screen w-full grid grid-rows-[1fr,auto]">
-        <div class="grid grid-cols-[auto,1fr] gap-2 p-2 relative overflow-y-hidden">
-            <aside class="w-72 bg-primary rounded-lg flex flex-col gap-2">
-                <nav class="bg-secondary rounded-lg p-3">
-                    <div class="px-3 py-2">
-                        <a href="#" class="nav-item flex items-center gap-5 font-bold text-md transition-colors duration-300" title="Início" id="nav-home">
-                            <i class="ph-bold ph-house text-2xl"></i>
-                            <span>Início</span>
-                        </a>
-                    </div>
-                    <div class="px-3 py-2">
-                        <a href="#" class="nav-item flex items-center gap-5 font-bold text-md transition-colors duration-300" title="Buscar" id="nav-search">
-                            <i class="ph-bold ph-magnifying-glass text-2xl"></i>
-                            <span>Buscar</span>
-                        </a>
-                    </div>
-                    <div class="px-3 py-2">
-                        <a href="#" class="nav-item flex items-center gap-5 font-bold text-md transition-colors duration-300" title="Histórico" id="nav-history">
-                            <i class="ph-bold ph-clock-counter-clockwise text-2xl"></i>
-                            <span>Histórico</span>
-                        </a>
-                    </div>
-                </nav>
-                <div class="bg-secondary rounded-lg flex-1 flex flex-col">
-                    <div class="p-3 flex justify-between items-center">
-                        <a href="#" class="nav-item flex items-center gap-4 font-bold text-md transition-colors duration-300" title="Sua Biblioteca" id="nav-library">
-                            <i class="ph-bold ph-stack text-2xl"></i>
-                            <span>Sua Biblioteca</span>
-                        </a>
-                        <div>
-                            <button id="create-playlist-btn" class="text-secondary hover:text-primary cursor-pointer hover:bg-highlight rounded-full p-2 transition-colors duration-300" title="Criar playlist">
-                                <i class="ph-bold ph-plus text-xl"></i>
-                            </button>
-                            <label for="add-music-input" class="text-secondary hover:text-primary cursor-pointer hover:bg-highlight rounded-full p-2 transition-colors duration-300" title="Adicionar músicas">
-                                <i class="ph-bold ph-folder-plus text-xl"></i>
-                            </label>
-                            <input type="file" id="add-music-input" multiple accept=".mp3" class="hidden">
-                        </div>
-                    </div>
-                    <div id="library-content" class="px-2 space-y-1 overflow-y-auto flex-1">
-                       <div class="text-center text-secondary p-4" id="library-placeholder">
-                            <p class="font-semibold text-primary">Crie sua primeira playlist</p>
-                            <p class="text-sm">É fácil, vamos te ajudar.</p>
-                       </div>
-                    </div>
-                    <div id="status-indicator" class="text-xs text-center p-2 m-2 bg-tertiary rounded-lg text-primary transition-all duration-300 hidden">...</div>
+    <!-- Main Layout Container -->
+    <div class="h-screen w-full flex flex-col md:flex-row">
+        
+        <!-- Desktop Sidebar -->
+        <aside class="w-72 bg-primary flex-col gap-2 p-2 hidden md:flex">
+            <nav class="bg-secondary rounded-lg p-3">
+                <div class="px-3 py-2">
+                    <a href="#" class="nav-item flex items-center gap-5 font-bold text-md transition-colors duration-300" title="Início" id="nav-home">
+                        <i class="ph-bold ph-house text-2xl"></i>
+                        <span>Início</span>
+                    </a>
                 </div>
-            </aside>
+                <div class="px-3 py-2">
+                    <a href="#" class="nav-item flex items-center gap-5 font-bold text-md transition-colors duration-300" title="Buscar" id="nav-search">
+                        <i class="ph-bold ph-magnifying-glass text-2xl"></i>
+                        <span>Buscar</span>
+                    </a>
+                </div>
+                <div class="px-3 py-2">
+                    <a href="#" class="nav-item flex items-center gap-5 font-bold text-md transition-colors duration-300" title="Histórico" id="nav-history">
+                        <i class="ph-bold ph-clock-counter-clockwise text-2xl"></i>
+                        <span>Histórico</span>
+                    </a>
+                </div>
+            </nav>
+            <div class="bg-secondary rounded-lg flex-1 flex flex-col">
+                <div class="p-3 flex justify-between items-center">
+                    <a href="#" class="nav-item flex items-center gap-4 font-bold text-md transition-colors duration-300" title="Sua Biblioteca" id="nav-library">
+                        <i class="ph-bold ph-stack text-2xl"></i>
+                        <span>Sua Biblioteca</span>
+                    </a>
+                    <!-- Removidos os botões de "Criar playlist" e "Adicionar músicas" da sidebar -->
+                    <!-- O botão de "Criar playlist" agora está na renderização da lista de playlists -->
+                    <!-- O botão de "Adicionar músicas" agora está na renderização da lista de todas as músicas -->
+                </div>
+                <div id="library-content" class="px-2 space-y-1 overflow-y-auto flex-1">
+                   <div class="text-center text-secondary p-4" id="library-placeholder">
+                        <p class="font-semibold text-primary">Crie sua primeira playlist</p>
+                        <p class="text-sm">É fácil, vamos te ajudar.</p>
+                   </div>
+                </div>
+                <div id="status-indicator" class="text-xs text-center p-2 m-2 bg-tertiary rounded-lg text-primary transition-all duration-300 hidden">...</div>
+            </div>
+        </aside>
 
-            <div class="relative flex flex-col min-h-0">
-                   <main id="main-view" class="bg-secondary rounded-lg flex-1 min-h-0 flex flex-col">
-                   </main>
-                 <div class="absolute top-4 right-4 z-20">
-                    <button id="theme-toggle-btn" class="text-secondary hover:text-primary cursor-pointer bg-primary hover:bg-highlight rounded-full p-2 transition-colors duration-300" title="Mudar Tema">
-                         <i id="theme-icon" class="ph-bold ph-sun text-xl"></i>
-                    </button>
-                 </div>
+        <!-- Main Content Area -->
+        <div class="relative flex-1 flex flex-col min-h-0 min-w-0 main-content-wrapper">
+            <main id="main-view" class="flex-1 min-h-0 flex flex-col bg-secondary md:m-2 md:rounded-lg">
+            </main>
+            <div class="absolute top-4 right-4 z-20">
+                <button id="theme-toggle-btn" class="text-secondary hover:text-primary cursor-pointer bg-primary hover:bg-highlight rounded-full p-2 transition-colors duration-300" title="Mudar Tema">
+                   <i id="theme-icon" class="ph-bold ph-sun text-xl"></i>
+                </button>
             </div>
         </div>
-
-        <footer class="bg-glass p-3 h-[92px]">
-             <div class="grid grid-cols-3 items-center">
-                   <div class="flex items-center gap-3">
-                       <img id="player-album-art" src="https://placehold.co/64x64/121212/b3b3b3?text=KVSL" alt="Capa" class="w-14 h-14 rounded-md shadow-md cursor-pointer">
-                       <div>
-                           <p id="player-title" class="font-bold text-primary truncate cursor-pointer">Nenhuma música tocando</p>
-                           <p id="player-artist" class="text-sm text-secondary truncate">---</p>
-                       </div>
-                   </div>
-                   <div class="flex flex-col items-center justify-center gap-2">
-                       <div class="flex items-center gap-6">
-                           <button id="shuffle-btn" class="btn-icon text-secondary hover:text-primary transition-colors" title="Aleatório"><i class="ph-bold ph-shuffle text-xl"></i></button>
-                           <button id="prev-btn" class="btn-icon text-secondary hover:text-primary transition-colors" title="Anterior"><i class="ph-bold ph-skip-back text-2xl"></i></button>
-                           <button id="play-pause-btn" class="bg-white text-black rounded-full w-10 h-10 flex items-center justify-center hover:scale-105 transition-transform" title="Tocar/Pausar">
-                                 <i id="play-pause-icon" class="ph-bold ph-play text-xl"></i>
-                           </button>
-                           <button id="next-btn" class="btn-icon text-secondary hover:text-primary transition-colors" title="Próxima"><i class="ph-bold ph-skip-forward text-2xl"></i></button>
-                           <button id="repeat-btn" class="btn-icon text-secondary hover:text-primary transition-colors relative" title="Repetir">
-                                 <i class="ph-bold ph-repeat text-xl"></i>
-                                 <span id="repeat-one-indicator" class="absolute -top-1 -right-1 text-xs bg-brand text-black rounded-full h-3 w-3 flex items-center justify-center font-bold hidden">1</span>
-                           </button>
-                       </div>
-                       <div class="flex items-center gap-2 w-full max-w-xl slider-container">
-                           <span id="current-time" class="text-xs text-secondary w-10 text-right">0:00</span>
-                           <input id="progress-bar" type="range" min="0" max="100" value="0" class="w-full">
-                           <span id="duration" class="text-xs text-secondary w-10">0:00</span>
-                       </div>
-                   </div>
-                   <div class="flex items-center justify-end gap-4">
-                       <button id="lyrics-btn" class="btn-icon text-secondary hover:text-primary transition-colors" title="Letra"><i class="ph-bold ph-microphone-stage text-xl"></i></button>
-                       <button id="queue-btn" class="btn-icon text-secondary hover:text-primary transition-colors" title="Fila de reprodução"><i class="ph-bold ph-list-bullets text-xl"></i></button>
-                       <div class="flex items-center gap-2 w-32 slider-container">
-                           <button id="volume-icon-btn" class="btn-icon text-secondary hover:text-primary transition-colors" title="Mudo">
-                                 <i id="volume-icon" class="ph-bold ph-speaker-high text-xl"></i>
-                           </button>
-                           <input id="volume-bar" type="range" min="0" max="100" value="50" class="w-full">
-                       </div>
-                   </div>
-             </div>
-        </footer>
     </div>
+
+    <!-- Player (conditionally visible) -->
+    <footer class="bg-glass p-3 h-[92px] fixed left-0 right-0 bottom-20 md:bottom-0 z-30 hidden">
+           <div class="grid grid-cols-3 items-center h-full">
+               <div class="flex items-center gap-3 overflow-hidden">
+                   <img id="player-album-art" src="https://placehold.co/64x64/121212/b3b3b3?text=KVSL" alt="Capa" class="w-14 h-14 rounded-md shadow-md cursor-pointer flex-shrink-0">
+                   <div class="overflow-hidden hidden md:block">
+                       <p id="player-title" class="font-bold text-primary truncate cursor-pointer">Nenhuma música tocando</p>
+                       <p id="player-artist" class="text-sm text-secondary truncate">---</p>
+                   </div>
+               </div>
+               
+               <div class="flex flex-col items-center justify-center gap-2">
+                   <div class="flex items-center gap-4 md:gap-6">
+                       <button id="shuffle-btn" class="btn-icon text-secondary hover:text-primary transition-colors" title="Aleatório"><i class="ph-bold ph-shuffle text-xl"></i></button>
+                       <button id="prev-btn" class="btn-icon text-secondary hover:text-primary transition-colors" title="Anterior"><i class="ph-bold ph-skip-back text-2xl"></i></button>
+                       <button id="play-pause-btn" class="bg-white text-black rounded-full w-10 h-10 flex items-center justify-center hover:scale-105 transition-transform" title="Tocar/Pausar">
+                             <i id="play-pause-icon" class="ph-bold ph-play text-xl"></i>
+                       </button>
+                       <button id="next-btn" class="btn-icon text-secondary hover:text-primary transition-colors" title="Próxima"><i class="ph-bold ph-skip-forward text-2xl"></i></button>
+                       <button id="repeat-btn" class="btn-icon text-secondary hover:text-primary transition-colors relative" title="Repetir">
+                             <i class="ph-bold ph-repeat text-xl"></i>
+                             <span id="repeat-one-indicator" class="absolute -top-1 -right-1 text-xs bg-brand text-black rounded-full h-3 w-3 flex items-center justify-center font-bold hidden">1</span>
+                       </button>
+                   </div>
+                   <div class="hidden md:flex items-center gap-2 w-full max-w-xl slider-container">
+                       <span id="current-time" class="text-xs text-secondary w-10 text-right">0:00</span>
+                       <input id="progress-bar" type="range" min="0" max="100" value="0" class="w-full">
+                       <span id="duration" class="text-xs text-secondary w-10">0:00</span>
+                   </div>
+               </div>
+
+               <div class="flex items-center justify-end gap-2 md:gap-4">
+                   <button id="lyrics-btn" class="btn-icon text-secondary hover:text-primary transition-colors" title="Letra"><i class="ph-bold ph-microphone-stage text-xl"></i></button>
+                   <button id="queue-btn" class="btn-icon text-secondary hover:text-primary transition-colors" title="Fila de reprodução"><i class="ph-bold ph-list-bullets text-xl"></i></button>
+                   <div class="hidden md:flex items-center gap-2 w-32 slider-container">
+                       <button id="volume-icon-btn" class="btn-icon text-secondary hover:text-primary transition-colors" title="Mudo">
+                             <i id="volume-icon" class="ph-bold ph-speaker-high text-xl"></i>
+                       </button>
+                       <input id="volume-bar" type="range" min="0" max="100" value="50" class="w-full">
+                   </div>
+               </div>
+           </div>
+    </footer>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="bg-primary border-t border-theme h-20 fixed bottom-0 left-0 right-0 z-30 flex justify-around items-center md:hidden">
+        <a href="#" id="nav-home-mobile" class="mobile-nav-item flex flex-col items-center text-secondary" title="Início">
+            <i class="ph-house text-3xl"></i>
+        </a>
+        <a href="#" id="nav-search-mobile" class="mobile-nav-item flex flex-col items-center text-secondary" title="Buscar">
+            <i class="ph-magnifying-glass text-3xl"></i>
+        </a>
+        <a href="#" id="nav-history-mobile" class="mobile-nav-item flex flex-col items-center text-secondary" title="Histórico">
+            <i class="ph-clock-counter-clockwise text-3xl"></i>
+        </a>
+        <a href="#" id="nav-library-mobile" class="mobile-nav-item flex flex-col items-center text-secondary" title="Sua Biblioteca">
+            <i class="ph-stack text-3xl"></i>
+        </a>
+    </nav>
     
     <audio id="audio-player-for-metadata" class="hidden"></audio>
     
     <aside id="queue-panel" class="p-4 flex flex-col gap-4">
         <div class="flex justify-between items-center">
             <h2 class="text-lg font-bold text-primary">Fila de Reprodução</h2>
-            <button id="close-queue-btn" class="text-secondary hover:text-primary" title="Fechar fila"><i class="ph-bold ph-x text-xl"></i></button>
+            <button id="close-queue-btn" class="text-secondary hover:text-primary" title="Fechar fila"><i class="ph-bold ph-x"></i></button>
         </div>
         <div class="border-b border-theme pb-4">
             <h3 class="text-md font-semibold text-secondary mb-2">A tocar</h3>
@@ -445,18 +479,18 @@
         </div>
     </aside>
 
-    <div id="now-playing-fullscreen" class="hidden fixed inset-0 z-40 flex flex-col items-center justify-center overflow-hidden">
+    <div id="now-playing-fullscreen" class="hidden fixed inset-0 z-50 flex flex-col items-center justify-center overflow-hidden">
         <div id="now-playing-fullscreen-bg" class="absolute inset-0 bg-center bg-cover transition-all duration-1000" style="filter: blur(50px) brightness(0.4);"></div>
         <div class="relative z-10 flex flex-col items-center justify-center text-center p-8">
             <button id="close-now-playing-fullscreen" class="absolute top-6 right-8 text-2xl"><i class="ph-bold ph-x"></i></button>
-            <img id="now-playing-fullscreen-art" src="https://placehold.co/300x300/121212/b3b3b3?text=KVSL" class="w-80 h-80 rounded-lg shadow-2xl mb-6">
-            <h2 id="now-playing-fullscreen-title" class="text-5xl font-extrabold text-primary">Título da Música</h2>
-            <p id="now-playing-fullscreen-artist" class="text-2xl text-secondary mt-2">Nome do Artista</p>
+            <img id="now-playing-fullscreen-art" src="https://placehold.co/300x300/121212/b3b3b3?text=KVSL" class="w-64 h-64 md:w-80 md:h-80 rounded-lg shadow-2xl mb-6">
+            <h2 id="now-playing-fullscreen-title" class="text-3xl md:text-5xl font-extrabold text-primary">Título da Música</h2>
+            <p id="now-playing-fullscreen-artist" class="text-lg md:text-2xl text-secondary mt-2">Nome do Artista</p>
             <button id="go-to-lyrics-btn" class="mt-8 bg-white/10 hover:bg-white/20 text-white font-bold py-3 px-6 rounded-full transition-colors">Ver Letra</button>
         </div>
     </div>
 
-    <div id="lyrics-panel" class="hidden fixed inset-0 z-40 flex flex-col items-center overflow-hidden">
+    <div id="lyrics-panel" class="hidden fixed inset-0 z-50 flex flex-col items-center overflow-hidden">
         <div id="lyrics-bg" class="absolute inset-0 bg-center bg-cover transition-all duration-1000" style="filter: blur(50px) brightness(0.4);"></div>
         
         <div id="show-timer-panel" class="hidden fixed top-28 left-1/2 -translate-x-1/2 bg-glass p-3 rounded-xl shadow-2xl z-50 flex flex-col" style="min-width: 320px; resize: both; overflow: auto;">
@@ -478,16 +512,16 @@
             </div>
         </div>
 
-        <div class="relative z-10 w-full h-full flex flex-col p-8 items-center">
+        <div class="relative z-10 w-full h-full flex flex-col p-4 md:p-8 items-center">
             <div class="w-full max-w-6xl flex justify-between items-start flex-shrink-0">
-                <div class="flex items-center gap-6">
-                    <img id="lyrics-album-art" src="https://placehold.co/96x96/121212/b3b3b3?text=KVSL" class="w-24 h-24 rounded-lg">
+                <div class="flex items-center gap-4 md:gap-6">
+                    <img id="lyrics-album-art" src="https://placehold.co/96x96/121212/b3b3b3?text=KVSL" class="w-16 h-16 md:w-24 md:h-24 rounded-lg">
                     <div>
-                        <h2 id="lyrics-title" class="text-3xl font-extrabold text-primary">Título da Música</h2>
-                        <p id="lyrics-artist" class="text-lg text-secondary">Nome do Artista</p>
+                        <h2 id="lyrics-title" class="text-xl md:text-3xl font-extrabold text-primary">Título da Música</h2>
+                        <p id="lyrics-artist" class="text-base md:text-lg text-secondary">Nome do Artista</p>
                         </div>
                 </div>
-                <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2 md:gap-4">
                     <button id="toggle-show-timer-btn" class="btn-icon text-secondary hover:text-primary" title="Temporizador de Show"><i class="ph-bold ph-timer text-xl"></i></button>
                     
                     <div class="relative" id="font-size-menu-container">
@@ -533,7 +567,7 @@
                             <i class="ph-bold ph-repeat text-xl"></i>
                             <span id="lyrics-repeat-one-indicator" class="absolute -top-1 -right-1 text-xs bg-brand text-black rounded-full h-3 w-3 flex items-center justify-center font-bold hidden">1</span>
                         </button>
-                       <button id="lyrics-queue-btn" class="btn-icon text-secondary hover:text-primary transition-colors" title="Fila de reprodução"><i class="ph-bold ph-list-bullets text-xl"></i></button>
+                        <button id="lyrics-queue-btn" class="btn-icon text-secondary hover:text-primary transition-colors" title="Fila de reprodução"><i class="ph-bold ph-list-bullets text-xl"></i></button>
                     </div>
                     <div class="flex items-center gap-2 w-full slider-container mt-1">
                         <span id="lyrics-current-time" class="text-xs text-secondary w-10 text-right">0:00</span>
@@ -654,7 +688,9 @@
 
     <script>
         // DOM Elements
-        const addMusicInput = document.getElementById('add-music-input');
+        const playerFooter = document.querySelector('footer');
+        // O input de arquivo agora está diretamente na view "Todas as Músicas"
+        const addMusicInput = document.getElementById('add-music-input'); 
         const mainView = document.getElementById('main-view');
         const libraryContent = document.getElementById('library-content');
         const libraryPlaceholder = document.getElementById('library-placeholder');
@@ -734,18 +770,6 @@
         const startSyncBtn = document.getElementById('start-sync-btn');
         const deleteLyricsBtn = document.getElementById('delete-lyrics-btn');
         
-        // --- Removidos Elementos de Tom e Karaokê ---
-        // const originalKeyBtn = document.getElementById('original-key-btn');
-        // const playbackKeyBtn = document.getElementById('playback-key-btn');
-        // const karaokeModeBtn = document.getElementById('karaoke-mode-btn'); 
-
-        // const keySelectionModal = document.getElementById('key-selection-modal');
-        // const keyModalTitle = document.getElementById('key-modal-title');
-        // const keyModalGrid = document.getElementById('key-modal-grid');
-        // const closeKeyModalBtn = document.getElementById('close-key-modal-btn');
-        // const resetKeyBtn = document.getElementById('reset-key-btn');
-
-
         // Show Timer Panel Elements
         const toggleShowTimerBtn = document.getElementById('toggle-show-timer-btn');
         const showTimerPanel = document.getElementById('show-timer-panel');
@@ -781,7 +805,12 @@
         const navSearch = document.getElementById('nav-search');
         const navHistory = document.getElementById('nav-history');
         const navLibrary = document.getElementById('nav-library');
-        const createPlaylistBtn = document.getElementById('create-playlist-btn');
+        const navHomeMobile = document.getElementById('nav-home-mobile');
+        const navSearchMobile = document.getElementById('nav-search-mobile');
+        const navHistoryMobile = document.getElementById('nav-history-mobile');
+        const navLibraryMobile = document.getElementById('nav-library-mobile');
+        // Removido o botão de criar playlist da sidebar, agora está na view da biblioteca
+        const createPlaylistBtn = document.getElementById('create-playlist-btn-sidebar'); 
         const themeToggleBtn = document.getElementById('theme-toggle-btn');
         const themeIcon = document.getElementById('theme-icon');
 
@@ -800,7 +829,7 @@
         
         // Add Songs Modal
         const addSongsModal = document.getElementById('add-songs-modal');
-        const closeAddSongsModalBtn = document.getElementById('close-add-songs-modal');
+        const closeAddSongsModalBtn = document.getElementById('close-add-songs-modal'); 
         const addSongsPlaylistName = document.getElementById('add-songs-playlist-name');
         const addSongsSearchInput = document.getElementById('add-songs-search-input');
         const addSongsList = document.getElementById('add-songs-list');
@@ -869,23 +898,28 @@
         let audioContext;
         let currentSourceNode;
         let mainGainNode;
-        // Removidos os nós de processamento de áudio complexos
-        // let pitchShifterNode; 
-        // let karaokeSplitterNode;
-        // let karaokeInvertNode;
-        // let karaokeFilterNode;
-        // let pitchShifterProcessorLoaded = false;
-        
         let currentAudioBuffer;
-        // let karaokeMode = false; // Removido
-        // let currentPlaybackKey = null; // Removido
         let playbackStartTime = 0;
         let playbackStartOffset = 0;
         let progressUpdateAnimation;
 
-        // Key/Transposition Constants (Removidos, pois não são mais usados)
-        // const ALL_KEYS = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-
+        // --- PLAYER VISIBILITY LOGIC ---
+        function updatePlayerVisibility(show) {
+            const isMobile = window.innerWidth < 768;
+            if (show) {
+                playerFooter.classList.remove('hidden');
+                document.body.classList.add('player-active');
+                document.body.classList.remove('player-inactive');
+                mainView.style.paddingBottom = isMobile ? '172px' : '92px';
+            } else {
+                playerFooter.classList.add('hidden');
+                document.body.classList.remove('player-active');
+                document.body.classList.add('player-inactive');
+                mainView.style.paddingBottom = isMobile ? '80px' : '0px';
+            }
+            // Add mobile-nav-active class for queue panel positioning
+            document.body.classList.toggle('mobile-nav-active', isMobile);
+        }
 
         // --- ERROR HANDLING & STATUS ---
         function showError(title, htmlMessage) {
@@ -939,14 +973,13 @@
                     if (oldVersion < 6) {
                         db.createObjectStore('showHistory', { keyPath: 'id', autoIncrement: true });
                     }
-                    // A partir da versão 9, 'originalKey' e 'playbackKey' não são mais necessários
-                    // pois as funcionalidades de transposição foram removidas.
                 },
             });
             await loadAllData(true);
             initializePlayerState();
             initializeTheme();
             initializeDragAndDrop();
+            updatePlayerVisibility(false); // Ensure player is hidden on start
             renderView('home');
         }
 
@@ -1006,7 +1039,7 @@
                     });
                     tempAudio.src = ''; // Clean up
                 } catch (err) {
-                    console.warn(`Não foi possível obter a duração do áudio para "${file.name}":`, err);
+                    console.warn(`Não foi possível obter a duração do audio para "${file.name}":`, err);
                 }
 
                 const imageBlob = picture ? new Blob([new Uint8Array(picture.data)], { type: picture.format }) : null;
@@ -1021,8 +1054,6 @@
                     uploadedAt: new Date(),
                     lyrics: '',
                     playCount: 0,
-                    // originalKey: null, // Removido do objeto
-                    // playbackKey: null, // Removido do objeto
                 };
 
                 await db.add('songs', songData);
@@ -1034,41 +1065,41 @@
             }
         }
         
-        addMusicInput.addEventListener('change', async (e) => {
-            if (!db) {
-                setStatus('Aguarde, o banco de dados está inicializando...', 'info');
-                e.target.value = '';
-                return;
-            }
-            const files = e.target.files;
-            if (!files.length) return;
+        // addMusicInput.addEventListener('change', async (e) => { // Removido daqui
+        //     if (!db) {
+        //         setStatus('Aguarde, o banco de dados está inicializando...', 'info');
+        //         e.target.value = '';
+        //         return;
+        //     }
+        //     const files = e.target.files;
+        //     if (!files.length) return;
 
-            let successCount = 0;
-            let errorCount = 0;
-            const totalFiles = files.length;
+        //     let successCount = 0;
+        //     let errorCount = 0;
+        //     const totalFiles = files.length;
 
-            for (let i = 0; i < totalFiles; i++) {
-                const file = files[i];
-                setStatus(`Importando ${i + 1}/${totalFiles}: ${file.name}`, 'info');
-                const result = await processAndSaveFile(file);
-                if (result.success) {
-                    successCount++;
-                } else {
-                    errorCount++;
-                    console.error(`Falha ao importar ${result.name}: ${result.reason}`);
-                }
-            }
+        //     for (let i = 0; i < totalFiles; i++) {
+        //         const file = files[i];
+        //         setStatus(`Importando ${i + 1}/${totalFiles}: ${file.name}`, 'info');
+        //         const result = await processAndSaveFile(file);
+        //         if (result.success) {
+        //             successCount++;
+        //         } else {
+        //             errorCount++;
+        //             console.error(`Falha ao importar ${result.name}: ${result.reason}`);
+        //         }
+        //     }
 
-            if (errorCount > 0) {
-                setStatus(`${successCount} de ${totalFiles} músicas importadas. ${errorCount} falharam.`, 'error');
-            } else {
-                setStatus(`Todas as ${successCount} músicas foram importadas com sucesso!`, 'success');
-            }
+        //     if (errorCount > 0) {
+        //         setStatus(`${successCount} de ${totalFiles} músicas importadas. ${errorCount} falharam.`, 'error');
+        //     } else {
+        //         setStatus(`Todas as ${successCount} músicas foram importadas com sucesso!`, 'success');
+        //     }
 
-            await loadAllData();
-            renderView('songs');
-            e.target.value = '';
-        });
+        //     await loadAllData();
+        //     renderView('songs');
+        //     e.target.value = '';
+        // });
 
         // --- UI RENDERING ---
         function formatTime(seconds, showHours = false) {
@@ -1098,22 +1129,33 @@
 
         async function renderView(view, id = null) {
             mainView.innerHTML = '';
-            mainView.className = 'bg-secondary rounded-lg flex-1 min-h-0 flex flex-col';
+            mainView.className = 'flex-1 min-h-0 flex flex-col bg-secondary md:m-2 md:rounded-lg overflow-y-auto relative'; // Added relative positioning
+            updatePlayerVisibility(document.body.classList.contains('player-active'));
+
 
             document.body.dataset.currentView = view;
             document.body.dataset.currentViewId = id;
 
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(item => item.classList.remove('active'));
+            const allNavItems = document.querySelectorAll('.nav-item, .mobile-nav-item');
+            allNavItems.forEach(item => item.classList.remove('active'));
             
+            const activeDesktopItem = document.getElementById(`nav-${view}`);
+            const activeMobileItem = document.getElementById(`nav-${view}-mobile`);
+
             if (view === 'home') {
-                navHome.classList.add('active');
+                if (activeDesktopItem) activeDesktopItem.classList.add('active');
+                if (activeMobileItem) activeMobileItem.classList.add('active');
             } else if (view === 'search') {
-                navSearch.classList.add('active');
+                if (activeDesktopItem) activeDesktopItem.classList.add('active');
+                if (activeMobileItem) activeMobileItem.classList.add('active');
             } else if (view === 'history') {
-                navHistory.classList.add('active');
+                if (activeDesktopItem) activeDesktopItem.classList.add('active');
+                if (activeMobileItem) activeMobileItem.classList.add('active');
             } else if (['songs', 'playlists', 'playlist'].includes(view)) {
-                navLibrary.classList.add('active');
+                const libDesktop = document.getElementById('nav-library');
+                const libMobile = document.getElementById('nav-library-mobile');
+                if (libDesktop) libDesktop.classList.add('active');
+                if (libMobile) libMobile.classList.add('active');
             }
             
             if (isSelectionMode && !['songs', 'playlist'].includes(view)) {
@@ -1209,8 +1251,8 @@
                         <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
                         <div class="relative z-10">
                             <p class="text-sm text-white/80">${category.title}</p>
-                            <h3 class="text-2xl font-bold text-white truncate" id="highlight-title-${category.type}">${firstItem.title || firstItem.name}</h3>
-                            <p class="text-md text-white/80 truncate" id="highlight-subtitle-${category.type}">${firstItem.artist || `${firstItem.count} reproduções`}</p>
+                            <h3 class="text-xl md:text-2xl font-bold text-white truncate" id="highlight-title-${category.type}">${firstItem.title || firstItem.name}</h3>
+                            <p class="text-sm md:text-md text-white/80 truncate" id="highlight-subtitle-${category.type}">${firstItem.artist || `${firstItem.count} reproduções`}</p>
                         </div>
                     </div>
                 `;
@@ -1223,17 +1265,17 @@
             const recentSongsHTML = recentSongs.map(song => {
                 const imageUrl = song.imageBlob ? URL.createObjectURL(song.imageBlob) : 'https://placehold.co/200x200/181818/b3b3b3?text=🎵';
                 return `
-                    <div class="flex-shrink-0 w-48 group" onclick="startPlaybackFromContext(${songs.findIndex(s => s.id === song.id)}, songs)">
+                    <div class="flex-shrink-0 w-36 md:w-48 group" onclick="startPlaybackFromContext(${songs.findIndex(s => s.id === song.id)}, songs)">
                         <div class="p-3 rounded-lg hover:bg-highlight transition-colors duration-300 cursor-pointer">
                             <div class="recent-song-card aspect-square w-full bg-tertiary rounded-md overflow-hidden shadow-lg relative mb-3">
                                 <img src="${imageUrl}" class="w-full h-full object-cover transition-transform duration-1000 ease-in-out group-hover:scale-110">
-                                <button class="absolute bottom-2 right-2 bg-brand text-white rounded-full w-12 h-12 flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:translate-y-0 translate-y-2 transform transition-all duration-300 shadow-lg">
-                                    <i class="ph-bold ph-play text-2xl"></i>
+                                <button class="absolute bottom-2 right-2 bg-brand text-white rounded-full w-10 h-10 md:w-12 md:h-12 flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:translate-y-0 translate-y-2 transform transition-all duration-300 shadow-lg">
+                                    <i class="ph-bold ph-play text-xl md:text-2xl"></i>
                                 </button>
                             </div>
                             <div>
-                               <p class="font-bold text-primary truncate">${song.title}</p>
-                               <p class="text-sm text-secondary truncate">${song.artist}</p>
+                               <p class="font-bold text-primary truncate text-sm md:text-base">${song.title}</p>
+                               <p class="text-xs md:text-sm text-secondary truncate">${song.artist}</p>
                             </div>
                         </div>
                     </div>
@@ -1244,36 +1286,36 @@
             const topPlaylistsHTML = topPlaylists.map(playlist => {
                 const coverHTML = generatePlaylistCover(playlist);
                 return `
-                     <div class="flex-shrink-0 w-48 group relative cursor-pointer" onclick="renderView('playlist', ${playlist.id})">
-                         <div class="aspect-square w-full bg-tertiary rounded-lg overflow-hidden shadow-lg transform group-hover:scale-105 transition-transform duration-300 grid grid-cols-2 grid-rows-2">
-                                 ${coverHTML}
-                         </div>
+                   <div class="flex-shrink-0 w-36 md:w-48 group relative cursor-pointer" onclick="renderView('playlist', ${playlist.id})">
+                       <div class="aspect-square w-full bg-tertiary rounded-lg overflow-hidden shadow-lg transform group-hover:scale-105 transition-transform duration-300 grid grid-cols-2 grid-rows-2">
+                                   ${coverHTML}
+                       </div>
                            <div class="mt-2">
-                                 <p class="font-bold text-primary truncate">${playlist.name}</p>
-                                 <p class="text-sm text-secondary truncate">${playlist.songIds?.length || 0} músicas</p>
+                                   <p class="font-bold text-primary truncate text-sm md:text-base">${playlist.name}</p>
+                                   <p class="text-xs md:text-sm text-secondary truncate">${playlist.songIds?.length || 0} músicas</p>
                            </div>
-                     </div>
+                   </div>
                 `;
             }).join('');
 
             container.innerHTML = `
                 <div class="overflow-y-auto flex-grow">
-                    <div class="p-6 space-y-12">
-                        <h1 class="text-3xl font-extrabold text-primary">${greeting}</h1>
+                    <div class="p-4 md:p-6 space-y-8 md:space-y-12">
+                        <h1 class="text-2xl md:text-3xl font-extrabold text-primary">${greeting}</h1>
                         ${topSongs.length > 0 ? `
                         <div>
-                            <h2 class="text-2xl font-bold text-primary mb-4">Destaques para Você</h2>
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">${highlightsHTML}</div>
+                            <h2 class="text-xl md:text-2xl font-bold text-primary mb-4">Destaques para Você</h2>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">${highlightsHTML}</div>
                         </div>` : ''}
                         ${recentSongs.length > 0 ? `
                         <div>
-                            <h2 class="text-2xl font-bold text-primary mb-4">Tocadas recentemente</h2>
-                            <div class="flex gap-6 overflow-x-auto pb-4">${recentSongsHTML}</div>
+                            <h2 class="text-xl md:text-2xl font-bold text-primary mb-4">Tocadas recentemente</h2>
+                            <div class="flex gap-4 md:gap-6 overflow-x-auto pb-4">${recentSongsHTML}</div>
                         </div>` : ''}
                         ${playlists.length > 0 ? `
                         <div>
-                            <h2 class="text-2xl font-bold text-primary mb-4">Suas playlists</h2>
-                            <div class="flex gap-6 overflow-x-auto pb-4">${topPlaylistsHTML}</div>
+                            <h2 class="text-xl md:text-2xl font-bold text-primary mb-4">Suas playlists</h2>
+                            <div class="flex gap-4 md:gap-6 overflow-x-auto pb-4">${topPlaylistsHTML}</div>
                         </div>` : ''}
                         ${recentSongs.length === 0 && playlists.length === 0 && topSongs.length === 0 ? `
                         <div class="text-center text-secondary p-8 bg-tertiary rounded-lg mt-8">
@@ -1293,19 +1335,19 @@
         function renderLibraryView(filter = 'songs') {
             document.body.dataset.libraryView = filter;
             mainView.innerHTML = `
-                <header class="p-6 pr-20 flex-shrink-0 sticky top-0 bg-secondary z-10">
-                    <div class="flex justify-between items-center gap-8">
+                <header class="p-4 md:p-6 md:pr-20 flex-shrink-0 sticky top-0 bg-secondary z-10">
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-4 md:gap-8">
                         <div class="flex items-center gap-4 flex-shrink-0">
                             <button id="library-filter-songs" class="library-filter-btn px-4 py-2 rounded-full text-sm font-semibold transition-colors ${filter === 'songs' ? 'active' : ''}" data-filter="songs">Músicas</button>
                             <button id="library-filter-playlists" class="library-filter-btn px-4 py-2 rounded-full text-sm font-semibold transition-colors ${filter === 'playlists' ? 'active' : ''}" data-filter="playlists">Playlists</button>
                         </div>
-                        <div class="relative flex-grow max-w-xs">
+                        <div class="relative w-full md:w-auto md:flex-grow max-w-xs">
                              <i class="ph-bold ph-magnifying-glass absolute top-1/2 left-3 -translate-y-1/2 text-secondary text-lg"></i>
                              <input type="text" id="library-search-input" class="w-full bg-tertiary text-primary pl-10 pr-4 py-2 rounded-full focus:outline-none focus:ring-1 focus:ring-brand" placeholder="Buscar em ${filter === 'songs' ? 'músicas' : 'playlists'}...">
                         </div>
                     </div>
                 </header>
-                <div id="library-view-content" class="flex-grow overflow-y-auto px-6"></div>
+                <div id="library-view-content" class="flex-grow overflow-y-auto px-4 md:px-6"></div>
             `;
 
             if (filter === 'playlists') {
@@ -1349,19 +1391,19 @@
                 const coverHTML = generatePlaylistCover(playlist);
                 const songCount = playlist.songIds ? playlist.songIds.length : 0;
                 return `
-                    <div class="p-4 rounded-lg hover:bg-highlight transition-colors cursor-pointer" onclick="renderView('playlist', ${playlist.id})">
-                        <div class="w-full aspect-square bg-tertiary flex-shrink-0 flex items-center justify-center rounded-md shadow-lg grid grid-cols-2 grid-rows-2 overflow-hidden mb-4">
+                    <div class="p-2 md:p-4 rounded-lg hover:bg-highlight transition-colors cursor-pointer" onclick="renderView('playlist', ${playlist.id})">
+                        <div class="w-full aspect-square bg-tertiary flex-shrink-0 flex items-center justify-center rounded-md shadow-lg grid grid-cols-2 grid-rows-2 overflow-hidden mb-2 md:mb-4">
                             ${coverHTML}
                         </div>
                         <div>
-                            <p class="font-bold text-primary truncate">${playlist.name}</p>
-                            <p class="text-sm text-secondary">${songCount} música${songCount !== 1 ? 's' : ''}</p>
+                            <p class="font-bold text-primary truncate text-sm md:text-base">${playlist.name}</p>
+                            <p class="text-xs md:text-sm text-secondary">${songCount} música${songCount !== 1 ? 's' : ''}</p>
                         </div>
                     </div>
                 `;
             }).join('');
             
-            container.innerHTML = `<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6 py-6">${createPlaylistCardHTML}${playlistsHTML}</div>`;
+            container.innerHTML = `<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4 md:gap-6 py-6">${createPlaylistCardHTML}${playlistsHTML}</div>`;
         }
 
         function renderAllSongsListView(songsToRender = songs) {
@@ -1371,10 +1413,15 @@
                 <div class="py-6">
                     <div class="flex items-center justify-between gap-6 mb-4">
                         <div>
-                            <h1 class="text-3xl font-extrabold text-primary">Todas as Músicas</h1>
-                            <p class="text-secondary mt-1">${songsToRender.length} músicas, ${formatTime(totalDuration, true)}</p>
+                            <h1 class="text-2xl md:text-3xl font-extrabold text-primary">Todas as Músicas</h1>
+                            <p class="text-sm text-secondary mt-1">${songsToRender.length} músicas, ${formatTime(totalDuration, true)}</p>
                         </div>
-                        <div class="flex items-center gap-2">
+                        <div class="hidden md:flex items-center gap-2">
+                             <label for="add-music-input" class="bg-brand text-white font-semibold py-2 px-4 rounded-full flex items-center gap-2 cursor-pointer hover:opacity-90">
+                                 <i class="ph-bold ph-plus"></i>
+                                 <span>Adicionar</span>
+                             </label>
+                             <input type="file" id="add-music-input" multiple accept=".mp3" class="hidden"> <!-- Movido para cá -->
                              <button id="library-select-btn" class="btn-icon text-secondary hover:text-primary p-2 rounded-full hover:bg-highlight" title="Selecionar músicas">
                                  <i class="ph-bold ph-list-checks text-2xl"></i>
                              </button>
@@ -1386,15 +1433,18 @@
                              </button>
                         </div>
                     </div>
-                    <div class="grid grid-cols-[auto,2fr,1fr,1fr,auto] gap-4 text-secondary border-b border-theme p-2 mb-2">
+                    <div class="grid grid-cols-[auto,minmax(0,2fr),minmax(0,1fr),minmax(0,1fr),auto] gap-x-2 md:gap-x-4 text-secondary border-b border-theme p-2 mb-2 text-xs md:text-base">
                         <div id="song-list-header-col" class="w-8 text-center">#</div>
                         <div>Título</div>
-                        <div>Artista</div>
-                        <div>Álbum</div>
+                        <div class="hidden md:block">Artista</div>
+                        <div class="hidden md:block">Álbum</div>
                         <div class="text-center"><i class="ph-bold ph-clock"></i></div>
                     </div>
                     <div id="library-song-list"></div>
                 </div>
+                <label for="add-music-input" class="md:hidden fixed bottom-24 right-6 bg-brand text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg z-40 cursor-pointer">
+                    <i class="ph-bold ph-plus text-2xl"></i>
+                </label>
             `;
             renderSongList(songsToRender, 'library-song-list', songsToRender);
             updateLibraryMenuState();
@@ -1408,6 +1458,46 @@
                     deleteAllSongsFromLibrary
                 );
             });
+
+            // Adicionado o event listener para o input de arquivo aqui
+            const currentAddMusicInput = document.getElementById('add-music-input');
+            if (currentAddMusicInput) {
+                currentAddMusicInput.addEventListener('change', async (e) => {
+                    if (!db) {
+                        setStatus('Aguarde, o banco de dados está inicializando...', 'info');
+                        e.target.value = '';
+                        return;
+                    }
+                    const files = e.target.files;
+                    if (!files.length) return;
+
+                    let successCount = 0;
+                    let errorCount = 0;
+                    const totalFiles = files.length;
+
+                    for (let i = 0; i < totalFiles; i++) {
+                        const file = files[i];
+                        setStatus(`Importando ${i + 1}/${totalFiles}: ${file.name}`, 'info');
+                        const result = await processAndSaveFile(file);
+                        if (result.success) {
+                            successCount++;
+                        } else {
+                            errorCount++;
+                            console.error(`Falha ao importar ${result.name}: ${result.reason}`);
+                        }
+                    }
+
+                    if (errorCount > 0) {
+                        setStatus(`${successCount} de ${totalFiles} músicas importadas. ${errorCount} falharam.`, 'error');
+                    } else {
+                        setStatus(`Todas as ${successCount} músicas foram importadas com sucesso!`, 'success');
+                    }
+
+                    await loadAllData();
+                    renderView('songs');
+                    e.target.value = '';
+                });
+            }
         }
 
         function renderSearchView() {
@@ -1420,22 +1510,22 @@
 
             const categoriesHTML = searchCategories.map(cat => `
                 <div class="aspect-square rounded-lg overflow-hidden relative ${cat.color} cursor-pointer">
-                    <h3 class="text-white text-2xl font-bold p-4">${cat.name}</h3>
-                    <img src="https://placehold.co/100x100/000000/ffffff?text=🎵" class="absolute -bottom-4 -right-4 w-24 h-24 rotate-[25deg]">
+                    <h3 class="text-white text-lg md:text-2xl font-bold p-2 md:p-4">${cat.name}</h3>
+                    <img src="https://placehold.co/100x100/000000/ffffff?text=🎵" class="absolute -bottom-4 -right-4 w-16 h-16 md:w-24 md:h-24 rotate-[25deg]">
                 </div>
             `).join('');
 
             mainView.innerHTML = `
-                <header class="p-6 flex-shrink-0 sticky top-0 bg-secondary z-10">
-                    <div class="relative w-full max-w-md">
+                <header class="p-4 md:p-6 flex-shrink-0 sticky top-0 bg-secondary z-10">
+                    <div class="relative w-full max-w-md mx-auto md:mx-0">
                         <i class="ph-bold ph-magnifying-glass absolute top-1/2 left-3 -translate-y-1/2 text-secondary text-xl"></i>
                         <input type="text" id="search-input" class="w-full bg-tertiary text-primary pl-10 pr-4 py-3 rounded-full focus:outline-none focus:ring-2 focus:ring-brand" placeholder="O que você quer ouvir?">
                     </div>
                 </header>
-                <div class="flex-grow overflow-y-auto px-6">
+                <div class="flex-grow overflow-y-auto px-4 md:px-6">
                     <div id="search-default-view" class="py-6">
-                        <h2 class="text-2xl font-bold text-primary mb-4">Navegar por seções</h2>
-                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+                        <h2 class="text-xl md:text-2xl font-bold text-primary mb-4">Navegar por seções</h2>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
                             ${categoriesHTML}
                         </div>
                     </div>
@@ -1465,11 +1555,11 @@
                     s.album.toLowerCase().includes(query)
                 );
                 resultsContainer.innerHTML = `
-                    <div class="grid grid-cols-[auto,2fr,1fr,1fr,auto] gap-4 text-secondary border-b border-theme p-2 mb-2">
-                        <div class="w-8 text-center">#</div>
+                    <div class="grid grid-cols-[auto,minmax(0,2fr),minmax(0,1fr),minmax(0,1fr),auto] gap-x-2 md:gap-x-4 text-secondary border-b border-theme p-2 mb-2 text-xs md:text-base">
+                        <div id="song-list-header-col" class="w-8 text-center">#</div>
                         <div>Título</div>
-                        <div>Artista</div>
-                        <div>Álbum</div>
+                        <div class="hidden md:block">Artista</div>
+                        <div class="hidden md:block">Álbum</div>
                         <div class="text-center"><i class="ph-bold ph-clock"></i></div>
                     </div>
                     <div id="search-song-list"></div>
@@ -1486,19 +1576,19 @@
             const totalDuration = playlistSongs.reduce((acc, song) => acc + (song.duration || 0), 0);
             
             mainView.innerHTML = `
-                <header class="p-6 flex-shrink-0 sticky top-0 bg-secondary z-10 flex flex-col gap-4">
-                    <div class="flex items-end gap-6">
-                        <div class="w-48 h-48 bg-tertiary flex-shrink-0 rounded-md shadow-lg grid grid-cols-2 grid-rows-2 overflow-hidden relative group cursor-pointer" onclick="openPlaylistModal(${playlistId})">
+                <header class="p-4 md:p-6 flex-shrink-0 sticky top-0 bg-secondary z-10 flex flex-col gap-4">
+                    <div class="flex flex-col md:flex-row items-center md:items-end gap-4 md:gap-6">
+                        <div class="w-36 h-36 md:w-48 md:h-48 bg-tertiary flex-shrink-0 rounded-md shadow-lg grid grid-cols-2 grid-rows-2 overflow-hidden relative group cursor-pointer" onclick="openPlaylistModal(${playlistId})">
                             ${generatePlaylistCover(playlist)}
                             <div class="absolute inset-0 bg-black/60 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                <i class="ph-bold ph-pencil-simple text-5xl text-white"></i>
-                                <p class="text-white font-semibold mt-2">Editar detalhes</p>
+                                <i class="ph-bold ph-pencil-simple text-3xl md:text-5xl text-white"></i>
+                                <p class="text-white font-semibold mt-2 text-xs md:text-base">Editar detalhes</p>
                             </div>
                         </div>
-                        <div class="flex-1">
+                        <div class="flex-1 text-center md:text-left">
                             <p class="text-sm">Playlist</p>
-                            <h1 class="text-6xl font-extrabold text-primary">${playlist.name}</h1>
-                            <p class="text-secondary mt-2">${playlistSongs.length} músicas, ${formatTime(totalDuration, true)}</p>
+                            <h1 class="text-4xl md:text-6xl font-extrabold text-primary break-words">${playlist.name}</h1>
+                            <p class="text-sm text-secondary mt-2">${playlistSongs.length} músicas, ${formatTime(totalDuration, true)}</p>
                         </div>
                     </div>
                     <div class="flex items-center justify-between gap-4 pt-4 border-t border-theme">
@@ -1510,30 +1600,29 @@
                                 <i class="ph-bold ph-plus-circle text-3xl"></i>
                             </button>
                             <button id="playlist-select-btn" class="btn-icon text-secondary hover:text-primary p-2 rounded-full hover:bg-highlight" title="Selecionar músicas">
-                                 <i class="ph-bold ph-list-checks text-3xl"></i>
+                                <i class="ph-bold ph-list-checks text-3xl"></i>
                             </button>
                             <button id="delete-selected-from-playlist-btn" class="hidden btn-icon text-red-400 hover:text-red-500 p-2 rounded-full hover:bg-red-600/20" title="Remover selecionadas da playlist">
-                                 <i class="ph-bold ph-trash text-3xl"></i>
+                                <i class="ph-bold ph-trash text-3xl"></i>
                             </button>
                             <button id="delete-playlist-btn" class="text-secondary hover:text-primary p-2 rounded-full hover:bg-highlight" title="Excluir playlist">
                                 <i class="ph-bold ph-x text-3xl"></i>
                             </button>
                         </div>
-                        <div class="relative flex-grow max-w-xs">
+                        <div class="relative flex-grow max-w-xs hidden md:block">
                              <i class="ph-bold ph-magnifying-glass absolute top-1/2 left-3 -translate-y-1/2 text-secondary text-lg"></i>
                              <input type="text" id="playlist-search-input" class="w-full bg-highlight text-primary pl-10 pr-4 py-2 rounded-full focus:outline-none focus:ring-1 focus:ring-brand" placeholder="Buscar nesta playlist...">
                         </div>
                     </div>
                 </header>
                 <div class="flex-grow overflow-y-auto px-4">
-                    <div class="grid grid-cols-[auto,2fr,1fr,1fr,auto] gap-4 text-secondary border-b border-theme p-2 mb-2">
+                    <div class="grid grid-cols-[auto,minmax(0,2fr),minmax(0,1fr),auto] gap-x-2 md:gap-x-4 text-secondary border-b border-theme p-2 mb-2 text-xs md:text-base">
                         <div id="song-list-header-col" class="w-8 text-center">#</div>
                         <div>Título</div>
-                        <div>Artista</div>
-                        <div>Álbum</div>
+                        <div class="hidden md:block">Álbum</div>
                         <div class="text-center"><i class="ph-bold ph-clock"></i></div>
                     </div>
-                    <div id="playlist-song-list"></div>
+                    <div id="playlist-song-list" data-playlist-id="${playlistId}"></div> <!-- Adicionado data-playlist-id -->
                 </div>
             `;
             renderSongList(playlistSongs, 'playlist-song-list', playlistSongs);
@@ -1553,36 +1642,42 @@
             document.getElementById('playlist-select-btn').addEventListener('click', () => toggleSelectionMode(!isSelectionMode, 'playlist'));
             document.getElementById('delete-selected-from-playlist-btn').addEventListener('click', () => deleteSelectedSongsFromPlaylist(playlistId));
 
-            document.getElementById('playlist-search-input').addEventListener('input', (e) => {
-                const query = e.target.value.toLowerCase();
-                const filteredSongs = playlistSongs.filter(s => 
-                    s.title.toLowerCase().includes(query) ||
-                    s.artist.toLowerCase().includes(query) ||
-                    s.album.toLowerCase().includes(query)
-                );
-                renderSongList(filteredSongs, 'playlist-song-list', playlistSongs);
-            });
+            const searchInput = document.getElementById('playlist-search-input');
+            if(searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    const query = e.target.value.toLowerCase();
+                    const filteredSongs = playlistSongs.filter(s => 
+                        s.title.toLowerCase().includes(query) ||
+                        s.artist.toLowerCase().includes(query) ||
+                        s.album.toLowerCase().includes(query)
+                    );
+                    renderSongList(filteredSongs, 'playlist-song-list', playlistSongs);
+                });
+            }
+
+            // Inicializa o drag and drop para as músicas da playlist
+            initializePlaylistDragAndDrop(playlistId);
         }
 
         async function renderHistoryView() {
             const lastTab = localStorage.getItem('historyActiveTab') || 'dashboard';
 
             mainView.innerHTML = `
-                <header class="p-6 pr-20 flex-shrink-0 sticky top-0 bg-secondary z-10">
+                <header class="p-4 md:p-6 md:pr-20 flex-shrink-0 sticky top-0 bg-secondary z-10">
                     <div class="flex items-center justify-between">
-                           <h1 class="text-3xl font-extrabold text-primary">Seu Histórico</h1>
-                           <button id="clear-history-btn" class="bg-red-600/20 text-red-400 hover:bg-red-600/40 font-semibold py-2 px-4 rounded-full flex items-center gap-2">
-                                 <i class="ph-bold ph-trash"></i>
-                                 <span>Limpar Tudo</span>
+                           <h1 class="text-2xl md:text-3xl font-extrabold text-primary">Seu Histórico</h1>
+                           <button id="clear-history-btn" class="bg-red-600/20 text-red-400 hover:bg-red-600/40 font-semibold py-2 px-3 md:px-4 rounded-full flex items-center gap-2 text-sm">
+                                   <i class="ph-bold ph-trash"></i>
+                                   <span class="hidden md:inline">Limpar Tudo</span>
                            </button>
                     </div>
-                    <div id="history-tabs" class="flex items-center gap-2 mt-4 border-b border-theme">
-                        <button data-tab="dashboard" class="history-tab px-4 py-2 rounded-t-lg text-sm font-semibold transition-colors">Estatísticas</button>
-                        <button data-tab="shows" class="history-tab px-4 py-2 rounded-t-lg text-sm font-semibold transition-colors">Shows Salvos</button>
-                        <button data-tab="plays" class="history-tab px-4 py-2 rounded-t-lg text-sm font-semibold transition-colors">Músicas Tocadas</button>
+                    <div id="history-tabs" class="flex items-center gap-2 mt-4 border-b border-theme overflow-x-auto">
+                        <button data-tab="dashboard" class="history-tab px-3 md:px-4 py-2 rounded-t-lg text-sm font-semibold transition-colors whitespace-nowrap">Estatísticas</button>
+                        <button data-tab="shows" class="history-tab px-3 md:px-4 py-2 rounded-t-lg text-sm font-semibold transition-colors whitespace-nowrap">Shows Salvos</button>
+                        <button data-tab="plays" class="history-tab px-3 md:px-4 py-2 rounded-t-lg text-sm font-semibold transition-colors whitespace-nowrap">Músicas Tocadas</button>
                     </div>
                 </header>
-                <div class="flex-grow overflow-y-auto p-6 pt-0">
+                <div class="flex-grow overflow-y-auto p-4 md:p-6 pt-0">
                     <div id="tab-content-dashboard" class="history-tab-content hidden"></div>
                     <div id="tab-content-shows" class="history-tab-content hidden"></div>
                     <div id="tab-content-plays" class="history-tab-content hidden"></div>
@@ -1687,9 +1782,9 @@
                     <img src="${topSongOfWeek.song.imageBlob ? URL.createObjectURL(topSongOfWeek.song.imageBlob) : 'https://placehold.co/150x150/181818/b3b3b3?text=🎵'}" class="w-36 h-36 rounded-lg shadow-lg flex-shrink-0">
                     <div class="text-center md:text-left">
                         <p class="text-sm text-brand font-bold">TOP MÚSICA DA SEMANA</p>
-                        <h3 class="text-4xl font-extrabold text-primary truncate">${topSongOfWeek.song.title}</h3>
-                        <p class="text-lg text-secondary">${topSongOfWeek.song.artist}</p>
-                        <p class="text-lg text-primary mt-2">${topSongOfWeek.count} reproduções</p>
+                        <h3 class="text-3xl md:text-4xl font-extrabold text-primary truncate">${topSongOfWeek.song.title}</h3>
+                        <p class="text-base md:text-lg text-secondary">${topSongOfWeek.song.artist}</p>
+                        <p class="text-base md:text-lg text-primary mt-2">${topSongOfWeek.count} reproduções</p>
                     </div>
                 </div>
             ` : '<div class="bg-tertiary rounded-lg p-6 flex items-center justify-center lg:col-span-2"><p class="text-secondary">Sem dados de música da semana.</p></div>';
@@ -1697,8 +1792,8 @@
             const topArtistHTML = topArtistOfWeek ? `
                 <div class="bg-tertiary rounded-lg p-6">
                     <p class="text-sm text-brand font-bold">TOP ARTISTA DA SEMANA</p>
-                    <h3 class="text-3xl font-extrabold text-primary truncate">${topArtistOfWeek.name}</h3>
-                    <p class="text-lg text-secondary">${topArtistOfWeek.count} reproduções</p>
+                    <h3 class="text-2xl md:text-3xl font-extrabold text-primary truncate">${topArtistOfWeek.name}</h3>
+                    <p class="text-base md:text-lg text-secondary">${topArtistOfWeek.count} reproduções</p>
                 </div>
             ` : '<div class="bg-tertiary rounded-lg p-6 flex items-center justify-center"><p class="text-secondary">Sem dados de artista da semana.</p></div>';
             
@@ -1706,8 +1801,8 @@
             const listeningTimeHTML = `
                 <div class="bg-tertiary rounded-lg p-6">
                     <p class="text-sm text-brand font-bold">TEMPO DE ESCUTA</p>
-                    <h3 class="text-3xl font-extrabold text-primary truncate">${formatTime(totalTimeWeek, true)}</h3>
-                    <p class="text-lg text-secondary">nos últimos 7 dias</p>
+                    <h3 class="text-2xl md:text-3xl font-extrabold text-primary truncate">${formatTime(totalTimeWeek, true)}</h3>
+                    <p class="text-base md:text-lg text-secondary">nos últimos 7 dias</p>
                 </div>
             `;
 
@@ -1725,7 +1820,7 @@
                                     <span class="w-5 text-center text-secondary">${index + 1}</span>
                                     <img src="${imageUrl}" class="w-10 h-10 rounded-md">
                                     <div class="flex-1 overflow-hidden">
-                                        <p class="text-sm font-semibold text-primary truncate">${data.title || data.name}</p>
+                                        <p class="font-semibold text-primary truncate">${data.title || data.name}</p>
                                         <p class="text-xs text-secondary truncate">${item.count} reproduções</p>
                                     </div>
                                 </div>
@@ -1739,7 +1834,7 @@
             container.innerHTML = `
                 <div class="space-y-8 py-6">
                     <div>
-                        <h3 class="text-2xl font-bold text-primary mb-4">Seu Resumo da Semana</h3>
+                        <h3 class="text-xl md:text-2xl font-bold text-primary mb-4">Seu Resumo da Semana</h3>
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                             ${topSongHTML}
                             <div class="space-y-6">
@@ -1750,7 +1845,7 @@
                     </div>
 
                     <div>
-                        <h3 class="text-2xl font-bold text-primary mb-4">Suas Listas</h3>
+                        <h3 class="text-xl md:text-2xl font-bold text-primary mb-4">Suas Listas</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             ${generateTopListHTML(top5Songs, 'song')}
                             ${generateTopListHTML(top5Artists, 'artist')}
@@ -1759,7 +1854,7 @@
                     </div>
 
                     <div>
-                        <h3 class="text-2xl font-bold text-primary mb-4">Atividade de Escuta</h3>
+                        <h3 class="text-xl md:text-2xl font-bold text-primary mb-4">Atividade de Escuta</h3>
                         <div class="bg-tertiary p-4 rounded-lg"><canvas id="listeningTimeChart"></canvas></div>
                     </div>
                 </div>
@@ -1783,7 +1878,7 @@
                     <div class="bg-tertiary rounded-lg p-2 flex flex-col gap-2 history-show-card">
                         <div class="history-show-card-header flex justify-between items-center cursor-pointer hover:bg-highlight/50 transition-colors rounded-md p-2">
                             <div>
-                                <p class="font-bold text-primary text-lg">${formatFullDateTime(show.savedAt)}</p>
+                                <p class="font-bold text-primary text-base md:text-lg">${formatFullDateTime(show.savedAt)}</p>
                                 <p class="text-sm text-secondary">${songCount} música${songCount !== 1 ? 's' : ''} • ${formatTime(show.duration, true)}</p>
                             </div>
                             <button class="text-secondary hover:text-primary p-1 pointer-events-none">
@@ -1843,19 +1938,19 @@
                     }, {});
 
                     if (Object.keys(songPlays).length > 0) {
-                         detailsEl.innerHTML = `
-                             <div class="space-y-2">
-                             ${Object.values(songPlays).map(({song, count, duration}) => `
-                                 <div class="flex items-center gap-3 p-1.5 rounded-md hover:bg-highlight">
-                                     <img src="${song.imageBlob ? URL.createObjectURL(song.imageBlob) : 'https://placehold.co/40x40/121212/b3b3b3?text=🎵'}" class="w-10 h-10 rounded-md">
-                                     <div class="flex-1 overflow-hidden">
-                                         <p class="font-semibold text-primary truncate">${song.title}</p>
-                                         <p class="text-sm text-secondary truncate">${count}x • ${formatTime(duration)}</p>
-                                     </div>
-                                 </div>
-                             `).join('')}
-                             </div>
-                         `;
+                           detailsEl.innerHTML = `
+                               <div class="space-y-2">
+                               ${Object.values(songPlays).map(({song, count, duration}) => `
+                                   <div class="flex items-center gap-3 p-1.5 rounded-md hover:bg-highlight">
+                                       <img src="${song.imageBlob ? URL.createObjectURL(song.imageBlob) : 'https://placehold.co/40x40/121212/b3b3b3?text=🎵'}" class="w-10 h-10 rounded-md">
+                                       <div class="flex-1 overflow-hidden">
+                                           <p class="font-semibold text-primary truncate">${song.title}</p>
+                                           <p class="text-sm text-secondary truncate">${count}x • ${formatTime(duration)}</p>
+                                       </div>
+                                   </div>
+                               `).join('')}
+                               </div>
+                           `;
                     } else {
                         detailsEl.innerHTML = '<p class="text-center p-2">Nenhuma música foi tocada durante este show.</p>';
                     }
@@ -1890,7 +1985,7 @@
                 }
 
                 acc[play.songId].totalPlays++;
-                acc[play.songId].totalDuration += play.durationPlayed;
+                acc[play.songId].totalDuration += play.durationPlayed; // Corrigido para usar play.songId para o histórico de reprodução
                 acc[play.songId].plays.push({
                     playedAt: play.playedAt,
                     durationPlayed: play.durationPlayed
@@ -1923,7 +2018,7 @@
                             <div class="flex items-center gap-4 flex-1 overflow-hidden">
                                 <img src="${song.imageBlob ? URL.createObjectURL(song.imageBlob) : 'https://placehold.co/64x64/181818/b3b3b3?text=🎵'}" class="w-16 h-16 rounded-md flex-shrink-0">
                                 <div class="flex-1 overflow-hidden">
-                                    <p class="font-bold text-primary text-lg truncate">${song.title}</p>
+                                    <p class="font-bold text-primary text-base md:text-lg truncate">${song.title}</p>
                                     <p class="text-sm text-secondary truncate">${song.artist}</p>
                                 </div>
                             </div>
@@ -2020,7 +2115,7 @@
             }
             const playlistSongs = (playlist.songIds || []).map(id => songs.find(s => s.id === id)).filter(Boolean);
             if (playlistSongs.length === 0) {
-                 return `<div class="w-full h-full bg-tertiary flex items-center justify-center col-span-2 row-span-2"><i class="ph-bold ph-music-notes text-5xl text-secondary"></i></div>`;
+                   return `<div class="w-full h-full bg-tertiary flex items-center justify-center col-span-2 row-span-2"><i class="ph-bold ph-music-notes text-5xl text-secondary"></i></div>`;
             }
             let coverHTML = '';
             for (let i = 0; i < 4; i++) {
@@ -2057,21 +2152,24 @@
                 }
 
                 const songItemEl = document.createElement('div');
-                songItemEl.className = `grid grid-cols-[auto,2fr,1fr,1fr,auto] gap-4 items-center p-2 rounded-lg hover:bg-highlight group song-item-row cursor-pointer ${selectedSongIds.has(song.id) ? 'selected' : ''}`;
+                // Adicionado draggable="true" e data-song-id para drag and drop
+                songItemEl.draggable = true;
                 songItemEl.dataset.songId = song.id;
-
+                songItemEl.className = `grid grid-cols-[auto,minmax(0,2fr),minmax(0,1fr),auto] md:grid-cols-[auto,minmax(0,2fr),minmax(0,1fr),minmax(0,1fr),auto] gap-x-2 md:gap-x-4 items-center p-2 rounded-lg hover:bg-highlight group song-item-row cursor-pointer ${selectedSongIds.has(song.id) ? 'selected' : ''}`;
+                
                 songItemEl.innerHTML = `
                     <div class="w-8 text-center relative flex items-center justify-center pointer-events-none">
                         ${firstColHTML}
                     </div>
-                    <div class="flex items-center gap-4 pointer-events-none">
+                    <div class="flex items-center gap-3 md:gap-4 pointer-events-none overflow-hidden">
                         <img src="${imageUrl}" alt="Capa" class="w-10 h-10 rounded">
-                        <div>
-                            <p class="font-semibold truncate ${isPlayingSong ? 'text-brand' : 'text-primary'}">${song.title}</p>
+                        <div class="overflow-hidden">
+                            <p class="font-semibold truncate text-sm md:text-base ${isPlayingSong ? 'text-brand' : 'text-primary'}">${song.title}</p>
+                            <p class="md:hidden text-xs truncate text-secondary">${song.artist}</p>
                         </div>
                     </div>
-                    <div class="text-secondary truncate pointer-events-none">${song.artist}</div>
-                    <div class="text-secondary truncate pointer-events-none">${song.album}</div>
+                    <div class="text-secondary truncate pointer-events-none hidden md:block">${song.artist}</div>
+                    <div class="text-secondary truncate pointer-events-none hidden md:block">${song.album}</div>
                     <div class="flex items-center gap-4 justify-end">
                         <span class="text-sm text-secondary pointer-events-none">${formatTime(song.duration)}</span>
                         <button class="text-secondary hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity context-menu-btn" data-song-id="${song.id}">
@@ -2131,10 +2229,6 @@
         }
 
         // --- PLAYER & QUEUE LOGIC (WEB AUDIO API) ---
-
-        /**
-         * Initializes the Web Audio API context and nodes. Must be called after a user interaction.
-         */
         async function initAudioContext() {
             if (audioContext && audioContext.state !== 'closed') return;
             try {
@@ -2144,20 +2238,12 @@
                 mainGainNode.gain.value = isMuted ? 0 : lastVolume;
                 mainGainNode.connect(audioContext.destination);
 
-                // Nódulos de processamento de áudio avançado para Karaokê/Tom foram removidos.
-                // karaokeSplitterNode, karaokeInvertNode, karaokeFilterNode não são mais usados na cadeia de áudio.
-                // pitchShifterNode e pitchShifterProcessorLoaded também removidos.
-
             } catch (e) {
-                // Mensagem de erro mais genérica, já que os recursos específicos foram removidos.
                 showError("Erro de Áudio", "Seu navegador não suporta a Web Audio API ou ocorreu um erro na inicialização do áudio. A reprodução pode não funcionar corretamente.");
                 console.error("Could not create AudioContext", e);
             }
         }
         
-        /**
-         * Stops any currently playing audio source node completely.
-         */
         function stopCurrentSource() {
             if (currentSourceNode) {
                 currentSourceNode.onended = null;
@@ -2170,9 +2256,6 @@
             cancelAnimationFrame(progressUpdateAnimation);
         }
 
-        /**
-         * Starts a new playback session from a list of songs (a context).
-         */
         async function startPlaybackFromContext(startIndex, contextArray) {
             await initAudioContext();
             if (audioContext.state === 'suspended') {
@@ -2191,7 +2274,7 @@
             
             if (isShuffled) {
                 const firstSong = upcomingSongs.shift();
-                const shuffledUpcoming = upcomingSongs.sort(() => Math.random() - 0.5);
+                const shuffledUpcoming = upcomingongs.sort(() => Math.random() - 0.5);
                 playbackQueue = [firstSong, ...shuffledUpcoming];
             } else {
                 playbackQueue = upcomingSongs;
@@ -2200,9 +2283,6 @@
             await playNextSongFromQueue(false);
         }
 
-        /**
-         * Plays the next song from the queue. This is the main playback engine.
-         */
         async function playNextSongFromQueue(fromEndOfTrack = false) {
             if (fromEndOfTrack && repeatMode === 'one' && currentSong) {
                 await playSongObject(currentSong);
@@ -2223,10 +2303,12 @@
                     stopCurrentSource();
                     currentSong = null;
                     isPlaying = false;
-                    // Removidos 'originalKey', 'playbackKey' da chamada de updatePlayerUI
+                    updatePlayerVisibility(false); 
                     updatePlayerUI({ title: 'Nenhuma música tocando', artist: '---', imageBlob: null, duration: 0 }); 
                     updateAllPlayerControls();
                     await stopHistoryTracking();
+                    // Oculta a notificação "A seguir" quando a fila de reprodução está vazia e não há repetição
+                    hideUpNextNotification(); 
                 }
                 return;
             }
@@ -2235,19 +2317,20 @@
             await playSongObject(nextSong);
         }
 
-        /**
-         * Core function that loads a song into the Web Audio API and starts playback.
-         */
         async function playSongObject(song) {
             if (!song || !song.id) {
                 console.error("playSongObject: Invalid song object provided.");
                 return;
             }
+            // Reset upNextNotification state for the new song
+            upNextNotificationShown = false;
+            clearTimeout(upNextTimeout);
+
+            updatePlayerVisibility(true);
             await stopHistoryTracking();
             stopCurrentSource();
 
             currentSong = song;
-            // 'currentPlaybackKey' e lógicas relacionadas à transposição de tom foram removidas.
 
             try {
                 const songFromDb = await db.get('songs', song.id);
@@ -2271,7 +2354,6 @@
                 await startHistoryTracking(songFromDb.id);
                 
                 updatePlayerUI(songFromDb);
-                // updateKeyUI(); // Chamada removida
                 renderLyricsDisplay();
                 if (lyricsView) lyricsView.scrollTop = 0;
                 
@@ -2286,9 +2368,6 @@
             }
         }
 
-        /**
-         * Creates the source node and starts the actual playback at a specific offset.
-         */
         function startPlayback(offset) {
             if (!currentAudioBuffer) {
                 console.error("Audio buffer not ready.");
@@ -2299,10 +2378,8 @@
 
             currentSourceNode = audioContext.createBufferSource();
             currentSourceNode.buffer = currentAudioBuffer;
-            currentSourceNode.playbackRate.value = 1; // Sempre 1 para reprodução normal
+            currentSourceNode.playbackRate.value = 1;
 
-            // Conecta diretamente ao nó de ganho principal.
-            // Lógicas de pitch shifter e karaokê foram removidas da cadeia de áudio.
             currentSourceNode.connect(mainGainNode);
             
             currentSourceNode.onended = () => {
@@ -2398,8 +2475,6 @@
             lyricsRepeatOneIndicator.classList.toggle('hidden', repeatMode !== 'one');
             
             syncPlayPauseIcon.className = isAudioPlaying ? 'ph-bold ph-pause text-3xl' : 'ph-bold ph-play text-3xl';
-
-            // Botão de Karaokê (karaokeModeBtn) removido, então não há classe para alternar aqui.
 
             refreshCurrentSongList();
         }
@@ -2505,16 +2580,13 @@
         }
 
         function getDragAfterElement(container, y) {
-            const draggableElements = [...container.querySelectorAll('.queue-item:not(.dragging)')];
-            return draggableElements.reduce((closest, child) => {
+            const draggableElements = [...container.querySelectorAll('.queue-item:not(.dragging), .song-item-row:not(.dragging)')]; // Seleciona ambos os tipos
+
+            return draggableElements.find(child => {
                 const box = child.getBoundingClientRect();
-                const offset = y - box.top - box.height / 2;
-                if (offset < 0 && offset > closest.offset) {
-                    return { offset: offset, element: child };
-                } else {
-                    return closest;
-                }
-            }, { offset: Number.NEGATIVE_INFINITY }).element;
+                // Se o Y do mouse estiver na metade superior do elemento, insere antes deste elemento
+                return y < box.top + box.height / 2;
+            }) || null; // Se nenhum elemento for encontrado, significa que deve ser anexado no final
         }
 
         function addSongToNextUp(songId) {
@@ -3226,6 +3298,14 @@
             const nextSong = getNextSong();
             
             if (nextSong) {
+                // Calculate remaining time of the current song
+                const duration = currentAudioBuffer ? currentAudioBuffer.duration : 0;
+                const currentTime = isPlaying ? playbackStartOffset + (audioContext.currentTime - playbackStartTime) : playbackStartOffset;
+                const remainingTime = duration - currentTime;
+
+                // Determine notification display duration (min 0.5s, max 8s, or remaining time)
+                const notificationDisplayDuration = Math.max(0.5, Math.min(8, remainingTime));
+
                 upNextNotificationShown = true;
                 upNextArt.src = nextSong.imageBlob ? URL.createObjectURL(nextSong.imageBlob) : 'https://placehold.co/48x48/121212/b3b3b3?text=🎵';
                 upNextTitle.textContent = nextSong.title;
@@ -3236,11 +3316,11 @@
                 upNextTimer.style.transition = 'none';
                 upNextTimer.style.width = '0%';
                 setTimeout(() => {
-                    upNextTimer.style.transition = 'width 8s linear';
+                    upNextTimer.style.transition = `width ${notificationDisplayDuration}s linear`; // Use dynamic duration
                     upNextTimer.style.width = '100%';
                 }, 100);
 
-                upNextTimeout = setTimeout(hideUpNextNotification, 8000);
+                upNextTimeout = setTimeout(hideUpNextNotification, notificationDisplayDuration * 1000); // Use dynamic duration
             }
         }
 
@@ -3557,7 +3637,6 @@
                 const currentTime = playbackStartOffset + (audioContext.currentTime - playbackStartTime);
                 
                 if (currentTime >= duration) {
-                    // onended will handle the next song
                     cancelAnimationFrame(progressUpdateAnimation);
                     return;
                 }
@@ -3591,16 +3670,6 @@
             progressUpdateAnimation = requestAnimationFrame(update);
         }
         
-        // As funções toggleKaraokeMode, updateKeyUI, openKeySelectionModal, handleKeySelection e calculateTransposition
-        // foram removidas ou simplificadas, pois as funcionalidades associadas foram removidas.
-
-        // O botão karaoke-mode-btn foi removido do HTML acima.
-
-        // updateKeyUI foi removido.
-        // openKeySelectionModal foi removido.
-        // handleKeySelection foi removido.
-        // calculateTransposition foi removido.
-
         // --- EVENT LISTENERS ---
         document.getElementById('close-error-modal').addEventListener('click', () => document.getElementById('error-modal').classList.add('hidden'));
         cancelConfirmationBtn.addEventListener('click', hideConfirmation);
@@ -3630,7 +3699,6 @@
             const song = currentSong;
             lyricsTextarea.value = song.lyrics || '';
             renderLyricsDisplay();
-            // updateKeyUI(); // Removido
             toggleLyricsEditMode(false);
             document.body.classList.add('lyrics-active');
             lyricsPanel.classList.remove('hidden');
@@ -3730,8 +3798,13 @@
         navSearch.addEventListener('click', (e) => { e.preventDefault(); renderView('search'); });
         navHistory.addEventListener('click', (e) => { e.preventDefault(); renderView('history'); });
         navLibrary.addEventListener('click', (e) => { e.preventDefault(); renderView('songs'); });
+        navHomeMobile.addEventListener('click', (e) => { e.preventDefault(); renderView('home'); });
+        navSearchMobile.addEventListener('click', (e) => { e.preventDefault(); renderView('search'); });
+        navHistoryMobile.addEventListener('click', (e) => { e.preventDefault(); renderView('history'); });
+        navLibraryMobile.addEventListener('click', (e) => { e.preventDefault(); renderView('songs'); });
 
-        createPlaylistBtn.addEventListener('click', () => openPlaylistModal());
+        // Removido o event listener do botão de criar playlist da sidebar, agora o botão está na view da biblioteca
+        // createPlaylistBtn.addEventListener('click', () => openPlaylistModal()); 
         closePlaylistEditModalBtn.addEventListener('click', () => playlistEditModal.classList.add('hidden'));
         savePlaylistDetailsBtn.addEventListener('click', savePlaylistDetails);
         playlistCoverInput.addEventListener('change', (e) => {
@@ -3757,11 +3830,6 @@
         showTimerPlayPauseBtn.addEventListener('click', startPauseShowTimer);
         showTimerResetBtn.addEventListener('click', resetShowTimer);
         showTimerSaveBtn.addEventListener('click', saveShowTimer);
-        // karaokeModeBtn.addEventListener('click', toggleKaraokeMode); // Listener removido
-
-        // originalKeyBtn.addEventListener('click', () => openKeySelectionModal(true)); // Listener removido
-        // playbackKeyBtn.addEventListener('click', () => openKeySelectionModal(false)); // Listener removido
-        // closeKeyModalBtn.addEventListener('click', () => keySelectionModal.classList.add('hidden')); // Listener removido
 
         closeAddSongsModalBtn.addEventListener('click', () => addSongsModal.classList.add('hidden'));
         addSongsSearchInput.addEventListener('input', async () => {
@@ -3783,6 +3851,10 @@
             if (moreOptionsContainer && !moreOptionsContainer.contains(e.target)) {
                 moreOptionsDropdown.classList.add('hidden');
             }
+        });
+
+        window.addEventListener('resize', () => {
+            updatePlayerVisibility(document.body.classList.contains('player-active'));
         });
 
         function initializeDragAndDrop() {
@@ -3834,6 +3906,68 @@
             });
         }
 
+        // Nova função para inicializar o drag and drop na playlist
+        function initializePlaylistDragAndDrop(playlistId) {
+            const playlistSongList = document.getElementById('playlist-song-list');
+            if (!playlistSongList) return;
+
+            let draggedItem = null;
+
+            playlistSongList.addEventListener('dragstart', (e) => {
+                if (e.target.classList.contains('song-item-row')) {
+                    draggedItem = e.target;
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('text/plain', draggedItem.dataset.songId);
+                    setTimeout(() => {
+                        if (draggedItem) {
+                            draggedItem.classList.add('dragging');
+                        }
+                    }, 0);
+                }
+            });
+
+            playlistSongList.addEventListener('dragend', () => {
+                if (draggedItem) {
+                    draggedItem.classList.remove('dragging');
+                    draggedItem = null;
+                }
+            });
+            
+            playlistSongList.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                if (!draggedItem) return;
+                e.dataTransfer.dropEffect = 'move';
+
+                const afterElement = getDragAfterElement(playlistSongList, e.clientY);
+                
+                if (afterElement == null) {
+                    playlistSongList.appendChild(draggedItem);
+                } else {
+                    playlistSongList.insertBefore(draggedItem, afterElement);
+                }
+            });
+
+            playlistSongList.addEventListener('drop', async (e) => {
+                e.preventDefault();
+                if (!draggedItem) return;
+                
+                const newIdOrder = Array.from(playlistSongList.querySelectorAll('.song-item-row'))
+                    .map(item => parseInt(item.dataset.songId, 10));
+
+                // Atualizar a playlist no IndexedDB
+                const playlist = await db.get('playlists', playlistId);
+                if (playlist) {
+                    playlist.songIds = newIdOrder;
+                    await db.put('playlists', playlist);
+                    setStatus('Ordem da playlist salva!', 'success');
+                    // Recarregar a view da playlist para refletir a nova ordem visualmente
+                    renderView('playlist', playlistId);
+                }
+                draggedItem = null;
+            });
+        }
+
+
         function parseLyrics(text) {
             if (!text || !text.trim()) return [];
             const lines = text.split('\n');
@@ -3850,7 +3984,6 @@
                     const time = parseInt(lrcMatch[1], 10) * 60 + parseInt(lrcMatch[2], 10) + parseInt(lrcMatch[3], 10) / (lrcMatch[3].length === 2 ? 100 : 1000);
                     result.push({ time, text: cleanText });
                 } else {
-                    // Only add non-empty lines for non-timed lyrics
                     if(cleanText) {
                         result.push({ time: null, text: cleanText });
                     }
