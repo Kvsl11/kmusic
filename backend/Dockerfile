@@ -6,7 +6,6 @@ FROM python:3.9-slim-bullseye
 # O ffmpeg e libsndfile1 são essenciais para processamento de áudio.
 # Se o Codespaces ainda falhar com erro de memória (código 137),
 # considere comentar esta seção temporariamente e tentar novamente.
-# ...
 # Remover a instalação pesada para evitar erros de falta de memória no Codespaces.
 # Descomente esta parte se for testar com uma máquina de mais recursos ou localmente.
 # RUN apt-get update && apt-get install -y \
