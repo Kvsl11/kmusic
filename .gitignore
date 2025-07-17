@@ -1,0 +1,24 @@
+# Ignorar arquivos de cache do Python
+__pycache__/
+*.pyc
+*.pyd
+.Python
+env/
+venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Ignorar variáveis de ambiente (contêm informações sensíveis)
+.env
+
+# Ignorar arquivos de sistema operacional
+.DS_Store
+Thumbs.db
+
+# Ignorar diretórios de armazenamento local (gerenciados por volumes Docker)
+backend/storage/audio/
+backend/storage/stems/
+
+# Ignorar logs
+*.log

@@ -1,0 +1,12 @@
+# backend/requirements.txt
+Flask==2.3.2
+Celery==5.3.4
+redis==5.0.1
+python-dotenv==1.0.0
+Flask-Cors==4.0.0 # Para permitir requisições do frontend
+# Bibliotecas de IA (exemplos, descomente e instale se for usar modelos reais)
+# spleeter==2.3.0
+# openai-whisper==20231117
+# librosa==0.10.1
+# essentia-extractor==2.1b6 # Pode ser complexo de instalar
+# madmom==0.17.0

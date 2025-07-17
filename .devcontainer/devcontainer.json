@@ -1,0 +1,36 @@
+// .devcontainer/devcontainer.json
+{
+    "name": "KMusic Development Environment",
+    // Caminho para o seu docker-compose.yml a partir de .devcontainer/
+    "dockerComposeFile": "../docker-compose.yml", 
+    // O serviço principal do seu docker-compose.yml que o Codespace deve "anexar"
+    // O terminal do Codespace será executado dentro deste contêiner.
+    "service": "backend_api", 
+    // Onde seu código estará dentro do contêiner principal.
+    // O Codespaces clona seu repositório para /workspaces/<nome_do_repositorio> por padrão.
+    "workspaceFolder": "/workspaces/kmusic", 
+
+    // Portas que devem ser automaticamente expostas e encaminhadas para o navegador
+    // A porta 5000 é a da sua API Flask (backend_api)
+    "forwardPorts": [5000],
+
+    // Comandos a serem executados após a criação do Codespace.
+    // Este comando inicia todos os serviços definidos no docker-compose.yml em modo detached (-d).
+    // Usamos 'docker compose' (sem hífen) que é a sintaxe moderna.
+    "postCreateCommand": "echo 'Codespace pronto! Rodando docker compose up --build -d...' && docker compose up --build -d",
+
+    // Configurações específicas do VS Code no Codespace
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",      // Extensão Python
+                "ms-azuretools.vscode-docker", // Extensão Docker
+                "esbenp.prettier-vscode" // Formatador de código
+            ],
+            "settings": {
+                "python.pythonPath": "/usr/local/bin/python",
+                "terminal.integrated.defaultProfile.linux": "bash"
+            }
+        }
+    }
+}

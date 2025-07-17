@@ -1,0 +1,73 @@
+# docker-compose.yml
+# Versão da sintaxe do Docker Compose
+version: '3.8'
+
+# Definição dos serviços da aplicação
+services:
+  # Serviço Redis: Usado como broker e backend de resultados para o Celery
+  redis:
+    image: redis:latest # Imagem oficial do Redis
+    ports:
+      - "6379:6379" # Mapeia a porta 6379 do contêiner para a porta 6379 do host
+    volumes:
+      - redis_data:/data # Monta um volume persistente para os dados do Redis
+    networks:
+      - default # Conecta ao network padrão (kmusic_default)
+
+  # Serviço da API Flask (backend_api)
+  backend_api:
+    build: ./backend # Constrói a imagem Docker a partir do Dockerfile na pasta ./backend
+    # Comando para iniciar a aplicação Flask.
+    # Em produção, 'gunicorn --bind 0.0.0.0:5000 app:app' seria mais robusto.
+    command: python app.py 
+    ports:
+      - "5000:5000" # Mapeia a porta 5000 do contêiner para a porta 5000 do host
+    volumes:
+      # Monta o diretório do backend local para /app no contêiner, permitindo hot-reloading em dev
+      - ./backend:/app 
+      # Garante que a pasta storage seja persistente e acessível dentro do contêiner
+      - ./backend/storage:/app/storage 
+    environment:
+      # Variáveis de ambiente passadas para o contêiner (lidas de .env no host)
+      - UPLOAD_FOLDER=/app/storage/audio
+      - STEMS_FOLDER=/app/storage/stems
+      - CELERY_BROKER_URL=redis://redis:6379/0 # URL do Redis dentro da rede Docker
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      redis:
+        condition: service_started # Garante que o Redis inicie antes da API
+    networks:
+      - default # Conecta ao network padrão (kmusic_default)
+
+  # Serviço do worker Celery (celery_worker)
+  celery_worker:
+    build: ./backend # Constrói a imagem Docker a partir do Dockerfile na pasta ./backend
+    # Comando para iniciar o worker do Celery
+    command: celery -A app.celery worker --loglevel=info 
+    volumes:
+      # Monta os mesmos diretórios do backend_api para que o worker tenha acesso aos arquivos
+      - ./backend:/app
+      - ./backend/storage:/app/storage
+    environment:
+      # Variáveis de ambiente para o worker
+      - UPLOAD_FOLDER=/app/storage/audio
+      - STEMS_FOLDER=/app/storage/stems
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      backend_api:
+        condition: service_started # O worker precisa que a API esteja rodando para importar a instância do Celery
+      redis:
+        condition: service_started # O worker precisa que o Redis esteja rodando
+    networks:
+      - default # Conecta ao network padrão (kmusic_default)
+
+# Definição de volumes persistentes
+volumes:
+  redis_data:
+    name: kmusic_redis_data # Nomeia o volume para fácil identificação
+
+# Definição de networks (rede virtual interna para os contêineres)
+networks:
+  default:
+    name: kmusic_default # Nomeia o network padrão
